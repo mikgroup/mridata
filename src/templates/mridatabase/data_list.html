@@ -1,0 +1,31 @@
+{% extends "mridatabase/base.html" %}
+{% load el_pagination_tags %}
+
+
+{% block body_block %}
+<div class="row">
+  {% include "mridatabase/sidebar.html" %}
+
+  <div class="col">
+    {% paginate filter.qs as objects%}
+    
+    {% if user.is_authenticated %}
+    {% include "mridatabase/batch_links.html" %}
+    {% endif %}
+
+    {% for temp_data in temp_datasets %}
+    {% include "mridatabase/temp_data_card.html" with temp_data=temp_data%}
+    {% endfor %}
+    
+    {% for data in objects %}
+    {% include "mridatabase/data_card.html" with data=data%}
+    {% endfor %}
+    
+    <h5>
+      {% show_pages %}
+    </h5>
+  </div>
+</div>
+<br>
+<br>
+{% endblock %}

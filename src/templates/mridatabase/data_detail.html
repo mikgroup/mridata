@@ -1,0 +1,147 @@
+<table class="table table-striped" style="width:100%" align="center">
+  <tr>
+    <th>Matrix Size</th>
+    <td>
+      {{data.matrix_size_x}} x {{data.matrix_size_y}}
+      {% if data.matrix_size_z > 1 %}x {{data.matrix_size_z}}{% endif %}
+    </td> 
+  </tr>
+  
+  <tr>
+    <th>Resolution</th>
+    <td>
+      {{data.resolution_x|floatformat}} mm x {{data.resolution_y|floatformat}} mm
+      {% if data.matrix_z > 1 %}x {{data.resolution_z|floatformat}} mm{% endif %}
+      {% if data.number_of_time_frames > 1 %}x {{data.resolution_t|floatformat}} ms{% endif %}
+    </td> 
+  </tr>
+  
+  <tr>
+    <th>Number of Channels</th>
+    <td>{{data.number_of_channels}}</td> 
+  </tr>
+  
+  {% if data.number_of_slices != 1 %}
+  <tr>
+    <th>Number of Slices</th>
+    <td>{{ data.number_of_slices }}</td> 
+  </tr>
+  {% endif %}
+  
+  {% if data.number_of_repetitions != 1 %}
+  <tr>
+    <th>Number of Repetition</th>
+    <td>{{ data.number_of_repetitions }}</td> 
+  </tr>
+  {% endif %}
+  
+  {% if data.number_of_contrasts != 1 %}
+  <tr>
+    <th>Number of Contrasts</th>
+    <td>{{ data.number_of_contrasts }}</td> 
+  </tr>
+  {% endif %}
+  
+  <tr>
+    <th>Anatomy</th>
+    <td>{{ data.anatomy }}</td> 
+  </tr>
+  
+  <tr>
+    <th>Sequence Name</th>
+    <td>{{ data.sequence_name }}</td> 
+  </tr>
+  
+  <tr>
+    <th>Trajectory</th>
+    <td>{{ data.trajectory }}</td> 
+  </tr>
+  
+  <tr>
+    <th>Fullysampled</th>
+    <td>{{ data.fullysampled }}</td> 
+  </tr>
+  
+  <tr>
+    <th>Scanner Vendor</th>
+    <td>{{ data.scanner_vendor }}</td> 
+  </tr>
+  
+  <tr>
+    <th>Scanner Model</th>
+    <td>{{ data.scanner_model }}</td> 
+  </tr>
+  
+  <tr>
+    <th>Scanner Field Strength</th>
+    <td>
+      {% if data.scanner_field > 0 %}
+      {{ data.scanner_field }} T
+      {% else %}
+      N/A
+      {% endif %}
+    </td> 
+  </tr>
+  
+  <tr>
+    <th>Flip Angle</th>
+    <td>{{ data.flip_angle|floatformat }} &deg;</td> 
+  </tr>
+  
+  <tr>
+    <th>Echo Time</th>
+    <td>{{ data.te|floatformat }} ms</td> 
+  </tr>
+  
+  <tr>
+    <th>Repetition Time</th>
+    <td>{{ data.tr|floatformat }} ms</td> 
+  </tr>
+
+  {% if data.ti != 0 %}
+  <tr>
+    <th>Inversion Time</th>
+    <td>{{ data.ti|floatformat }} ms</td> 
+  </tr>
+  {% endif %}
+  
+  <tr>
+    <th>UUID</th>
+    <td>{{ data.uuid }}</td> 
+  </tr>
+  
+  <tr>
+    <th>Uploader</th>
+    <td>{{ data.uploader }}</td> 
+  </tr>
+  
+  <tr>
+    <th>Upload Date</th>
+    <td>{{ data.upload_date }}</td> 
+  </tr>
+</table>
+
+
+{% if data.ra_file %}
+<a href="{{ data.ra_data_file.url }}" class="btn btn-primary">
+  Download Raw Array
+</a>
+{% endif %}
+{% if data.ismrmrd_file %}
+<a href="{{ data.ismrmrd_file.url }}" class="btn btn-primary">
+  Download ISMRMRD
+</a>
+{% endif %}
+<a href="{% url 'data_description' uuid=data.uuid %}" class="btn btn-info">
+  Generate Description
+</a>
+{% if user == data.uploader %}
+<a href="{% url 'data_update_form' uuid=data.uuid %}" class="btn btn-info">
+  Edit
+</a>
+<a href="{% url 'data_delete' uuid=data.uuid %}"
+   onclick="return confirm('This would delete the file permanently. Do you want to proceed?')"
+   class="btn btn-danger">
+  Delete
+</a>
+{% endif %}

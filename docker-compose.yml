@@ -1,0 +1,39 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    expose:
+      - "5432"
+  redis:
+    image: redis
+    expose:
+      - "6379"
+  worker:
+    container_name: mridata_worker
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    command: ['celery', 'worker', '-l', 'info', '-A', 'mridata']
+    links:
+      - db
+      - redis
+    depends_on:
+      - redis
+    volumes:
+      - ./src:/src
+  web:
+    container_name: mridata_web
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    command: ['bash', 'start_web.sh']
+    ports:
+      - "8000:8000"
+    links:
+      - db
+      - redis
+      - worker
+    depends_on:
+      - db
+    volumes:
+      - ./src:/src

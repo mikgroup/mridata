@@ -1,0 +1,36 @@
+{% load staticfiles %}
+<table class="table" align="left">
+  <tr>
+    <td rowspan="3" align="left">
+      <img src=
+	   {% if temp_data.failed %}
+	   {% static "images/failed.png" %}
+	   {% else %}
+	   {% static "images/processing.gif" %}
+	   {% endif %}
+	   class="rounded" width="128" height="128">
+    </td>
+    <td align="left" class="text-muted">
+      Anatomy:
+    </td>
+    <td align="left" class="text-muted">
+      {{ temp_data.anatomy }}
+    </td>
+  </tr>
+  <tr>
+    <td align="left" class="text-muted">
+      Fullysampled:
+    </td>
+    <td align="left" class="text-muted">
+      {{ temp_data.fullysampled }}
+    </td>
+  </tr>
+  <tr>
+    <td align="left" class="text-muted">
+      Uploader:
+    </td>
+    <td align="left" class="text-muted">
+      {{ temp_data.uploader }}
+    </td>
+  </tr>  
+</table>

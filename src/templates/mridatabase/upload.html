@@ -1,0 +1,32 @@
+{% extends 'mridatabase/base.html' %}
+{% load static from staticfiles %}
+
+
+{% block body_block %}
+<br>
+<div class="col">
+    <form method="POST" class="data-form data-form-default" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ forms.management_form }}
+      
+      {% for form in forms %}
+      <div class="link-formset card container text-center">
+	<table class="table">
+          {{ form.as_table }}
+	</table>
+      </div>
+      {% endfor %}
+      
+      <div class="text-center">
+	<div>
+	  <input type="checkbox" required>
+	  <label>I agree to the <a class="terms" href="#">Terms of Service</a></label>
+	</div>
+	
+	<button type="submit" class="save btn btn-default">Upload</button>
+    </form>
+    <br>
+    </div>
+</div>
+{% include "mridatabase/terms_modal.html" %}
+{% endblock %}

@@ -1,0 +1,18 @@
+<div class="card card-primary text-center">
+  <div class="card-block">
+    <a class="text-muted" data-toggle="collapse" href="#collapse_links">
+      <div align="center">ISMRMRD Links for Batch Download</div>
+    </a>
+    <div id="collapse_links" class="collapse">
+      <p class="card-text">
+	{% for data in filter.qs %}
+	{% if data.ismrmrd_file %}
+	{{data.ismrmrd_file.url}}
+	{% endif %}
+	<br>
+	{% endfor %}
+      </p>
+    </div>
+  </div>
+</div>
+<br>

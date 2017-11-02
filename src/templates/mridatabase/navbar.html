@@ -1,0 +1,83 @@
+{% load staticfiles %}
+<div class="navbar navbar-expand-md navbar-light bg-light fixed-top" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">
+	<img src={% static "favicons/android-chrome-192x192.png" %} height="25"> mridata.org
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#myNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-left mr-auto">
+      	<li {% if request.path == "/about/" %}
+      	    class="nav-item active"
+      	    {% else %}
+      	    class="nav-item"
+      	    {% endif %}>
+          <a class="nav-link" href="{% url 'about' %}">About</a>
+        </li>
+      	<li {% if request.path == "/info/" %}
+      	    class="nav-item active"
+      	    {% else %}
+      	    class="nav-item"
+      	    {% endif %}>
+          <a class="nav-link" href="{% url 'info' %}">Info</a>
+        </li>
+        {% if user.is_authenticated %}  
+        <li {% if request.path == "/my_data_sets/" %}
+            class="nav-item active"
+            {% else %}
+            class="nav-item"
+            {% endif %}>
+          <a class="nav-link" href="{% url 'user_data_list' %}">My Datasets</a>
+        </li>
+        <li {% if "upload" in request.path %}
+      	    class="nav-item dropdown active"
+      	    {% else %}
+      	    class="nav-item dropdown"
+      	    {% endif %}>
+          <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Upload</a>
+          <div class="dropdown-menu" aria-labelledby="dropdown01">
+      	    <a class="dropdown-item" href="{% url 'upload_ge' %}">GE P-file</a>
+      	    <a class="dropdown-item" href="{% url 'upload_ismrmrd' %}">ISMRMRD</a>
+      	    <a class="dropdown-item" href="{% url 'upload_philips' %}">Philips</a>
+      	    <a class="dropdown-item" href="{% url 'upload_siemens' %}">Siemens</a>
+          </div>
+        </li>
+        <li><a class="nav-link" href="{% url 'auth_logout' %}">Logout</a></li>
+        {% else %}
+      	<li {% if request.path == "/accounts/register/" %}
+      	    class="nav-item active"
+      	    {% else %}
+      	    class="nav-item"
+      	    {% endif %}>
+          <a class="nav-link" href="{% url 'registration_register' %}">Sign Up</a>
+        </li>
+      	<li {% if request.path == "/accounts/login/" %}
+      	    class="nav-item active"
+      	    {% else %}
+      	    class="nav-item"
+      	    {% endif %}>
+          <a class="nav-link" href="{% url 'auth_login' %}">Login</a>
+        </li>
+        {% endif %}
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+	<li class="nav-item">
+	  <a  href="http://www.berkeley.edu/">
+	    <img src={% static "images/berkeley.png" %}
+		 height="25" width="81" hspace="7">
+	  </a>
+	</li>
+	<li>
+	  <a  href="http://www.stanfordchildrens.org/">
+	    <img src={% static "images/stanford.png" %}
+		 height="25" width="75">
+	  </a>
+	</li>
+      </ul>
+    </div>
+  </div>
+</div>

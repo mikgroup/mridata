@@ -1,0 +1,23 @@
+{% extends "mridatabase/base.html" %}
+
+
+{% block body_block %}
+<br>
+<div class="col">
+  <div class="card container text-center">
+    <form method="post" action=".">
+      {% csrf_token %}
+      <table class="table">
+	{{ form.as_table }}
+      </table>
+      <div>
+        <input type="checkbox" required>
+        <label>I agree to the <a class="terms" href="#">Terms of Service</a></label>
+      </div>
+      <button type="submit" class="save btn btn-default">Submit</button>
+    </form>
+    <br>
+  </div>
+</div>
+{% include "mridatabase/terms_modal.html" %}
+{% endblock %}

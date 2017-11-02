@@ -1,0 +1,21 @@
+{% extends 'mridatabase/base.html' %}
+
+{% block body_block %}
+{% if user == data.uploader %}
+<br>
+<div class="col">
+  <div class="card text-center">
+    <form method="POST" class="data-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table class="table table-striped" style="width:100%">
+  	     {{ form.as_table }}
+        </table>
+        <button type="submit" class="save btn btn-default">Update</button>
+    </form>
+    <br>
+  </div>
+</div>
+<br>
+<br>
+{% endif %}
+{% endblock %}

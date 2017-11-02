@@ -1,0 +1,15 @@
+<div class="card card-container text-justify">
+  <font size="1">
+  <code>
+   <div style="white-space: pre-wrap;">
+      {{ temp_data.error_message }}
+   </div>
+  </code>
+  </font>
+</div>
+<br>
+
+<a href="{% url 'temp_data_delete' uuid=temp_data.uuid %}"
+   class="btn btn-danger">
+  Clear
+</a>

@@ -1,0 +1,90 @@
+FROM continuumio/miniconda3
+
+MAINTAINER Frank Ong <frankong@berkeley.edu>
+
+## ISMRMRD dependencies
+RUN apt-get update \
+    && apt-get install -y \
+    build-essential \
+    fftw-dev \
+    g++ \
+    libhdf5-serial-dev \
+    h5utils \
+    hdf5-tools \
+    libboost-all-dev \
+    xsdcxx \
+    libtinyxml-dev \
+    libxslt1-dev \
+    libxml2-dev \
+    libxerces-c-dev \
+    cmake \
+    git \
+    sudo
+
+# ISMRMRD
+RUN git clone https://github.com/ismrmrd/ismrmrd.git
+RUN cd ismrmrd && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    make && \
+    sudo make install
+    
+ENV LD_LIBRARY_PATH /usr/local/lib
+
+# Siemens to ISMRMRD
+RUN git clone https://github.com/ismrmrd/siemens_to_ismrmrd.git
+RUN cd siemens_to_ismrmrd/ && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    make && \
+    sudo make install
+
+# Philips to ISMRMRD
+RUN git clone https://github.com/ismrmrd/philips_to_ismrmrd.git
+RUN cd philips_to_ismrmrd && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    make && \
+    sudo make install
+    
+# GE to ISMRMRD
+ADD orchestra-sdk-1.6-1 orchestra-sdk-1.6-1
+ENV SDKTOP /orchestra-sdk-1.6-1
+RUN git clone https://github.com/frankong/ge_to_ismrmrd.git
+RUN cd ge_to_ismrmrd && \
+    mkdir build && \
+    cd build && \
+    cmake -D OX_INSTALL_DIRECTORY=$SDKTOP .. && \
+    make && \
+    sudo make install
+ENV HDF5_DISABLE_VERSION_CHECK 2
+
+# Python
+RUN conda update -y conda
+RUN conda update -y pip
+RUN conda install -y \
+    django \
+    h5py  \
+    psycopg2 \
+    boto3 \
+    pillow
+RUN conda install -y -c conda-forge \
+    celery \
+    django-filter \
+    django-storages \
+    pyxb
+RUN pip install \
+    django-el-pagination \
+    django-registration-redux \
+    redis
+    
+# ISMRMRD-python
+RUN git clone https://github.com/ismrmrd/ismrmrd-python.git
+RUN cd ismrmrd-python && \
+    python setup.py install && \
+    cd ..
+
+WORKDIR src

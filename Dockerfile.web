@@ -1,0 +1,32 @@
+FROM continuumio/miniconda3
+
+MAINTAINER Frank Ong <frankong@berkeley.edu>
+
+# Python
+RUN conda update -y conda
+RUN conda update -y pip
+RUN conda install -y \
+    django \
+    h5py  \
+    psycopg2 \
+    boto3 \
+    pillow
+RUN conda install -y -c conda-forge \
+    celery \
+    django-filter \
+    django-storages \
+    pyxb
+RUN pip install \
+    django-el-pagination \
+    django-registration-redux \
+    redis
+
+# ISMRMRD-python
+RUN git clone https://github.com/ismrmrd/ismrmrd-python.git
+RUN cd ismrmrd-python && \
+    python setup.py install && \
+    cd ..
+
+WORKDIR src
+
+EXPOSE 8000

@@ -1,0 +1,20 @@
+{% extends "mridatabase/base.html" %}
+
+{% block body_block %}
+<br>
+<div class="row">
+  <div class="col">
+    <div class="card container text-center">
+      <form method="post" action=".">
+	{% csrf_token %}
+	<table class="table">
+	  {{ form.as_table }}
+	</table>
+	<button type="submit" class="save btn btn-default">Log in</button>
+	<input type="hidden" name="next" value="{{ next }}" />
+      </form>
+      <br>
+    </div>
+  </div>
+</div>
+{% endblock %}
