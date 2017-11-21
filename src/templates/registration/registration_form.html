@@ -1,6 +1,5 @@
 {% extends "mridatabase/base.html" %}
 
-
 {% block body_block %}
 <br>
 <div class="col">
@@ -8,16 +7,33 @@
     <form method="post" action=".">
       {% csrf_token %}
       <table class="table">
-	{{ form.as_table }}
+	{% for field in form %}
+	<div class="fieldWrapper">
+	  <tr>
+            {{ field.errors }}
+	    <th>
+              {{ field.label_tag }}
+	    </th>
+	    <td>
+	      {{ field }}
+	      {% for error in field.errors %}
+	      <br>
+	      <small class="text-danger">{{ error }}</small>
+	      {% endfor %}
+	    </td>
+	  </tr>
+	</div>
+	{% endfor %}
       </table>
-      <div>
-        <input type="checkbox" required>
-        <label>I agree to the <a class="terms" href="#">Terms of Service</a></label>
-      </div>
-      <button type="submit" class="save btn btn-default">Submit</button>
+      {% if form.non_field_errors %}
+      {% for error in form.non_field_errors %}
+      <p class="text-danger">{{ error }}</p>
+      {% endfor %}
+      {% endif %}
+      <button type="submit" class="save btn btn-primary">Log in</button>
+      <input type="hidden" name="next" value="{{ next }}" />
     </form>
     <br>
   </div>
 </div>
-{% include "mridatabase/terms_modal.html" %}
 {% endblock %}

@@ -2,19 +2,38 @@
 
 {% block body_block %}
 <br>
-<div class="row">
-  <div class="col">
-    <div class="card container text-center">
-      <form method="post" action=".">
-	{% csrf_token %}
-	<table class="table">
-	  {{ form.as_table }}
-	</table>
-	<button type="submit" class="save btn btn-default">Log in</button>
-	<input type="hidden" name="next" value="{{ next }}" />
-      </form>
-      <br>
-    </div>
+<div class="col">
+  <div class="card container text-center">
+    <form method="post" action=".">
+      {% csrf_token %}
+      <table class="table">
+	{% for field in form %}
+	<div class="fieldWrapper">
+	  <tr>
+            {{ field.errors }}
+	    <th>
+              {{ field.label_tag }}
+	    </th>
+	    <td>
+	      {{ field }}
+	      {% for error in field.errors %}
+	      <br>
+	      <small class="text-danger">{{ error }}</small>
+	      {% endfor %}
+	    </td>
+	  </tr>
+	</div>
+	{% endfor %}
+      </table>
+      {% if form.non_field_errors %}
+      {% for error in form.non_field_errors %}
+      <p class="text-danger">{{ error }}</p>
+      {% endfor %}
+      {% endif %}
+      <button type="submit" class="save btn btn-primary">Log in</button>
+      <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+    <br>
   </div>
 </div>
 {% endblock %}

@@ -1,0 +1,24 @@
+<tr> 
+  <th class="form-th">
+    <label for="{{ form.anatomy.id_for_label }}">Anatomy:</label>
+  </th>
+  <td class="default">
+    <select class="default-options">
+      <option value=""></option>
+      <option value="Abdomen">Abdomen</option>
+      <option value="Brain">Brain</option>
+      <option value="Breast">Breast</option>
+      <option value="Heart">Heart</option>
+      <option value="Kidney">Kidney</option>
+      <option value="Knee">Knee</option>
+      <option value="Liver">Liver</option>
+      <option value="Phantom">Phantom</option>
+      <option value="Spine">Spine</option>
+      <option value="Unknown">Unknown</option>
+    </select> 
+  </td>
+  <td class="custom-option hidden"> {{ form.anatomy }}</td>
+  <td class="custom-box"><input class="custom-checkbox" type="checkbox" id="custom-anatomy" name="anatomy">
+    Custom
+  <td>
+</tr>

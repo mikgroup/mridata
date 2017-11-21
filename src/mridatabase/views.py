@@ -78,14 +78,14 @@ def upload_ismrmrd(request):
     IsmrmrdFormSet = formset_factory(IsmrmrdDataForm)
     if request.method == "POST":
         forms = IsmrmrdFormSet(request.POST, request.FILES)
-        for form in forms:
-            if form.is_valid():
+        if forms.is_valid():
+            for form in forms:
                 ismrmrd_data = form.save(commit=False)
                 ismrmrd_data.upload_date = timezone.now()
                 ismrmrd_data.uploader = request.user
                 ismrmrd_data.save()
                 process_ismrmrd_data.delay(ismrmrd_data.uuid)
-        return redirect('data_list')
+            return redirect('data_list')
     return render(request, 'mridatabase/upload.html', {'forms': IsmrmrdFormSet})
 
 
@@ -94,14 +94,14 @@ def upload_ge(request):
     GeFormSet = formset_factory(GeDataForm)
     if request.method == "POST":
         forms = GeFormSet(request.POST, request.FILES)
-        for form in forms:
-            if form.is_valid():
+        if forms.is_valid():
+            for form in forms:
                 ge_data = form.save(commit=False)
                 ge_data.upload_date = timezone.now()
                 ge_data.uploader = request.user
                 ge_data.save()
                 process_ge_data.delay(ge_data.uuid)
-        return redirect('data_list')
+            return redirect('data_list')
     return render(request, 'mridatabase/upload.html', {'forms': GeFormSet})
 
 
@@ -110,14 +110,14 @@ def upload_philips(request):
     PhilipsFormSet = formset_factory(PhilipsDataForm)
     if request.method == "POST":
         forms = PhilipsFormSet(request.POST, request.FILES)
-        for form in forms:
-            if form.is_valid():
+        if forms.is_valid():
+            for form in forms:
                 philips_data = form.save(commit=False)
                 philips_data.upload_date = timezone.now()
                 philips_data.uploader = request.user
                 philips_data.save()
                 process_philips_data.delay(philips_data.uuid)
-        return redirect('data_list')
+            return redirect('data_list')
     return render(request, 'mridatabase/upload.html', {'forms': PhilipsFormSet})
 
 @login_required
@@ -126,14 +126,14 @@ def upload_siemens(request):
     if request.method == "POST":
 
         forms = SiemensFormSet(request.POST, request.FILES)
-        for form in forms:
-            if form.is_valid():
+        if forms.is_valid():
+            for form in forms:
                 siemens_data = form.save(commit=False)
                 siemens_data.upload_date = timezone.now()
                 siemens_data.uploader = request.user
                 siemens_data.save()
                 process_siemens_data.delay(siemens_data.uuid)
-        return redirect('data_list')
+            return redirect('data_list')
     return render(request, 'mridatabase/upload.html', {'forms': SiemensFormSet})
 
 @login_required

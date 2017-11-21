@@ -1,0 +1,31 @@
+td.default, td.custom-box, td.custom-option {
+	display: inline-block;
+}
+
+td.custom-box{
+	position: absolute;
+}
+
+input.custom-checkbox {
+	margin-right: 10px;
+}
+
+.link-formset tr{
+  border-bottom: 1px solid #e9ecef;
+}
+
+.table-spacing{
+  border-spacing:0px;
+}
+
+.form-th{
+	width: 1%;
+}
+
+.file-upload{
+	position: relative;
+	left: 10%
+}
+.table-striped{
+	margin-bottom: 0;
+}

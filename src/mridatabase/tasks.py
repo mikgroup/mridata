@@ -21,6 +21,9 @@ def convert_ge_data(uuid):
     ismrmrd_file = os.path.join(settings.TEMP_ROOT, '{}.h5'.format(uuid))
     schema_file = os.path.join(settings.STATICFILES_DIRS[0], 'schema', 'ismrmrd_ge.xsl')
     ge_pfile = os.path.join(settings.TEMP_ROOT, 'P{}.7'.format(uuid))
+
+    if not os.path.exists(ismrmrd_file):
+        raise IOError('{} does not exists.'.format(ismrmrd_file))
     
     logger.info('Converting GeData to ISMRMRD')
     subprocess.check_output(['pfile2ismrmrd',
@@ -35,6 +38,9 @@ def convert_siemens_data(uuid):
     ismrmrd_file = os.path.join(settings.TEMP_ROOT, '{}.h5'.format(uuid))
     siemens_dat_file = os.path.join(settings.TEMP_ROOT, '{}.dat'.format(uuid))
     
+    if not os.path.exists(ismrmrd_file):
+        raise IOError('{} does not exists.'.format(ismrmrd_file))
+    
     logger.info('Converting SiemensData to ISMRMRD...')
     subprocess.check_output(['siemens_to_ismrmrd',
                              '-f', siemens_dat_file,
@@ -48,6 +54,9 @@ def convert_philips_data(uuid):
     schema_file = os.path.join(settings.STATICFILES_DIRS[0], 'schema', 'ismrmrd_philips.xsl')
     ismrmrd_file = os.path.join(settings.TEMP_ROOT, '{}.h5'.format(uuid))
 
+    if not os.path.exists(ismrmrd_file):
+        raise IOError('{} does not exists.'.format(ismrmrd_file))
+    
     logger.info('Converting PhilipsData to ISMRMRD')
     subprocess.check_output(['philips_to_ismrmrd',
                              '-f', philips_basename,
@@ -153,6 +162,9 @@ def valid_int(x):
 
         
 def parse_ismrmrd(ismrmrd_file, data):
+    
+    if not os.path.exists(ismrmrd_file):
+        raise IOError('{} does not exists.'.format(ismrmrd_file))
 
     logger.info('Parsing ISMRMRD...')
 

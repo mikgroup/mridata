@@ -31,3 +31,7 @@
   cursor: pointer;
 }
 
+.terms-container{
+  position: relative;
+  left: 3%;
+}

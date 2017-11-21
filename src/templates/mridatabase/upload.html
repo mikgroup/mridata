@@ -4,29 +4,35 @@
 
 {% block body_block %}
 <br>
-<div class="col">
-    <form method="POST" class="data-form data-form-default" enctype="multipart/form-data">
-      {% csrf_token %}
-      {{ forms.management_form }}
-      
-      {% for form in forms %}
-      <div class="link-formset card container text-center">
+<div class="col text-center">
+  <div class="card container">
+    <div class="card-block">
+      <form method="POST" class="data-form data-form-default" enctype="multipart/form-data">
+	{% csrf_token %}
 	<table class="table">
-          {{ form.as_table }}
+	  {{ forms.management_form }}
+	  {% for form in forms %}
+	  <tbody class="link-formset"> 
+	    {% include "mridatabase/upload_anatomy.html" %}
+            <tr>
+              <th><label for="{{ form.fullysampled.id_for_label }}">Fullysampled:</label></th>
+              <td>
+		{{ form.fullysampled }}
+	      </td>
+            </tr>
+	    {% include "mridatabase/upload_file.html" %}
+	  </tbody>
+	  {% endfor %}
 	</table>
-      </div>
-      {% endfor %}
-      
-      <div class="text-center">
-	<div>
+	<div class="text-center terms-container">
 	  <input type="checkbox" required>
 	  <label>I agree to the <a class="terms" href="#">Terms of Service</a></label>
 	</div>
-	
-	<button type="submit" class="save btn btn-default">Upload</button>
-    </form>
-    <br>
+	<button type="submit" class="save btn btn-primary">Upload</button>
+      </form>
+      <br>
     </div>
+  </div>
 </div>
 {% include "mridatabase/terms_modal.html" %}
 {% endblock %}
