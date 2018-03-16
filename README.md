@@ -11,6 +11,8 @@ Install Docker Community Edition for your platform:
 
 ## Build and run using docker-compose
 
+Clone the repo, go to that directory and run:
+
 	docker-compose build
 	docker-compose up
 
