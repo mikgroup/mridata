@@ -9,6 +9,10 @@ Install Docker Community Edition for your platform:
 
 	https://docs.docker.com/engine/installation/
 
+Install docker-compose:
+
+	https://docs.docker.com/compose/install/#install-compose
+
 ## Build and run using docker-compose
 
 Clone the repo, go to that directory and run:
