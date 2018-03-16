@@ -12,18 +12,6 @@ def save_ismrmrd_file(data, filename):
     filename = '{}.h5'.format(data.uuid)
     return filename
 
-def save_cfl_file(data, filename):
-    filename = '{}.cfl'.format(data.uuid)
-    return filename
-
-def save_hdr_file(data, filename):
-    filename = '{}.hdr'.format(data.uuid)
-    return filename
-
-def save_ra_file(data, filename):
-    filename = '{}.ra'.format(data.uuid)
-    return filename
-
 def save_philips_raw_file(data, filename):
     filename = '{}.raw'.format(data.uuid)
     return filename
@@ -105,7 +93,7 @@ class TempData(models.Model):
     
     upload_date = models.DateTimeField(default=timezone.now)
     uploader = models.ForeignKey(User, on_delete=models.CASCADE)
-
+    
     failed = models.NullBooleanField(default=False)
     error_message = models.TextField(blank=True)
 
@@ -153,27 +141,4 @@ class IsmrmrdData(TempData):
     def delete(self, *args, **kwargs):
 
         self.ismrmrd_file.delete()
-        super().delete(*args, **kwargs)
-
-class CflData(Data):
-    
-    cfl_file = models.FileField(upload_to=save_cfl_file,
-                                storage=temp_storage)
-    hdr_file = models.FileField(upload_to=save_hdr_file,
-                                storage=temp_storage)
-
-    def delete(self, *args, **kwargs):
-
-        self.cfl_file.delete()
-        self.hdr_file.delete()
-        super().delete(*args, **kwargs)
-
-class RaData(Data):
-    
-    ra_file = models.FileField(upload_to=save_ra_file,
-                               storage=temp_storage)
-
-    def delete(self, *args, **kwargs):
-
-        self.ra_file.delete()
         super().delete(*args, **kwargs)

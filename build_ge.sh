@@ -6,7 +6,7 @@ if [ -d "orchestra-sdk-1.6-1/lib" ]; then
     cd ge_to_ismrmrd && \
 	mkdir build && \
 	cd build && \
-	cmake -D OX_INSTALL_DIRECTORY=$SDKTOP .. && \
+	cmake -D OX_INSTALL_DIRECTORY=$SDKTOP -D CXX=g++-4.9 .. && \
 	make && \
 	sudo make install && \
 	cd ../..

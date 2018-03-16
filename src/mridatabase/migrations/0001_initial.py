@@ -63,15 +63,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='CflData',
-            fields=[
-                ('data_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='mridatabase.Data')),
-                ('cfl_file', models.FileField(storage=django.core.files.storage.FileSystemStorage(base_url='/temp/', location='/src/temp'), upload_to=mridatabase.models.save_cfl_file)),
-                ('hdr_file', models.FileField(storage=django.core.files.storage.FileSystemStorage(base_url='/temp/', location='/src/temp'), upload_to=mridatabase.models.save_hdr_file)),
-            ],
-            bases=('mridatabase.data',),
-        ),
-        migrations.CreateModel(
             name='GeData',
             fields=[
                 ('tempdata_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='mridatabase.TempData')),
@@ -96,14 +87,6 @@ class Migration(migrations.Migration):
                 ('philips_lab_file', models.FileField(storage=django.core.files.storage.FileSystemStorage(base_url='/temp/', location='/src/temp'), upload_to=mridatabase.models.save_philips_lab_file)),
             ],
             bases=('mridatabase.tempdata',),
-        ),
-        migrations.CreateModel(
-            name='RaData',
-            fields=[
-                ('data_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='mridatabase.Data')),
-                ('ra_file', models.FileField(storage=django.core.files.storage.FileSystemStorage(base_url='/temp/', location='/src/temp'), upload_to=mridatabase.models.save_ra_file)),
-            ],
-            bases=('mridatabase.data',),
         ),
         migrations.CreateModel(
             name='SiemensData',

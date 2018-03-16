@@ -1,5 +1,5 @@
 from django import forms
-from .models import Data, PhilipsData, SiemensData, GeData, IsmrmrdData, RaData, CflData
+from .models import Data, PhilipsData, SiemensData, GeData, IsmrmrdData
 
     
 class DataForm(forms.ModelForm):
@@ -26,53 +26,6 @@ class DataForm(forms.ModelForm):
                   'ti',
                   'thumbnail_file',
                   'ismrmrd_file',
-        )
-        
-    
-class RaDataForm(forms.ModelForm):
-
-    class Meta:
-        model = RaData
-        fields = ('anatomy',
-                  'fullysampled',
-                  'sequence_name',
-                  'trajectory',
-                  'matrix_size_x',
-                  'matrix_size_y',
-                  'matrix_size_z',
-                  'number_of_channels',
-                  'resolution_x',
-                  'resolution_y',
-                  'resolution_z',
-                  'flip_angle',
-                  'te',
-                  'tr',
-                  'ti',
-                  'ra_file',
-        )
-        
-    
-class CflDataForm(forms.ModelForm):
-
-    class Meta:
-        model = CflData
-        fields = ('anatomy',
-                  'fullysampled',
-                  'sequence_name',
-                  'trajectory',
-                  'matrix_size_x',
-                  'matrix_size_y',
-                  'matrix_size_z',
-                  'number_of_channels',
-                  'resolution_x',
-                  'resolution_y',
-                  'resolution_z',
-                  'flip_angle',
-                  'te',
-                  'tr',
-                  'ti',
-                  'cfl_file',
-                  'hdr_file',
         )
         
 

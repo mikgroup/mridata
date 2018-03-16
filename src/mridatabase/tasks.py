@@ -19,16 +19,14 @@ logger = get_task_logger(__name__)
 
 def convert_ge_data(uuid):
     ismrmrd_file = os.path.join(settings.TEMP_ROOT, '{}.h5'.format(uuid))
-    schema_file = os.path.join(settings.STATICFILES_DIRS[0], 'schema', 'ismrmrd_ge.xsl')
     ge_pfile = os.path.join(settings.TEMP_ROOT, 'P{}.7'.format(uuid))
 
     if not os.path.exists(ismrmrd_file):
         raise IOError('{} does not exists.'.format(ismrmrd_file))
     
     logger.info('Converting GeData to ISMRMRD')
-    subprocess.check_output(['pfile2ismrmrd',
-                             '-v',
-                             '-x', schema_file,
+    subprocess.check_output(['ge_to_ismrmrd',
+                             '--verbose',
                              '-o', ismrmrd_file,
                              ge_pfile])
     logger.info('Conversion SUCCESS')
