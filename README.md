@@ -1,6 +1,6 @@
 # mridata
 
-This repo contains the source code building the mridata.org website. The only codes that are not public are the GE Orchestra Reconstruction code, and AWS account related code.
+This repo contains the source code building the mridata.org website. The only codes that are not public are the GE Orchestra code, and AWS account related code.
 
 A local server can be set up using Docker, to test and extend features.
 
