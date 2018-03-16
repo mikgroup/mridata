@@ -92,7 +92,7 @@ class Data(models.Model):
 
     thumbnail_file = models.ImageField()
     upload_date = models.DateTimeField(default=timezone.now)
-    uploader = models.ForeignKey(User)
+    uploader = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 temp_storage = FileSystemStorage(location=settings.TEMP_ROOT, base_url=settings.TEMP_URL)
@@ -104,7 +104,7 @@ class TempData(models.Model):
     fullysampled = models.NullBooleanField()
     
     upload_date = models.DateTimeField(default=timezone.now)
-    uploader = models.ForeignKey(User)
+    uploader = models.ForeignKey(User, on_delete=models.CASCADE)
 
     failed = models.NullBooleanField(default=False)
     error_message = models.TextField(blank=True)
