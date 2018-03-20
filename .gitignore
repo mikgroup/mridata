@@ -112,7 +112,9 @@ ENV/
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
-
-eb_setenv.sh
 P*.7
 temp
+
+eb_*
+README_aws.md
+Dockerrun.aws.json
