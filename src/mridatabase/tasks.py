@@ -169,18 +169,25 @@ def parse_ismrmrd(ismrmrd_file, data):
     dset = ismrmrd.Dataset(ismrmrd_file, 'dataset', create_if_needed=False)
     hdr = ismrmrd.xsd.CreateFromDocument(dset.read_xml_header())
 
-    data.sequence_name = hdr.measurementInformation.protocolName
-    data.number_of_channels = hdr.acquisitionSystemInformation.receiverChannels
-    data.scanner_vendor = hdr.acquisitionSystemInformation.systemVendor
+    if hdr.acquisitionSystemInformation.protocolName is not None:
+        data.sequence_name = hdr.measurementInformation.protocolName
+    if hdr.acquisitionSystemInformation.receiverChannels is not None:
+        data.number_of_channels = hdr.acquisitionSystemInformation.receiverChannels    
+    if hdr.acquisitionSystemInformation.systemVendor is not None:
+        data.scanner_vendor = hdr.acquisitionSystemInformation.systemVendor    
     if hdr.acquisitionSystemInformation.systemModel is not None:
         data.scanner_model = hdr.acquisitionSystemInformation.systemModel
     if hdr.acquisitionSystemInformation.systemModel is not None:
         data.scanner_field = hdr.acquisitionSystemInformation.systemFieldStrength_T
 
-    data.tr = hdr.sequenceParameters.TR[0]
-    data.te = hdr.sequenceParameters.TE[0]
-    data.ti = hdr.sequenceParameters.TI[0]
-    data.flip_angle = hdr.sequenceParameters.flipAngle_deg[0]
+    if hdr.sequenceParameters.TR is not None:
+        data.tr = hdr.sequenceParameters.TR[0]
+    if hdr.sequenceParameters.TE is not None:
+        data.te = hdr.sequenceParameters.TE[0]
+    if hdr.sequenceParameters.TI is not None:
+        data.ti = hdr.sequenceParameters.TI[0]
+    if hdr.sequenceParameters.flipAngle_deg is not None:
+        data.flip_angle = hdr.sequenceParameters.flipAngle_deg[0]
 
     data.trajectory = hdr.encoding[0].trajectory
     data.matrix_size_x = hdr.encoding[0].encodedSpace.matrixSize.x
@@ -189,21 +196,12 @@ def parse_ismrmrd(ismrmrd_file, data):
     data.resolution_x = hdr.encoding[0].encodedSpace.fieldOfView_mm.x / data.matrix_size_x
     data.resolution_y = hdr.encoding[0].encodedSpace.fieldOfView_mm.y / data.matrix_size_y
     data.resolution_z = hdr.encoding[0].encodedSpace.fieldOfView_mm.z / data.matrix_size_z
-    try:
-        if hdr.encoding[0].encodedSpace.slice is not None:
-            data.number_of_slices = hdr.encoding[0].encodedSpace.slice.maximum + 1
-    except:
-        pass
-    try:
-        if hdr.encoding[0].encodedSpace.repetition is not None:
-            data.number_of_repetitions = hdr.encoding[0].encodedSpace.repetition.maximum + 1
-    except:
-        pass
-    try:
-        if hdr.encoding[0].encodedSpace.contrast is not None:
-            data.number_of_contrasts = hdr.encoding[0].encodedSpace.contrast.maximum + 1
-    except:
-        pass
+    if hdr.encoding[0].encodedSpace.slice is not None:
+        data.number_of_slices = hdr.encoding[0].encodedSpace.slice.maximum + 1
+    if hdr.encoding[0].encodedSpace.repetition is not None:
+        data.number_of_repetitions = hdr.encoding[0].encodedSpace.repetition.maximum + 1
+    if hdr.encoding[0].encodedSpace.contrast is not None:
+        data.number_of_contrasts = hdr.encoding[0].encodedSpace.contrast.maximum + 1
         
     logger.info('Parse SUCCESS')
     create_thumbnail(dset, hdr, data)
