@@ -85,7 +85,13 @@
   
   <tr>
     <th>Flip Angle</th>
-    <td>{{ data.flip_angle|floatformat }} &deg;</td> 
+    <td>
+      {% if data.flip_angle > 0 %}
+      {{ data.flip_angle|floatformat }} &deg;
+      {% else %}
+      N/A
+      {% endif %}
+    </td>
   </tr>
   
   <tr>
