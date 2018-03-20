@@ -22,6 +22,7 @@ Clone the repo, go to that directory and run:
 	docker-compose up
 	
 The first time would take a long time to build.
+The website can be accessed at http://127.0.0.1:8000
 
 ## Web architecture
 
