@@ -43,9 +43,8 @@ class Data(models.Model):
     fullysampled = models.NullBooleanField()
     
     scanner_vendor = models.CharField(max_length=100, default='N/A')
-    scanner_model = models.CharField(max_length=100, default='N/A', blank=True)
-    scanner_field = models.FloatField(verbose_name='Field Strength [T]',
-                                      default=-1, blank=True)
+    scanner_model = models.CharField(max_length=100, default='N/A')
+    scanner_field = models.FloatField(verbose_name='Field Strength [T]', default=-1)
     
     matrix_size_x = models.PositiveIntegerField(validators=[MinValueValidator(0)])
     matrix_size_y = models.PositiveIntegerField(validators=[MinValueValidator(0)])
@@ -59,21 +58,14 @@ class Data(models.Model):
     number_of_contrasts = models.PositiveIntegerField(validators=[MinValueValidator(0)],
                                                       default=1)
     
-    resolution_x = models.FloatField(verbose_name='Resolution x [mm]',
-                                     validators=[MinValueValidator(0)])
-    resolution_y = models.FloatField(verbose_name='Resolution y [mm]',
-                                     validators=[MinValueValidator(0)])
-    resolution_z = models.FloatField(verbose_name='Resolution z [mm]',
-                                     validators=[MinValueValidator(0)])
+    resolution_x = models.FloatField(verbose_name='Resolution x [mm]', default=-1)
+    resolution_y = models.FloatField(verbose_name='Resolution y [mm]', default=-1)
+    resolution_z = models.FloatField(verbose_name='Resolution z [mm]', default=-1)
     
-    flip_angle = models.FloatField(verbose_name='Flip Angle [degree]',
-                                   validators=[MinValueValidator(0)])
-    te = models.FloatField(verbose_name='Echo Time [ms]',
-                           validators=[MinValueValidator(0)])
-    tr = models.FloatField(verbose_name='Repetition Time [ms]',
-                           validators=[MinValueValidator(0)])
-    ti = models.FloatField(verbose_name='Inversion Time [ms]',
-                           validators=[MinValueValidator(0)], default=0)
+    flip_angle = models.FloatField(verbose_name='Flip Angle [degree]', default=-1)
+    te = models.FloatField(verbose_name='Echo Time [ms]', default=-1)
+    tr = models.FloatField(verbose_name='Repetition Time [ms]', default=-1)
+    ti = models.FloatField(verbose_name='Inversion Time [ms]', default=-1)
     
     ismrmrd_file = models.FileField(upload_to=save_ismrmrd_file,
                                     verbose_name='ISMRMRD File')
