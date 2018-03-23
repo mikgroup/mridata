@@ -9,3 +9,5 @@ RUN bash build_python.sh
 WORKDIR src
 
 EXPOSE 8000
+
+CMD ['bash', 'start_web.sh']

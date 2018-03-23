@@ -20,3 +20,5 @@ RUN bash build_ge.sh
 RUN bash build_python.sh
 
 WORKDIR src
+
+CMD ['celery', 'worker', '-l', 'info', '-A', 'mridata']
