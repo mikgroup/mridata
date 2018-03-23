@@ -2,14 +2,11 @@ FROM python
 
 MAINTAINER Frank Ong <frankong@berkeley.edu>
 
-ADD build_python.sh build_python.sh
+ADD build_scripts build_scripts
 
-RUN bash build_python.sh
+RUN bash build_scripts/build_python.sh
 
 ADD src src
-
-WORKDIR src
+ADD start_web.sh start_web.sh
 
 EXPOSE 8000
-
-CMD ['bash', 'start_web.sh']

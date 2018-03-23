@@ -16,5 +16,4 @@ pip install django \
 # ISMRMRD-python
 git clone https://github.com/ismrmrd/ismrmrd-python.git
 cd ismrmrd-python && \
-    python setup.py install && \
-    cd ..
+    python setup.py install

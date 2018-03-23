@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'el_pagination',
-    'mridatabase',
+    'mridata_app',
     'django_filters',
     'storages',
 ]
@@ -64,7 +64,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'mridata.urls'
+ROOT_URLCONF = 'mridata_org.urls'
 
 TEMPLATES = [
     {
@@ -83,7 +83,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'mridata.wsgi.application'
+WSGI_APPLICATION = 'mridata_org.wsgi.application'
 
 
 # Database

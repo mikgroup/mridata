@@ -25,5 +25,4 @@ cd ismrmrd && \
     cd build && \
     cmake .. && \
     make && \
-    sudo make install && \
-    cd ../..
+    sudo make install

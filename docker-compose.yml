@@ -13,7 +13,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.worker
-    command: ['celery', 'worker', '-l', 'info', '-A', 'mridata']
+    command: ['bash', 'start_worker.sh']
     links:
       - db
       - redis
