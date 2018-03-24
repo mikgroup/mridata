@@ -46,17 +46,13 @@ class Data(models.Model):
     scanner_model = models.CharField(max_length=100, default='N/A')
     scanner_field = models.FloatField(verbose_name='Field Strength [T]', default=-1)
     
-    matrix_size_x = models.PositiveIntegerField(validators=[MinValueValidator(0)])
-    matrix_size_y = models.PositiveIntegerField(validators=[MinValueValidator(0)])
-    matrix_size_z = models.PositiveIntegerField(validators=[MinValueValidator(0)],
-                                                default=1)
-    number_of_channels = models.PositiveIntegerField(validators=[MinValueValidator(0)])
-    number_of_slices = models.PositiveIntegerField(validators=[MinValueValidator(0)],
-                                                   default=1)
-    number_of_repetitions = models.PositiveIntegerField(validators=[MinValueValidator(0)],
-                                                        default=1)
-    number_of_contrasts = models.PositiveIntegerField(validators=[MinValueValidator(0)],
-                                                      default=1)
+    matrix_size_x = models.IntegerField(default=-1)
+    matrix_size_y = models.IntegerField(default=-1)
+    matrix_size_z = models.IntegerField(default=-1)
+    number_of_channels = models.IntegerField(default=-1)
+    number_of_slices = models.IntegerField(default=-1)
+    number_of_repetitions = models.IntegerField(default=-1)
+    number_of_contrasts = models.IntegerField(default=-1)
     
     resolution_x = models.FloatField(verbose_name='Resolution x [mm]', default=-1)
     resolution_y = models.FloatField(verbose_name='Resolution y [mm]', default=-1)
@@ -74,13 +70,14 @@ class Data(models.Model):
     upload_date = models.DateTimeField(default=timezone.now)
     uploader = models.ForeignKey(User, on_delete=models.CASCADE)
 
-
+    
 temp_storage = FileSystemStorage(location=settings.TEMP_ROOT, base_url=settings.TEMP_URL)
+
 
 class TempData(models.Model):
 
     uuid = models.UUIDField(default=uuid.uuid4, primary_key=True)
-    anatomy = models.CharField(max_length=100)
+    anatomy = models.CharField(max_length=100, default='N/A')
     fullysampled = models.NullBooleanField()
     
     upload_date = models.DateTimeField(default=timezone.now)

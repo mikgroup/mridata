@@ -1,46 +1,4 @@
 <table class="table table-striped" style="width:100%" align="center">
-  <tr>
-    <th>Matrix Size</th>
-    <td>
-      {{data.matrix_size_x}} x {{data.matrix_size_y}}
-      {% if data.matrix_size_z > 1 %}x {{data.matrix_size_z}}{% endif %}
-    </td> 
-  </tr>
-  
-  <tr>
-    <th>Resolution</th>
-    <td>
-      {{data.resolution_x|floatformat}} mm x {{data.resolution_y|floatformat}} mm
-      {% if data.matrix_z > 1 %}x {{data.resolution_z|floatformat}} mm{% endif %}
-      {% if data.number_of_time_frames > 1 %}x {{data.resolution_t|floatformat}} ms{% endif %}
-    </td> 
-  </tr>
-  
-  <tr>
-    <th>Number of Channels</th>
-    <td>{{data.number_of_channels}}</td> 
-  </tr>
-  
-  {% if data.number_of_slices != 1 %}
-  <tr>
-    <th>Number of Slices</th>
-    <td>{{ data.number_of_slices }}</td> 
-  </tr>
-  {% endif %}
-  
-  {% if data.number_of_repetitions != 1 %}
-  <tr>
-    <th>Number of Repetition</th>
-    <td>{{ data.number_of_repetitions }}</td> 
-  </tr>
-  {% endif %}
-  
-  {% if data.number_of_contrasts != 1 %}
-  <tr>
-    <th>Number of Contrasts</th>
-    <td>{{ data.number_of_contrasts }}</td> 
-  </tr>
-  {% endif %}
   
   <tr>
     <th>Anatomy</th>
@@ -63,6 +21,67 @@
   </tr>
   
   <tr>
+    <th>Matrix Size</th>
+    <td>
+      {{data.matrix_size_x}} x {{data.matrix_size_y}}
+      {% if data.matrix_size_z > 1 %}x {{data.matrix_size_z}}{% endif %}
+    </td> 
+  </tr>
+  
+  <tr>
+    <th>Resolution</th>
+    <td>
+      {{data.resolution_x|floatformat}} mm x {{data.resolution_y|floatformat}} mm
+      {% if data.matrix_z > 1 %}x {{data.resolution_z|floatformat}} mm{% endif %}
+      {% if data.number_of_time_frames > 1 %}x {{data.resolution_t|floatformat}} ms{% endif %}
+    </td> 
+  </tr>
+  
+  <tr>
+    <th>Number of Channels</th>
+    <td>
+      {% if data.number_of_channels == -1 %}
+      N/A
+      {% else %}
+      {{ data.number_of_channels }}
+      {% endif %}
+    </td> 
+  </tr>
+  
+  <tr>
+    <th>Number of Slices</th>
+    <td>
+      {% if data.number_of_slices == -1 %}
+      N/A
+      {% else %}
+      {{ data.number_of_slices }}
+      {% endif %}
+    </td> 
+  </tr>
+  
+  <tr>
+    <th>Number of Repetition</th>
+    <td>
+      {% if data.number_of_repetitions == -1 %}
+      N/A
+      {% else %}
+      {{ data.number_of_repetitions }}
+      {% endif %}
+    </td> 
+  </tr>
+  
+  <tr>
+    <th>Number of Contrasts</th>
+    <td>
+      {% if data.number_of_contrasts == -1 %}
+      N/A
+      {% else %}
+      {{ data.number_of_contrasts }}
+      {% endif %}
+    </td> 
+  </tr>
+  
+  <tr>
     <th>Scanner Vendor</th>
     <td>{{ data.scanner_vendor }}</td> 
   </tr>
@@ -75,10 +94,10 @@
   <tr>
     <th>Scanner Field Strength</th>
     <td>
-      {% if data.scanner_field > 0 %}
-      {{ data.scanner_field }} T
-      {% else %}
+      {% if data.scanner_field == -1 %}
       N/A
+      {% else %}
+      {{ data.scanner_field }} T
       {% endif %}
     </td> 
   </tr>
@@ -86,30 +105,46 @@
   <tr>
     <th>Flip Angle</th>
     <td>
-      {% if data.flip_angle > 0 %}
-      {{ data.flip_angle|floatformat }} &deg;
-      {% else %}
+      {% if data.flip_angle == -1 %}
       N/A
+      {% else %}
+      {{ data.flip_angle|floatformat }} &deg;
       {% endif %}
     </td>
   </tr>
   
   <tr>
     <th>Echo Time</th>
-    <td>{{ data.te|floatformat }} ms</td> 
+    <td>
+      {% if data.flip_angle == -1 %}
+      N/A
+      {% else %}
+      {{ data.te|floatformat }} ms
+      {% endif %}
+    </td>
   </tr>
   
   <tr>
     <th>Repetition Time</th>
-    <td>{{ data.tr|floatformat }} ms</td> 
+    <td>
+      {% if data.flip_angle == -1 %}
+      N/A
+      {% else %}
+      {{ data.tr|floatformat }} ms
+      {% endif %}
+    </td>
   </tr>
 
-  {% if data.ti != 0 %}
   <tr>
     <th>Inversion Time</th>
-    <td>{{ data.ti|floatformat }} ms</td> 
+    <td>
+      {% if data.flip_angle == -1 %}
+      N/A
+      {% else %}
+      {{ data.ti|floatformat }} ms
+      {% endif %}
+    </td>
   </tr>
-  {% endif %}
   
   <tr>
     <th>UUID</th>
@@ -128,18 +163,14 @@
 </table>
 
 
-{% if data.ra_file %}
-<a href="{{ data.ra_data_file.url }}" class="btn btn-primary">
-  Download Raw Array
-</a>
-{% endif %}
 {% if data.ismrmrd_file %}
 <a href="{{ data.ismrmrd_file.url }}" class="btn btn-primary">
   Download ISMRMRD
 </a>
 {% endif %}
-<a href="{% url 'data_description' uuid=data.uuid %}" class="btn btn-info">
-  Generate Description
+
+<a href="{% url 'data' uuid=data.uuid %}" class="btn btn-secondary">
+  Permalink
 </a>
 {% if user == data.uploader %}
 <a href="{% url 'data_update_form' uuid=data.uuid %}" class="btn btn-info">

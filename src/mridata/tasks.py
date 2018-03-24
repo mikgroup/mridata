@@ -21,8 +21,8 @@ def convert_ge_data(uuid):
     ismrmrd_file = os.path.join(settings.TEMP_ROOT, '{}.h5'.format(uuid))
     ge_pfile = os.path.join(settings.TEMP_ROOT, 'P{}.7'.format(uuid))
 
-    if not os.path.exists(ismrmrd_file):
-        raise IOError('{} does not exists.'.format(ismrmrd_file))
+    if not os.path.exists(ge_pfile):
+        raise IOError('{} does not exists.'.format(ge_pfile))
     
     logger.info('Converting GeData to ISMRMRD')
     subprocess.check_output(['ge_to_ismrmrd',
@@ -36,8 +36,8 @@ def convert_siemens_data(uuid):
     ismrmrd_file = os.path.join(settings.TEMP_ROOT, '{}.h5'.format(uuid))
     siemens_dat_file = os.path.join(settings.TEMP_ROOT, '{}.dat'.format(uuid))
     
-    if not os.path.exists(ismrmrd_file):
-        raise IOError('{} does not exists.'.format(ismrmrd_file))
+    if not os.path.exists(siemens_dat_file):
+        raise IOError('{} does not exists.'.format(siemens_dat_file))
     
     logger.info('Converting SiemensData to ISMRMRD...')
     subprocess.check_output(['siemens_to_ismrmrd',
@@ -51,9 +51,6 @@ def convert_philips_data(uuid):
     philips_basename = os.path.join(settings.TEMP_ROOT, str(uuid))
     schema_file = os.path.join(settings.STATICFILES_DIRS[0], 'schema', 'ismrmrd_philips.xsl')
     ismrmrd_file = os.path.join(settings.TEMP_ROOT, '{}.h5'.format(uuid))
-
-    if not os.path.exists(ismrmrd_file):
-        raise IOError('{} does not exists.'.format(ismrmrd_file))
     
     logger.info('Converting PhilipsData to ISMRMRD')
     subprocess.check_output(['philips_to_ismrmrd',
@@ -169,39 +166,100 @@ def parse_ismrmrd(ismrmrd_file, data):
     dset = ismrmrd.Dataset(ismrmrd_file, 'dataset', create_if_needed=False)
     hdr = ismrmrd.xsd.CreateFromDocument(dset.read_xml_header())
 
-    if hdr.acquisitionSystemInformation.protocolName is not None:
+    try:
         data.sequence_name = hdr.measurementInformation.protocolName
-    if hdr.acquisitionSystemInformation.receiverChannels is not None:
-        data.number_of_channels = hdr.acquisitionSystemInformation.receiverChannels    
-    if hdr.acquisitionSystemInformation.systemVendor is not None:
-        data.scanner_vendor = hdr.acquisitionSystemInformation.systemVendor    
-    if hdr.acquisitionSystemInformation.systemModel is not None:
+    except Exception:
+        pass
+
+    try:
+        data.number_of_channels = hdr.acquisitionSystemInformation.receiverChannels
+    except Exception:
+        pass
+        
+    try:
+        data.scanner_vendor = hdr.acquisitionSystemInformation.systemVendor
+    except Exception:
+        pass
+        
+    try:
         data.scanner_model = hdr.acquisitionSystemInformation.systemModel
-    if hdr.acquisitionSystemInformation.systemModel is not None:
+    except Exception:
+        pass
+    
+    try:
         data.scanner_field = hdr.acquisitionSystemInformation.systemFieldStrength_T
+    except Exception:
+        pass
 
-    if hdr.sequenceParameters.TR is not None:
+    try:
         data.tr = hdr.sequenceParameters.TR[0]
-    if hdr.sequenceParameters.TE is not None:
+    except Exception:
+        pass
+    
+    try:
         data.te = hdr.sequenceParameters.TE[0]
-    if hdr.sequenceParameters.TI is not None:
+    except Exception:
+        pass
+    
+    try:
         data.ti = hdr.sequenceParameters.TI[0]
-    if hdr.sequenceParameters.flipAngle_deg is not None:
+    except Exception:
+        pass
+    
+    try:
         data.flip_angle = hdr.sequenceParameters.flipAngle_deg[0]
+    except Exception:
+        pass
 
-    data.trajectory = hdr.encoding[0].trajectory
-    data.matrix_size_x = hdr.encoding[0].encodedSpace.matrixSize.x
-    data.matrix_size_y = hdr.encoding[0].encodedSpace.matrixSize.y
-    data.matrix_size_z = hdr.encoding[0].encodedSpace.matrixSize.z
-    data.resolution_x = hdr.encoding[0].encodedSpace.fieldOfView_mm.x / data.matrix_size_x
-    data.resolution_y = hdr.encoding[0].encodedSpace.fieldOfView_mm.y / data.matrix_size_y
-    data.resolution_z = hdr.encoding[0].encodedSpace.fieldOfView_mm.z / data.matrix_size_z
-    if hdr.encoding[0].encodedSpace.slice is not None:
+    try:
+        data.trajectory = hdr.encoding[0].trajectory
+    except Exception:
+        pass
+    
+    try:
+        data.matrix_size_x = hdr.encoding[0].encodedSpace.matrixSize.x
+    except Exception:
+        pass
+    
+    try:
+        data.matrix_size_y = hdr.encoding[0].encodedSpace.matrixSize.y
+    except Exception:
+        pass
+    
+    try:
+        data.matrix_size_z = hdr.encoding[0].encodedSpace.matrixSize.z
+    except Exception:
+        pass
+    
+    try:
+        data.resolution_x = hdr.encoding[0].encodedSpace.fieldOfView_mm.x / data.matrix_size_x
+    except Exception:
+        pass
+    
+    try:
+        data.resolution_y = hdr.encoding[0].encodedSpace.fieldOfView_mm.y / data.matrix_size_y
+    except Exception:
+        pass
+    
+    try:
+        data.resolution_z = hdr.encoding[0].encodedSpace.fieldOfView_mm.z / data.matrix_size_z
+    except Exception:
+        pass
+    
+    try:
         data.number_of_slices = hdr.encoding[0].encodedSpace.slice.maximum + 1
-    if hdr.encoding[0].encodedSpace.repetition is not None:
+    except Exception:
+        pass
+        
+    try:
         data.number_of_repetitions = hdr.encoding[0].encodedSpace.repetition.maximum + 1
-    if hdr.encoding[0].encodedSpace.contrast is not None:
+    except Exception:
+        pass
+        
+    try:
         data.number_of_contrasts = hdr.encoding[0].encodedSpace.contrast.maximum + 1
+    except Exception:
+        pass
         
     logger.info('Parse SUCCESS')
     create_thumbnail(dset, hdr, data)
