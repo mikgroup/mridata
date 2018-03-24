@@ -22,7 +22,13 @@
       Fullysampled:
     </td>
     <td align="left" class="text-muted">
-      {{ data.fullysampled }}
+      {% if data.fullysampled is None %}
+      Unknown
+      {% elif data.fullysampled %}
+      Yes
+      {% else %}
+      No
+      {% endif %}
     </td>
   </tr>
   <tr>

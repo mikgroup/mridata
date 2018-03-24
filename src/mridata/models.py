@@ -37,13 +37,13 @@ class Data(models.Model):
 
     uuid = models.UUIDField(default=uuid.uuid4, primary_key=True)
 
-    anatomy = models.CharField(max_length=100, default='N/A')
-    sequence_name = models.CharField(max_length=100, default='N/A')
-    trajectory = models.CharField(max_length=100, default='N/A')
+    anatomy = models.CharField(max_length=100, default='Unknown')
+    sequence_name = models.CharField(max_length=100, default='Unknown')
+    trajectory = models.CharField(max_length=100, default='Unknown')
     fullysampled = models.NullBooleanField()
     
-    scanner_vendor = models.CharField(max_length=100, default='N/A')
-    scanner_model = models.CharField(max_length=100, default='N/A')
+    scanner_vendor = models.CharField(max_length=100, default='Unknown')
+    scanner_model = models.CharField(max_length=100, default='Unknown')
     scanner_field = models.FloatField(verbose_name='Field Strength [T]', default=-1)
     
     matrix_size_x = models.IntegerField(default=-1)
@@ -77,7 +77,7 @@ temp_storage = FileSystemStorage(location=settings.TEMP_ROOT, base_url=settings.
 class TempData(models.Model):
 
     uuid = models.UUIDField(default=uuid.uuid4, primary_key=True)
-    anatomy = models.CharField(max_length=100, default='N/A')
+    anatomy = models.CharField(max_length=100, default='Unknown')
     fullysampled = models.NullBooleanField()
     
     upload_date = models.DateTimeField(default=timezone.now)
