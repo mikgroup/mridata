@@ -24,7 +24,7 @@ def data_list(request):
     else:
         temp_datasets = []
     
-    return render(request, 'mridatabase/data_list.html',
+    return render(request, 'mridata/data_list.html',
                   {'filter': filter,
                    'temp_datasets': temp_datasets
                   })
@@ -69,7 +69,7 @@ def data_description(request, uuid):
 
 
 def data(request, uuid):
-    return render(request, 'mridatabase/data.html',
+    return render(request, 'mridata/data.html',
                   {'data': get_object_or_404(Data, uuid=uuid)})
 
 
@@ -86,7 +86,7 @@ def upload_ismrmrd(request):
                 ismrmrd_data.save()
                 process_ismrmrd_data.delay(ismrmrd_data.uuid)
             return redirect('data_list')
-    return render(request, 'mridatabase/upload.html', {'forms': IsmrmrdFormSet})
+    return render(request, 'mridata/upload.html', {'forms': IsmrmrdFormSet})
 
 
 @login_required
@@ -102,7 +102,7 @@ def upload_ge(request):
                 ge_data.save()
                 process_ge_data.delay(ge_data.uuid)
             return redirect('data_list')
-    return render(request, 'mridatabase/upload.html', {'forms': GeFormSet})
+    return render(request, 'mridata/upload.html', {'forms': GeFormSet})
 
 
 @login_required
@@ -118,7 +118,7 @@ def upload_philips(request):
                 philips_data.save()
                 process_philips_data.delay(philips_data.uuid)
             return redirect('data_list')
-    return render(request, 'mridatabase/upload.html', {'forms': PhilipsFormSet})
+    return render(request, 'mridata/upload.html', {'forms': PhilipsFormSet})
 
 @login_required
 def upload_siemens(request):
@@ -134,7 +134,7 @@ def upload_siemens(request):
                 siemens_data.save()
                 process_siemens_data.delay(siemens_data.uuid)
             return redirect('data_list')
-    return render(request, 'mridatabase/upload.html', {'forms': SiemensFormSet})
+    return render(request, 'mridata/upload.html', {'forms': SiemensFormSet})
 
 @login_required
 def data_delete(request, uuid):
@@ -183,18 +183,18 @@ def data_update_form(request, uuid):
     else:
         data = get_object_or_404(Data, uuid=uuid)
         form = DataForm(instance=data)
-        return render(request, 'mridatabase/edit_data.html', {'data': data, 'form': form})
+        return render(request, 'mridata/edit_data.html', {'data': data, 'form': form})
 
 @login_required
 def user_data_list(request):
     filter = DataFilter(request.GET, Data.objects.filter(uploader=request.user).order_by('-upload_date'))
     
-    return render(request, 'mridatabase/my_data_sets.html',
+    return render(request, 'mridata/my_data_sets.html',
                   {'filter': filter})
 
 def about(request):
-    return render(request, 'mridatabase/about.html')
+    return render(request, 'mridata/about.html')
 
 
 def info(request):
-    return render(request, 'mridatabase/info.html')
+    return render(request, 'mridata/info.html')

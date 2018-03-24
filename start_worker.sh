@@ -1,2 +1,2 @@
 cd src
-celery worker -l info -A mridata
+celery worker -l info -A mridata_org

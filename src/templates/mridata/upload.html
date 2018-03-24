@@ -1,4 +1,4 @@
-{% extends 'mridatabase/base.html' %}
+{% extends 'mridata/base.html' %}
 {% load static from staticfiles %}
 
 
@@ -18,14 +18,14 @@
 	  {{ forms.management_form }}
 	  {% for form in forms %}
 	  <tbody class="link-formset"> 
-	    {% include "mridatabase/upload_anatomy.html" %}
+	    {% include "mridata/upload_anatomy.html" %}
             <tr>
               <th><label for="{{ form.fullysampled.id_for_label }}">Fullysampled:</label></th>
               <td>
 		{{ form.fullysampled }}
 	      </td>
             </tr>
-	    {% include "mridatabase/upload_file.html" %}
+	    {% include "mridata/upload_file.html" %}
 	  </tbody>
 	  {% endfor %}
 	</table>
@@ -39,5 +39,5 @@
     </div>
   </div>
 </div>
-{% include "mridatabase/terms_modal.html" %}
+{% include "mridata/terms_modal.html" %}
 {% endblock %}

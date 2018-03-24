@@ -38,14 +38,14 @@ Each of these packages (Django, PostgresSQL, Celery, and Redis) runs in their ow
 
 ## Code structure
 
-The [src] folder contains the Django source code for the website. [src/mridata_org] contains the project code, and [src/mridata_app] contains code for the Django app (mridata_app). [src/templates] contains the HTML template code for each webpage.
+The [src] folder contains the Django source code for the website. [src/mridata_org] contains the project code, and [src/mridata] contains code for the Django app (mridata). [src/templates] contains the HTML template code for each webpage.
 
-### mridata_app
+### mridata
 
-Data models, which include scan parameters and links to thumbnails and data files, are described in [src/mridata_app/models.py]. There are two main types of models: Data and TempData. Data is the final model for the stored ISMRMRD data. It must have the thumbnail file, and ismrmrd file populated. TempData has four sub-classes: GeData, SiemensData, PhilipsData, and IsmrmrdData.
+Data models, which include scan parameters and links to thumbnails and data files, are described in [src/mridata/models.py]. There are two main types of models: Data and TempData. Data is the final model for the stored ISMRMRD data. It must have the thumbnail file, and ismrmrd file populated. TempData has four sub-classes: GeData, SiemensData, PhilipsData, and IsmrmrdData.
 
-Backend processing tasks, including ISMRMRD conversion, and thumbnail extraction, are described in [src/mridata_app/tasks.py].
+Backend processing tasks, including ISMRMRD conversion, and thumbnail extraction, are described in [src/mridata/tasks.py].
 
-Filter options on the main page are described in [src/mridata_app/filters.py]
+Filter options on the main page are described in [src/mridata/filters.py]
 
-Uploading form options are described in [src/mridata_app/forms.py]
+Uploading form options are described in [src/mridata/forms.py]

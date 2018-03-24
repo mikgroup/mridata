@@ -1,4 +1,4 @@
-{% extends 'mridatabase/base.html' %}
+{% extends 'mridata/base.html' %}
 
 {% load staticfiles %}
 
@@ -8,7 +8,7 @@
   <div class="card text-center">
     <div class="card-block">
       <img src="{{ data.thumbnail_file.url }}" class="rounded" width="128" height="128" />
-      {% include "mridatabase/data_detail.html" with data=data %}
+      {% include "mridata/data_detail.html" with data=data %}
     </div>
   </div>
 </div>

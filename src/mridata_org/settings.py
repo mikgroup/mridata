@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'el_pagination',
-    'mridata_app',
+    'mridata',
     'django_filters',
     'storages',
 ]
@@ -164,6 +164,8 @@ CELERY_TIMEZONE = 'America/Los_Angeles'
 TEMP_ROOT = os.path.join(BASE_DIR, 'temp')
 TEMP_URL = '/temp/'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # AWS
 if 'AWS_ACCESS_KEY_ID' in os.environ:
     AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
@@ -179,19 +181,15 @@ if 'AWS_ACCESS_KEY_ID' in os.environ:
     USE_AWS = True
 
     # Static files (CSS, JavaScript, Images)
-    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
     STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_STATIC_LOCATION)
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
     # Media
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
     MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_MEDIA_LOCATION)
 else:
     # Static files (CSS, JavaScript, Images)
-    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
     STATIC_URL = '/static/'
     USE_AWS = False
 
     # Media
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
     MEDIA_URL = '/media/'

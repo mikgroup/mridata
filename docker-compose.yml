@@ -19,6 +19,10 @@ services:
       - redis
     depends_on:
       - redis
+    environment:
+      - DEBUG=1
+    volumes:
+      - ./src:/src
   web:
     container_name: mridata_web
     build:
@@ -33,3 +37,7 @@ services:
       - worker
     depends_on:
       - db
+    environment:
+      - DEBUG=1
+    volumes:
+      - ./src:/src
