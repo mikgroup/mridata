@@ -1,5 +1,25 @@
+<a href="{% url 'data_download' uuid=data.uuid %}" class="btn btn-primary"
+   id="download" uuid="{{data.uuid}}">
+  Download
+</a>
+
+<a href="{% url 'data' uuid=data.uuid %}" class="btn btn-secondary">
+  Permalink
+</a>
+
+{% if user == data.uploader %}
+<a href="{% url 'data_edit' uuid=data.uuid %}" class="btn btn-info">
+  Edit
+</a>
+<a href="{% url 'data_delete' uuid=data.uuid %}"
+   onclick="return confirm('Are you sure you want to delete?')"
+   class="btn btn-danger">
+  Delete
+</a>
+{% endif %}
+
 <table class="table table-striped" style="width:100%" align="center">
-  
+
   <tr>
     <th>Anatomy</th>
     <td>{{ data.anatomy }}</td> 
@@ -161,24 +181,3 @@
     <td>{{ data.upload_date }}</td> 
   </tr>
 </table>
-
-
-{% if data.ismrmrd_file %}
-<a href="{{ data.ismrmrd_file.url }}" class="btn btn-primary">
-  Download ISMRMRD
-</a>
-{% endif %}
-
-<a href="{% url 'data' uuid=data.uuid %}" class="btn btn-secondary">
-  Permalink
-</a>
-{% if user == data.uploader %}
-<a href="{% url 'data_update_form' uuid=data.uuid %}" class="btn btn-info">
-  Edit
-</a>
-<a href="{% url 'data_delete' uuid=data.uuid %}"
-   onclick="return confirm('This would delete the file permanently. Do you want to proceed?')"
-   class="btn btn-danger">
-  Delete
-</a>
-{% endif %}

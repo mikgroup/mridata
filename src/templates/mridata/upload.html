@@ -18,7 +18,33 @@
       <form method="POST" class="data-form data-form-default" enctype="multipart/form-data">
 	{% csrf_token %}
 	<table class="table">
-	  {% include "mridata/upload_anatomy.html" %}
+	  <tr> 
+	    <th>
+	      Anatomy:
+	    </th>
+	    <td id="default-options">
+	      <select id="default-options-select">
+		<option value="Unknown">Unknown</option>
+		<option value="Abdomen">Abdomen</option>
+		<option value="Brain">Brain</option>
+		<option value="Breast">Breast</option>
+		<option value="Heart">Heart</option>
+		<option value="Kidney">Kidney</option>
+		<option value="Knee">Knee</option>
+		<option value="Liver">Liver</option>
+		<option value="Phantom">Phantom</option>
+		<option value="Spine">Spine</option>
+	      </select> 
+	    </td>
+	    <td id="custom-option" style="display:none">
+	      {{ form.anatomy }}
+	    </td>
+	    <td>
+	      <input type="checkbox" id="custom-checkbox">
+	      Custom
+	    </td>
+	  </tr>
+
           <tr>
             <th><label for="{{ form.fullysampled.id_for_label }}">Fullysampled:</label></th>
             <td>

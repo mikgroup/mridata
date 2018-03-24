@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.urls import reverse
 
 from .models import Data, TempData
-from .forms import PhilipsDataForm, SiemensDataForm, GeDataForm, IsmrmrdDataForm
+from .forms import PhilipsDataForm, SiemensDataForm, GeDataForm, IsmrmrdDataForm, DataForm
 from .filters import DataFilter
 from .tasks import process_ge_data, process_ismrmrd_data, process_philips_data, process_siemens_data
 
@@ -28,42 +28,12 @@ def data_list(request):
                   })
 
 
-def data_description(request, uuid):
+def data_download(request, uuid):
     data = get_object_or_404(Data, uuid=uuid)
-    scanner = '{} {} T {} scanner'.format(data.scanner_vendor,
-                                        data.scanner_field,
-                                        data.scanner_model)
-    coil = '{}-channel coil array'.format(data.number_of_channels)
+    data.downloads += 1
+    data.save()
 
-    parameters = ''
-    
-    parameters += 'matrix size of {} x {}'.format(data.matrix_size_x,
-                                                  data.matrix_size_y)
-    if data.matrix_size_z > 1:
-        parameters += ' x {}, '.format(data.matrix_size_z)
-    else:
-        parameters += ', '
-    
-    parameters += 'spatial resolution of {} mm x {} mm'.format(data.resolution_x,
-                                                               data.resolution_y)
-    if data.matrix_size_z > 1:
-        parameters += ' x {} mm, '.format(data.resolution_z)
-    else:
-        parameters += ', '
-        
-    parameters += 'flip angle of {} degree, '.format(data.flip_angle)
-    parameters += 'and TE/TR of {}ms/{}ms.'.format(data.te, data.tr)
-
-    url = request.build_absolute_uri(reverse('data', args=(uuid, )))
-
-    description = 'The data was acquired on a {scanner}, with a {coil}. ' \
-                  'Scan parameters include {parameters} ' \
-                  'The data can be downloaded from {url}.'.format(scanner=scanner,
-                                                                  coil=coil,
-                                                                  parameters=parameters,
-                                                                  url=url)
-    
-    return HttpResponse(description, content_type='text/plain')
+    return redirect(data.ismrmrd_file.url)
 
 
 def data(request, uuid):
@@ -188,7 +158,7 @@ def temp_data_delete(request, uuid):
     return redirect("data_list")
 
 @login_required
-def data_update_form(request, uuid):
+def data_edit(request, uuid):
     if request.method == "POST":
         data = get_object_or_404(Data, uuid=uuid)
         form = DataForm(request.POST or None, request.FILES or None, instance=data)

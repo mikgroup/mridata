@@ -1,5 +1,32 @@
 from django import forms
 from .models import Data, PhilipsData, SiemensData, GeData, IsmrmrdData
+
+
+class DataForm(forms.ModelForm):
+
+    class Meta:
+        model = Data
+        fields = ('anatomy',
+                  'fullysampled',
+                  'sequence_name',
+                  'trajectory',
+                  'matrix_size_x',
+                  'matrix_size_y',
+                  'matrix_size_z',
+                  'number_of_channels',
+                  'number_of_slices',
+                  'number_of_repetitions',
+                  'number_of_contrasts',
+                  'resolution_x',
+                  'resolution_y',
+                  'resolution_z',
+                  'flip_angle',
+                  'te',
+                  'tr',
+                  'ti',
+                  'thumbnail_file',
+                  'ismrmrd_file',
+        )
         
 
 class PhilipsDataForm(forms.ModelForm):
