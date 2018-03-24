@@ -14,5 +14,4 @@ urlpatterns = [
     url(r'^delete/(?P<uuid>[\w-]+)/$', views.data_delete, name='data_delete'),
     url(r'^data/(?P<uuid>[\w-]+)/edit/$', views.data_update_form, name='data_update_form'),
     url(r'^temp_data_delete/(?P<uuid>[\w-]+)/$', views.temp_data_delete, name='temp_data_delete'),
-    url(r'^my_data_sets/$', views.user_data_list, name='user_data_list'),
 ]

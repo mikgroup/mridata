@@ -194,18 +194,11 @@ def data_update_form(request, uuid):
         form = DataForm(request.POST or None, request.FILES or None, instance=data)
         if form.is_valid():
             form.save()
-            return redirect("user_data_list")
+            return redirect("data_list")
     else:
         data = get_object_or_404(Data, uuid=uuid)
         form = DataForm(instance=data)
         return render(request, 'mridata/edit_data.html', {'data': data, 'form': form})
-
-@login_required
-def user_data_list(request):
-    filter = DataFilter(request.GET, Data.objects.filter(uploader=request.user).order_by('-upload_date'))
-    
-    return render(request, 'mridata/my_data_sets.html',
-                  {'filter': filter})
 
 def about(request):
     return render(request, 'mridata/about.html')
