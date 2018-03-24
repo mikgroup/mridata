@@ -1,35 +1,12 @@
 from django import forms
 from .models import Data, PhilipsData, SiemensData, GeData, IsmrmrdData
-
-    
-class DataForm(forms.ModelForm):
-
-    class Meta:
-        model = Data
-        fields = ('anatomy',
-                  'fullysampled',
-                  'sequence_name',
-                  'trajectory',
-                  'matrix_size_x',
-                  'matrix_size_y',
-                  'matrix_size_z',
-                  'number_of_channels',
-                  'number_of_slices',
-                  'number_of_repetitions',
-                  'number_of_contrasts',
-                  'resolution_x',
-                  'resolution_y',
-                  'resolution_z',
-                  'flip_angle',
-                  'te',
-                  'tr',
-                  'ti',
-                  'thumbnail_file',
-                  'ismrmrd_file',
-        )
         
 
 class PhilipsDataForm(forms.ModelForm):
+    
+    philips_lab_file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    philips_raw_file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    philips_sin_file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
     class Meta:
         model = PhilipsData
@@ -51,6 +28,8 @@ class PhilipsDataForm(forms.ModelForm):
 
 
 class GeDataForm(forms.ModelForm):
+    
+    ge_pfile = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
     class Meta:
         model = GeData
@@ -68,6 +47,8 @@ class GeDataForm(forms.ModelForm):
 
 class SiemensDataForm(forms.ModelForm):
 
+    siemens_dat_file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    
     class Meta:
         model = SiemensData
         fields = (
@@ -83,6 +64,8 @@ class SiemensDataForm(forms.ModelForm):
 
         
 class IsmrmrdDataForm(forms.ModelForm):
+    
+    ismrmrd_file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
     class Meta:
         model = IsmrmrdData

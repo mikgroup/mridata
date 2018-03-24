@@ -1,15 +1,7 @@
 $(document).ready(function() {
-	addForm();
 	displayCustomField();
 	selectListener();
 });
-
-var addForm = function() {
-	$('.link-formset').formset({
-	  addText: 'add form',
-	  deleteText: 'remove'
-	});
-}
 
 var displayCustomField = function(){
 	$('.table').on("change", ":checkbox", function() { 
