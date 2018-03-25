@@ -6,7 +6,7 @@
   Permalink
 </a>
 
-{% if user == data.uploader %}
+{% if user.uploader == data.uploader %}
 <a href="{% url 'data_edit' uuid=data.uuid %}" class="btn btn-info">
   Edit
 </a>

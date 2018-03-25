@@ -3,22 +3,31 @@ import numpy as np
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.urls import reverse
+from celery.result import AsyncResult
 
-from .models import Data, TempData
+from .models import Data, TempData, Uploader
 from .forms import PhilipsDataForm, SiemensDataForm, GeDataForm, IsmrmrdDataForm, DataForm
 from .filters import DataFilter
 from .tasks import process_ge_data, process_ismrmrd_data, process_philips_data, process_siemens_data
+
+def about(request):
+    return render(request, 'mridata/about.html')
+
+
+def info(request):
+    return render(request, 'mridata/info.html')
 
 
 def data_list(request):
     filter = DataFilter(request.GET, Data.objects.all().order_by('-upload_date'))
 
     if request.user.is_authenticated:
-        temp_datasets = TempData.objects.filter(uploader=request.user).order_by('-upload_date')
+        uploader = request.user.uploader
+        temp_datasets = TempData.objects.filter(uploader=uploader).order_by('-upload_date')
     else:
         temp_datasets = []
     
@@ -39,7 +48,7 @@ def data_download(request, uuid):
 def data(request, uuid):
     return render(request, 'mridata/data.html',
                   {'data': get_object_or_404(Data, uuid=uuid)})
-
+    
 
 @login_required
 def upload_ismrmrd(request):
@@ -50,9 +59,10 @@ def upload_ismrmrd(request):
             if form.is_valid():
                 ismrmrd_data = form.save(commit=False)
                 ismrmrd_data.upload_date = timezone.now()
-                ismrmrd_data.uploader = request.user
+                ismrmrd_data.uploader = request.user.uploader
                 ismrmrd_data.save()
-                process_ismrmrd_data.delay(ismrmrd_data.uuid)
+                process_ismrmrd_data.apply_async(args=[ismrmrd_data.uuid],
+                                                 task_id=str(ismrmrd_data.uuid))
             else:
                 return render(request, 'mridata/upload.html', {'form': IsmrmrdDataForm})               
         return redirect('data_list')
@@ -68,9 +78,10 @@ def upload_ge(request):
             if form.is_valid():
                 ge_data = form.save(commit=False)
                 ge_data.upload_date = timezone.now()
-                ge_data.uploader = request.user
+                ge_data.uploader = request.user.uploader
                 ge_data.save()
-                process_ge_data.delay(ge_data.uuid)
+                process_ge_data.apply_async(args=[ge_data.uuid],
+                                            task_id=str(ge_data.uuid))
             else:
                 return render(request, 'mridata/upload.html', {'form': GeDataForm})
         return redirect('data_list')
@@ -94,9 +105,10 @@ def upload_philips(request):
             if form.is_valid():
                 philips_data = form.save(commit=False)
                 philips_data.upload_date = timezone.now()
-                philips_data.uploader = request.user
+                philips_data.uploader = request.user.uploader
                 philips_data.save()
-                process_philips_data.delay(philips_data.uuid)
+                process_philips_data.apply_async(args=[philips_data.uuid],
+                                                 task_id=str(philips_data.uuid))
             else:
                 return render(request, 'mridata/upload.html', {'form': PhilipsDataForm})
             
@@ -112,29 +124,48 @@ def upload_siemens(request):
             if form.is_valid():
                 siemens_data = form.save(commit=False)
                 siemens_data.upload_date = timezone.now()
-                siemens_data.uploader = request.user
+                siemens_data.uploader = request.user.uploader
                 siemens_data.save()
-                process_siemens_data.delay(siemens_data.uuid)
+                process_siemens_data.apply_async(args=[siemens_data.uuid],
+                                                 task_id=str(siemens_data.uuid))
             else:
                 return render(request, 'mridata/upload.html', {'form': SiemensDataForm})
             
         return redirect('data_list')
+    
     return render(request, 'mridata/upload.html', {'form': SiemensDataForm})
+
+    
+@login_required
+def data_edit(request, uuid):
+    if request.user == data.uploader.user:
+        if request.method == "POST":
+            data = get_object_or_404(Data, uuid=uuid)
+            form = DataForm(request.POST or None, request.FILES or None, instance=data)
+            if form.is_valid():
+                form.save()
+                return redirect("data_list")
+        else:
+            data = get_object_or_404(Data, uuid=uuid)
+            form = DataForm(instance=data)
+            return render(request, 'mridata/data_edit.html', {'data': data, 'form': form})
+
 
 @login_required
 def data_delete(request, uuid):
     data = get_object_or_404(Data, uuid=uuid)
-    if request.user == data.uploader:
+    if request.user == data.uploader.user:
         data.ismrmrd_file.delete()
         data.thumbnail_file.delete()
         data.delete()
     return redirect("data_list")
 
+
 @login_required
 def temp_data_delete(request, uuid):
     temp_data = get_object_or_404(TempData, uuid=uuid)
     
-    if request.user == temp_data.uploader:
+    if request.user == temp_data.uploader.user:
         try:
             temp_data.siemens_dat_file.delete()
         except:
@@ -157,22 +188,16 @@ def temp_data_delete(request, uuid):
         temp_data.delete()
     return redirect("data_list")
 
+
 @login_required
-def data_edit(request, uuid):
-    if request.method == "POST":
-        data = get_object_or_404(Data, uuid=uuid)
-        form = DataForm(request.POST or None, request.FILES or None, instance=data)
-        if form.is_valid():
-            form.save()
-            return redirect("data_list")
-    else:
-        data = get_object_or_404(Data, uuid=uuid)
-        form = DataForm(instance=data)
-        return render(request, 'mridata/edit_data.html', {'data': data, 'form': form})
+def check_refresh(request):
 
-def about(request):
-    return render(request, 'mridata/about.html')
+    if request.user.is_authenticated:
 
-
-def info(request):
-    return render(request, 'mridata/info.html')
+        uploader = request.user.uploader
+        if uploader.refresh:
+            uploader.refresh = False
+            uploader.save()
+            return JsonResponse({'refresh' : True})
+            
+    return JsonResponse({'refresh' : False})

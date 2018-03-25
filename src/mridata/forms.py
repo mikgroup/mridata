@@ -1,4 +1,5 @@
 from django import forms
+from registration.forms import RegistrationForm
 from .models import Data, PhilipsData, SiemensData, GeData, IsmrmrdData
 
 

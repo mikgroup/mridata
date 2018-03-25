@@ -8,7 +8,7 @@ import subprocess
 import numpy as np
 import boto3
 from .recon import ifftc, rss, zpad, crop
-from .models import Data, TempData, PhilipsData, SiemensData, GeData, IsmrmrdData
+from .models import Uploader, Data, TempData, PhilipsData, SiemensData, GeData, IsmrmrdData
 from PIL import Image
 
 from django.conf import settings
@@ -135,7 +135,9 @@ def process_temp_data(dtype, uuid):
         temp_data.failed = True
         temp_data.error_message = traceback.format_exc()
         temp_data.save()
-        raise e
+        
+    temp_data.uploader.refresh = True
+    temp_data.uploader.save()
 
 
 def valid_float(x):
@@ -264,6 +266,7 @@ def parse_ismrmrd(ismrmrd_file, data):
         pass
         
     logger.info('Parse SUCCESS')
+    
     create_thumbnail(dset, hdr, data)
 
 
@@ -275,6 +278,8 @@ def create_thumbnail(dset, hdr, data):
     nx = enc.encodedSpace.matrixSize.x
     ny = enc.encodedSpace.matrixSize.y
     nz = enc.encodedSpace.matrixSize.z
+
+    print(nx, ny, nz)
 
     ncoils = hdr.acquisitionSystemInformation.receiverChannels
     if enc.encodingLimits.slice is not None:

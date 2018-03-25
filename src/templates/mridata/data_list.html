@@ -3,7 +3,7 @@
 
 
 {% block body_block %}
-<div class="row">
+<div id="data_list" class="row">
   {% include "mridata/sidebar.html" %}
 
   <div class="col">
@@ -28,4 +28,5 @@
 </div>
 <br>
 <br>
+{% include "mridata/data_list_js.html" with objects=objects temp_datasets=temp_datasets%}
 {% endblock %}

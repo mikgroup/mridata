@@ -1,0 +1,34 @@
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    toggleCustomField();
+    selectListener();
+    termsModalListener();
+});
+
+var toggleCustomField = function(){
+    $('#custom-checkbox').click(function() {
+	$("#default-options").toggle(!this.checked);
+	$("#custom-option").toggle(this.checked);
+    });
+}
+
+var selectListener = function(){
+    $('#default-options-select').change(function() {
+	$('#id_anatomy').val(this.value)
+    })
+  }
+
+var termsModalListener = function() {
+	var modal = $('.terms-modal');
+	
+	$('.terms').on("click", function(){
+		modal.removeClass("hidden")
+	});
+
+	$('.terms-modal-close').on("click", function(){
+		modal.addClass("hidden")
+	}); 
+}
+</script>
