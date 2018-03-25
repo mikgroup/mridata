@@ -119,3 +119,4 @@ eb_*
 README_aws.md
 Dockerrun.aws.json
 src/start_aws_web.sh
+orchestra-sdk-1.6-1
