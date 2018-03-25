@@ -63,6 +63,9 @@ class Data(models.Model):
     tr = models.FloatField(verbose_name='Repetition Time [ms]', default=-1)
     ti = models.FloatField(verbose_name='Inversion Time [ms]', default=-1)
     
+    references = models.TextField(blank=True, default='')
+    comments = models.TextField(blank=True, default='')
+    
     ismrmrd_file = models.FileField(upload_to=save_ismrmrd_file,
                                     verbose_name='ISMRMRD File')
 
@@ -79,6 +82,9 @@ class TempData(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, primary_key=True)
     anatomy = models.CharField(max_length=100, default='Unknown')
     fullysampled = models.NullBooleanField()
+    
+    references = models.TextField(blank=True, default='')
+    comments = models.TextField(blank=True, default='')
     
     upload_date = models.DateTimeField(default=timezone.now)
     uploader = models.ForeignKey(User, on_delete=models.CASCADE)

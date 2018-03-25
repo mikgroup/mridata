@@ -25,6 +25,28 @@
   </tr>
   
   <tr>
+    <th>References</th>
+    <td>
+      {% if data.references == '' %}
+      None
+      {% else %}
+      {{ data.references }}
+      {% endif %}
+    </td>
+  </tr>
+  
+  <tr>
+    <th>Comments</th>
+    <td>
+      {% if data.comments == '' %}
+      None
+      {% else %}
+      {{ data.comments }}
+      {% endif %}
+    </td>
+  </tr>
+  
+  <tr>
     <th>Sequence Name</th>
     <td>{{ data.sequence_name }}</td> 
   </tr>

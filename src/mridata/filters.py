@@ -16,6 +16,10 @@ class DataFilter(django_filters.FilterSet):
                                               widget=forms.TextInput(attrs={'size': 12}))
     uuid = django_filters.CharFilter(label='UUID', lookup_expr='icontains',
                                      widget=forms.TextInput(attrs={'size': 12}))
+    references = django_filters.CharFilter(label='References', lookup_expr='icontains',
+                                                 widget=forms.TextInput(attrs={'size': 12}))
+    comments = django_filters.CharFilter(label='Comments', lookup_expr='icontains',
+                                         widget=forms.TextInput(attrs={'size': 12}))
 
     class Meta:
         model = Data

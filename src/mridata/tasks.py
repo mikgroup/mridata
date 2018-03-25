@@ -90,6 +90,8 @@ def process_temp_data(dtype, uuid):
         data.upload_date = temp_data.upload_date
         data.anatomy = temp_data.anatomy
         data.fullysampled = temp_data.fullysampled
+        data.references = temp_data.references
+        data.comments = temp_data.comments
 
         if dtype == GeData:
             convert_ge_data(temp_data.uuid)

@@ -24,9 +24,15 @@ class DataForm(forms.ModelForm):
                   'te',
                   'tr',
                   'ti',
+                  'references',
+                  'comments',
                   'thumbnail_file',
                   'ismrmrd_file',
         )
+        widgets = {
+          'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
+          'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
+        }
         
 
 class PhilipsDataForm(forms.ModelForm):
@@ -40,18 +46,16 @@ class PhilipsDataForm(forms.ModelForm):
         fields = (
             'anatomy',
             'fullysampled',
+            'references',
+            'comments',
             'philips_lab_file',
             'philips_raw_file',
             'philips_sin_file',
         )
-        
-        labels = {
-            'anatomy' : 'Anatomy',
-            'fullysampled' : 'Fullysampled',
-            'philips_lab_file' : 'Philips LAB-File',
-            'philips_raw_file' : 'Philips RAW-File',
-            'philips_sin_file' : 'Philips SIN-File'
-            }
+        widgets = {
+          'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
+          'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
+        }
 
 
 class GeDataForm(forms.ModelForm):
@@ -63,13 +67,14 @@ class GeDataForm(forms.ModelForm):
         fields = [
             'anatomy',
             'fullysampled',
+            'references',
+            'comments',
             'ge_pfile',
-            ]
-        labels = {
-            'anatomy' : 'Anatomy',
-            'fullysampled' : 'Fullysampled',
-            'ge_pfile' : 'GE P-File'
-            }
+        ]
+        widgets = {
+          'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
+          'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
+        }
 
 
 class SiemensDataForm(forms.ModelForm):
@@ -81,13 +86,14 @@ class SiemensDataForm(forms.ModelForm):
         fields = (
             'anatomy',
             'fullysampled',
+            'references',
+            'comments',
             'siemens_dat_file',
         )
-        labels = {
-            'anatomy' : 'Anatomy',
-            'fullysampled' : 'Fullysampled',
-            'siemens_dat_file' : 'Siemens DAT-File'
-            }
+        widgets = {
+          'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
+          'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
+        }
 
         
 class IsmrmrdDataForm(forms.ModelForm):
@@ -99,10 +105,11 @@ class IsmrmrdDataForm(forms.ModelForm):
         fields = (
             'anatomy',
             'fullysampled',
+            'references',
+            'comments',
             'ismrmrd_file',
         )
-        labels = {
-            'anatomy' : 'Anatomy',
-            'fullysampled' : 'Fullysampled',
-            'ismrmrd_file' : 'ISMRMRD File'
-            }
+        widgets = {
+          'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
+          'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
+        }

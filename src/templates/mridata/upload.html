@@ -15,7 +15,8 @@
     <form method="POST" class="data-form data-form-default" enctype="multipart/form-data">
       {% csrf_token %}
       <table class="table">
-	<tr> 
+	
+	<tr>
 	  <th>
 	    Anatomy:
 	  </th>
@@ -48,6 +49,21 @@
 	    {{ form.fullysampled }}
 	  </td>
         </tr>
+
+        <tr>
+          <th>References (Optional):</th>
+          <td>
+	    {{ form.references }}
+	  </td>
+        </tr>
+
+        <tr>
+          <th>Comments (Optional):</th>
+          <td>
+	    {{ form.comments }}
+	  </td>
+        </tr>
+	
 	{% include "mridata/upload_file.html" %}
       </table>
       <div class="text-center terms-container">
