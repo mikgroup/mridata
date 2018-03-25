@@ -32,11 +32,10 @@ if 'DEBUG' in os.environ:
 else:
     DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-# if DEBUG:
-#     ALLOWED_HOSTS = ['*']
-# else:
-#     ALLOWED_HOSTS = []
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = ['*']
 
 
 # Application definition
