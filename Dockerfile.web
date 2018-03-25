@@ -6,7 +6,6 @@ ADD build_scripts build_scripts
 
 RUN bash build_scripts/build_python.sh
 
-ADD src src
 ADD start_web.sh start_web.sh
 
 EXPOSE 8000

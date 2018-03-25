@@ -15,5 +15,4 @@ RUN bash build_scripts/build_philips.sh
 RUN bash build_scripts/build_ge.sh
 RUN bash build_scripts/build_python.sh
 
-ADD src src
 ADD start_worker.sh start_worker.sh
