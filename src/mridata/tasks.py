@@ -256,17 +256,17 @@ def parse_ismrmrd(data):
         pass
     
     try:
-        data.number_of_slices = hdr.encoding[0].encodedSpace.slice.maximum + 1
+        data.number_of_slices = hdr.encoding[0].encodingLimits.slice.maximum + 1
     except Exception:
         pass
         
     try:
-        data.number_of_repetitions = hdr.encoding[0].encodedSpace.repetition.maximum + 1
+        data.number_of_repetitions = hdr.encoding[0].encodingLimits.repetition.maximum + 1
     except Exception:
         pass
         
     try:
-        data.number_of_contrasts = hdr.encoding[0].encodedSpace.contrast.maximum + 1
+        data.number_of_contrasts = hdr.encoding[0].encodingLimits.contrast.maximum + 1
     except Exception:
         pass
         
