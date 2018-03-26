@@ -2,6 +2,7 @@ from celery.decorators import task
 from celery.utils.log import get_task_logger
 
 import os
+import shutil
 import traceback
 import ismrmrd
 import subprocess
@@ -15,6 +16,58 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 
 logger = get_task_logger(__name__)
+
+
+@task(name="process_ge_data")
+def process_ge_data(uuid):
+    process_temp_data(GeData, uuid)
+
+    
+@task(name="process_philips_data")
+def process_philips_data(uuid):
+    process_temp_data(PhilipsData, uuid)
+
+    
+@task(name="process_ismrmrd_data")
+def process_ismrmrd_data(uuid):
+    process_temp_data(IsmrmrdData, uuid)
+
+    
+@task(name="process_siemens_data")
+def process_siemens_data(uuid):
+    process_temp_data(SiemensData, uuid)
+
+    
+def process_temp_data(dtype, uuid):
+
+    temp_data = get_object_or_404(dtype, uuid=uuid)
+    uploader = temp_data.uploader
+    data = Data()
+    
+    try:
+        convert_temp_data_to_data(temp_data, dtype, data)
+        upload_to_media(data.ismrmrd_file.name)
+    except Exception as e:
+        raise_temp_data_error(temp_data, traceback.format_exc())
+        set_uploader_refresh(uploader)
+        raise e
+        
+    try:
+        parse_ismrmrd(data)
+    except Exception as e:
+        raise_temp_data_error(temp_data, traceback.format_exc())
+        set_uploader_refresh(uploader)
+        raise e
+
+    try:
+        create_thumbnail(data)
+        upload_to_media(data.thumbnail_file.name)
+    except Exception as e:
+        pass
+
+    data.save()
+    temp_data.delete()
+    set_uploader_refresh(uploader)
 
 
 def convert_ge_data(uuid):
@@ -60,114 +113,66 @@ def convert_philips_data(uuid):
     logger.info('Conversion SUCCESS')
 
 
-@task(name="process_ge_data")
-def process_ge_data(uuid):
-    process_temp_data(GeData, uuid)
+def convert_temp_data_to_data(temp_data, dtype, data):
+    
+    data.uuid = temp_data.uuid
+    data.uploader_id = temp_data.uploader_id
+    data.upload_date = temp_data.upload_date
+    data.anatomy = temp_data.anatomy
+    data.fullysampled = temp_data.fullysampled
+    data.references = temp_data.references
+    data.comments = temp_data.comments
+
+    if dtype == GeData:
+        convert_ge_data(temp_data.uuid)
+    elif dtype == SiemensData:
+        convert_siemens_data(temp_data.uuid)
+    elif dtype == PhilipsData:
+        convert_philips_data(temp_data.uuid)
+
+    data.ismrmrd_file = '{}.h5'.format(temp_data.uuid)
+
+
+def set_uploader_refresh(uploader):
+    
+    uploader.refresh = True
+    uploader.save()
 
     
-@task(name="process_philips_data")
-def process_philips_data(uuid):
-    process_temp_data(PhilipsData, uuid)
-
+def raise_temp_data_error(temp_data, error_message):
     
-@task(name="process_ismrmrd_data")
-def process_ismrmrd_data(uuid):
-    process_temp_data(IsmrmrdData, uuid)
-
+    temp_data.failed = True
+    temp_data.error_message = error_message
+    temp_data.save()
     
-@task(name="process_siemens_data")
-def process_siemens_data(uuid):
-    process_temp_data(SiemensData, uuid)
-
     
-def process_temp_data(dtype, uuid):
+def upload_to_media(fname):
+    
+    local_file = os.path.join(settings.TEMP_ROOT, fname)
+    if not os.path.exists(local_file):
+        raise IOError('{} does not exists.'.format(local_file))
 
-    temp_data = get_object_or_404(dtype, uuid=uuid)
-    try:
-        data = Data()
-        data.uuid = temp_data.uuid
-        data.uploader_id = temp_data.uploader_id
-        data.upload_date = temp_data.upload_date
-        data.anatomy = temp_data.anatomy
-        data.fullysampled = temp_data.fullysampled
-        data.references = temp_data.references
-        data.comments = temp_data.comments
+    if settings.USE_AWS:
+        s3 = boto3.resource('s3')
+        bucket = s3.Bucket(settings.AWS_STORAGE_BUCKET_NAME)
 
-        if dtype == GeData:
-            convert_ge_data(temp_data.uuid)
-        elif dtype == SiemensData:
-            convert_siemens_data(temp_data.uuid)
-        elif dtype == PhilipsData:
-            convert_philips_data(temp_data.uuid)
-
-        ismrmrd_file = '{}.h5'.format(temp_data.uuid)
-        temp_ismrmrd_file = os.path.join(settings.TEMP_ROOT, ismrmrd_file)
-        parse_ismrmrd(temp_ismrmrd_file, data)
-
-        thumbnail_file = '{}.png'.format(temp_data.uuid)
-        temp_thumbnail_file = os.path.join(settings.TEMP_ROOT, thumbnail_file)
-
-        if settings.USE_AWS:
-            s3 = boto3.resource('s3')
-            bucket = s3.Bucket(settings.AWS_STORAGE_BUCKET_NAME)
-            
-            media_ismrmrd_file = os.path.join(settings.AWS_MEDIA_LOCATION, ismrmrd_file)
-            bucket.upload_file(temp_ismrmrd_file, media_ismrmrd_file,
-                               ExtraArgs={'ACL': 'public-read'})
-            media_thumbnail_file = os.path.join(settings.AWS_MEDIA_LOCATION, thumbnail_file)
-            bucket.upload_file(temp_thumbnail_file, media_thumbnail_file,
-                               ExtraArgs={'ACL': 'public-read'})
-            os.remove(temp_ismrmrd_file)
-            os.remove(temp_thumbnail_file)
-        else:
-            media_ismrmrd_file = os.path.join(settings.MEDIA_ROOT, ismrmrd_file)
-            os.rename(temp_ismrmrd_file, media_ismrmrd_file)
-            media_thumbnail_file = os.path.join(settings.MEDIA_ROOT, thumbnail_file)
-            os.rename(temp_thumbnail_file, media_thumbnail_file)
-            
-        data.ismrmrd_file = ismrmrd_file
-        data.thumbnail_file = thumbnail_file
-        data.save()
-        temp_data.delete()
-        
-    except Exception as e:
-        
-        temp_data.failed = True
-        temp_data.error_message = traceback.format_exc()
-        temp_data.save()
-        
-    temp_data.uploader.refresh = True
-    temp_data.uploader.save()
-
-
-def valid_float(x):
-    try:
-        o = np.float(x)
-    except ValueError:
-        o = 0
-    if np.isnan(o):
-        o = 0
-    return o
-
-
-def valid_int(x):
-    try:
-        o = int(float(x))
-    except ValueError:
-        o = 0
-    if np.isnan(o):
-        o = 0
-    return o
+        media_file = os.path.join(settings.AWS_MEDIA_LOCATION, fname)
+        bucket.upload_file(local_file, media_file, ExtraArgs={'ACL': 'public-read'})
+    else:
+        media_file = os.path.join(settings.MEDIA_ROOT, fname)
+        shutil.copyfile(local_file, media_file)
 
         
-def parse_ismrmrd(ismrmrd_file, data):
+def parse_ismrmrd(data):
     
-    if not os.path.exists(ismrmrd_file):
-        raise IOError('{} does not exists.'.format(ismrmrd_file))
+    local_ismrmrd_file = os.path.join(settings.TEMP_ROOT, data.ismrmrd_file.name)
+    
+    if not os.path.exists(local_ismrmrd_file):
+        raise IOError('{} does not exists.'.format(local_ismrmrd_file))
 
     logger.info('Parsing ISMRMRD...')
 
-    dset = ismrmrd.Dataset(ismrmrd_file, 'dataset', create_if_needed=False)
+    dset = ismrmrd.Dataset(local_ismrmrd_file, 'dataset', create_if_needed=False)
     hdr = ismrmrd.xsd.CreateFromDocument(dset.read_xml_header())
 
     try:
@@ -266,20 +271,22 @@ def parse_ismrmrd(ismrmrd_file, data):
         pass
         
     logger.info('Parse SUCCESS')
-    
-    create_thumbnail(dset, hdr, data)
 
 
-def create_thumbnail(dset, hdr, data):
+def create_thumbnail(data):
 
+    local_ismrmrd_file = os.path.join(settings.TEMP_ROOT, data.ismrmrd_file.name)
+    if not os.path.exists(local_ismrmrd_file):
+        raise IOError('{} does not exists.'.format(local_ismrmrd_file))
+
+    dset = ismrmrd.Dataset(local_ismrmrd_file, 'dataset', create_if_needed=False)
+    hdr = ismrmrd.xsd.CreateFromDocument(dset.read_xml_header())
     logger.info('Creating thumbnail...')
 
     enc = hdr.encoding[0]
     nx = enc.encodedSpace.matrixSize.x
     ny = enc.encodedSpace.matrixSize.y
     nz = enc.encodedSpace.matrixSize.z
-
-    print(nx, ny, nz)
 
     ncoils = hdr.acquisitionSystemInformation.receiverChannels
     if enc.encodingLimits.slice is not None:
@@ -325,8 +332,7 @@ def create_thumbnail(dset, hdr, data):
     img_slice = crop(img_slice, [min(ny, NY), min(nx, NX)])
     logger.info('Finished transforming k-space.')
     
-    thumbnail = zpad(img_slice, [NY,
-                                 NX]).T
+    thumbnail = zpad(img_slice, [NY, NX]).T
     thumbnail = thumbnail / np.percentile(thumbnail, 99)
     thumbnail = np.clip(thumbnail, 0, 1) * 255
     thumbnail = thumbnail.astype(np.uint8)
@@ -337,3 +343,4 @@ def create_thumbnail(dset, hdr, data):
     pil.save(os.path.join(settings.TEMP_ROOT, thumbnail_file))
 
     logger.info('Thumbnail creation SUCCESS')
+    data.thumbnail_file = thumbnail_file

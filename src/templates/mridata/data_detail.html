@@ -80,8 +80,8 @@
   <tr>
     <th>Resolution</th>
     <td>
-      {{data.resolution_x|floatformat}} mm x {{data.resolution_y|floatformat}} mm
-      {% if data.matrix_z > 1 %}x {{data.resolution_z|floatformat}} mm{% endif %}
+      {{data.resolution_x|floatformat}} mm x {{data.resolution_y|floatformat}} mm 
+      {% if data.matrix_size_z > 1 %}x {{data.resolution_z|floatformat}} mm{% endif %}
       {% if data.number_of_time_frames > 1 %}x {{data.resolution_t|floatformat}} ms{% endif %}
     </td> 
   </tr>
@@ -165,7 +165,7 @@
   <tr>
     <th>Echo Time</th>
     <td>
-      {% if data.flip_angle == -1 %}
+      {% if data.te == -1 %}
       Unknown
       {% else %}
       {{ data.te|floatformat }} ms
@@ -176,7 +176,7 @@
   <tr>
     <th>Repetition Time</th>
     <td>
-      {% if data.flip_angle == -1 %}
+      {% if data.tr == -1 %}
       Unknown
       {% else %}
       {{ data.tr|floatformat }} ms
@@ -187,7 +187,7 @@
   <tr>
     <th>Inversion Time</th>
     <td>
-      {% if data.flip_angle == -1 %}
+      {% if data.ti == -1 %}
       Unknown
       {% else %}
       {{ data.ti|floatformat }} ms
