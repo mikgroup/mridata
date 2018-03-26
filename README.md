@@ -13,10 +13,6 @@ Install Docker Community Edition for your platform:
 Install docker-compose for your platform:
 
 	https://docs.docker.com/compose/install/#install-compose
-	
-## (Optional) Set up GE Orchestra Conversion
-
-Put the folder orchestra-sdk-1.6-1 for Ubuntu in the same folder as Dockefile.worker.
 
 ## Build and run using docker-compose
 
