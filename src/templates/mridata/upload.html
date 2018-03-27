@@ -1,5 +1,5 @@
 {% extends 'mridata/base.html' %}
-{% load static from staticfiles %}
+{% load staticfiles %}
 
 {% block body_block %}
 <br>
@@ -75,5 +75,8 @@
   </div>
 </div>
 {% include "mridata/terms_modal.html" %}
-{% include "mridata/upload_js.html" %}
+{% endblock %}
+
+{% block js_block %}
+<script type="text/javascript" src="{% static 'js/upload.js' %}"></script>
 {% endblock %}

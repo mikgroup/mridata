@@ -1,14 +1,14 @@
 {% load staticfiles %}
 <table class="table" align="left">
   <tr>
-    <td rowspan="3" align="left">
+    <td rowspan="3" width="30%" align="center">
       <img src=
 	   {% if data.thumbnail_file %}
 	   "{{ data.thumbnail_file.url }}"
 	   {% else %}
 	   {% static "images/default_thumbnail.png" %}
 	   {% endif %}
-	   class="rounded" width="128">
+	   class="rounded" height="128">
     </td>
     <td align="left" class="text-muted">
       Anatomy:

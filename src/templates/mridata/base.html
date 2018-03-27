@@ -3,6 +3,7 @@
   <head>
     
     {% load staticfiles %}
+    
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
@@ -38,6 +39,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.formset/1.2.2/jquery.formset.min.js"></script>
 
     {% load staticfiles %}
+    {% block js_block %}{% endblock %}
     <link rel="stylesheet" href="{% static 'css/terms.css' %}" type="text/css" >
     <link rel="stylesheet" href="{% static 'css/base.css' %}" type="text/css" >
   </body>

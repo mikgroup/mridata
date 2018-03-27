@@ -6,7 +6,7 @@
   Permalink
 </a>
 
-{% if user.uploader == data.uploader %}
+{% if user == data.uploader.user %}
 <a href="{% url 'data_edit' uuid=data.uuid %}" class="btn btn-info">
   Edit
 </a>
@@ -19,32 +19,23 @@
 
 <table class="table table-striped" style="width:100%" align="center">
 
-  <tr>
-    <th>Anatomy</th>
-    <td>{{ data.anatomy }}</td> 
-  </tr>
-  
+      {% if data.references != '' %}
   <tr>
     <th>References</th>
     <td>
-      {% if data.references == '' %}
-      None
-      {% else %}
       {{ data.references }}
-      {% endif %}
     </td>
   </tr>
+      {% endif %}
   
+      {% if data.comments != '' %}
   <tr>
     <th>Comments</th>
     <td>
-      {% if data.comments == '' %}
-      None
-      {% else %}
       {{ data.comments }}
-      {% endif %}
     </td>
   </tr>
+      {% endif %}
   
   <tr>
     <th>Sequence Name</th>
@@ -54,19 +45,6 @@
   <tr>
     <th>Trajectory</th>
     <td>{{ data.trajectory }}</td> 
-  </tr>
-  
-  <tr>
-    <th>Fullysampled</th>
-    <td>
-      {% if data.fullysampled is None %}
-      Unknown
-      {% elif data.fullysampled %}
-      Yes
-      {% else %}
-      No
-      {% endif %}
-    </td> 
   </tr>
   
   <tr>
@@ -86,49 +64,41 @@
     </td> 
   </tr>
   
+  {% if data.number_of_channels != -1 %}
   <tr>
     <th>Number of Channels</th>
     <td>
-      {% if data.number_of_channels == -1 %}
-      Unknown
-      {% else %}
       {{ data.number_of_channels }}
-      {% endif %}
     </td> 
   </tr>
+  {% endif %}
   
+  {% if data.number_of_slices != -1 %}
   <tr>
     <th>Number of Slices</th>
     <td>
-      {% if data.number_of_slices == -1 %}
-      Unknown
-      {% else %}
       {{ data.number_of_slices }}
-      {% endif %}
     </td> 
   </tr>
+  {% endif %}
   
+  {% if data.number_of_repetitions != -1 %}
   <tr>
     <th>Number of Repetition</th>
     <td>
-      {% if data.number_of_repetitions == -1 %}
-      Unknown
-      {% else %}
       {{ data.number_of_repetitions }}
-      {% endif %}
     </td> 
   </tr>
+  {% endif %}
   
+  {% if data.number_of_contrasts != -1 %}
   <tr>
     <th>Number of Contrasts</th>
     <td>
-      {% if data.number_of_contrasts == -1 %}
-      Unknown
-      {% else %}
       {{ data.number_of_contrasts }}
-      {% endif %}
     </td> 
   </tr>
+  {% endif %}
   
   <tr>
     <th>Scanner Vendor</th>
@@ -140,69 +110,54 @@
     <td>{{ data.scanner_model }}</td> 
   </tr>
   
+      {% if data.scanner_field != -1 %}
   <tr>
     <th>Scanner Field Strength</th>
     <td>
-      {% if data.scanner_field == -1 %}
-      Unknown
-      {% else %}
       {{ data.scanner_field }} T
-      {% endif %}
     </td> 
   </tr>
+      {% endif %}
   
+  {% if data.flip_angle != -1 %}
   <tr>
     <th>Flip Angle</th>
     <td>
-      {% if data.flip_angle == -1 %}
-      Unknown
-      {% else %}
       {{ data.flip_angle|floatformat }} &deg;
-      {% endif %}
     </td>
   </tr>
+  {% endif %}
   
+      {% if data.te != -1 %}
   <tr>
     <th>Echo Time</th>
     <td>
-      {% if data.te == -1 %}
-      Unknown
-      {% else %}
       {{ data.te|floatformat }} ms
-      {% endif %}
     </td>
   </tr>
+  {% endif %}
   
+  {% if data.tr != -1 %}
   <tr>
     <th>Repetition Time</th>
     <td>
-      {% if data.tr == -1 %}
-      Unknown
-      {% else %}
       {{ data.tr|floatformat }} ms
-      {% endif %}
     </td>
   </tr>
+  {% endif %}
 
+  {% if data.ti != -1 %}
   <tr>
     <th>Inversion Time</th>
     <td>
-      {% if data.ti == -1 %}
-      Unknown
-      {% else %}
       {{ data.ti|floatformat }} ms
-      {% endif %}
     </td>
   </tr>
+  {% endif %}
   
   <tr>
     <th>UUID</th>
     <td>{{ data.uuid }}</td> 
-  </tr>
-  
-  <tr>
-    <th>Uploader</th>
-    <td>{{ data.uploader }}</td> 
   </tr>
   
   <tr>

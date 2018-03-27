@@ -1,5 +1,6 @@
 {% extends "mridata/base.html" %}
 {% load el_pagination_tags %}
+{% load staticfiles %}
 
 
 {% block body_block %}
@@ -28,5 +29,8 @@
 </div>
 <br>
 <br>
-{% include "mridata/data_list_js.html" with objects=objects temp_datasets=temp_datasets%}
+{% endblock %}
+
+{% block js_block %}
+<script type="text/javascript" src="{% static 'js/data_list.js' %}"> </script>
 {% endblock %}

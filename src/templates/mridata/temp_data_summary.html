@@ -1,7 +1,7 @@
 {% load staticfiles %}
 <table class="table" align="left">
   <tr>
-    <td rowspan="3" align="left">
+    <td rowspan="3" width="30%" align="center">
       <img src=
 	   {% if temp_data.failed %}
 	   {% static "images/failed.png" %}
@@ -22,9 +22,9 @@
       Fullysampled:
     </td>
     <td align="left" class="text-muted">
-      {% if data.fullysampled is None %}
+      {% if temp_data.fullysampled is None %}
       Unknown
-      {% elif data.fullysampled %}
+      {% elif temp_data.fullysampled %}
       Yes
       {% else %}
       No
