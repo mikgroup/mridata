@@ -18,8 +18,8 @@ def about(request):
     return render(request, 'mridata/about.html')
 
 
-def info(request):
-    return render(request, 'mridata/info.html')
+def faq(request):
+    return render(request, 'mridata/faq.html')
 
 
 def data_list(request):
@@ -138,9 +138,9 @@ def upload_siemens(request):
     
 @login_required
 def data_edit(request, uuid):
+    data = get_object_or_404(Data, uuid=uuid)
     if request.user == data.uploader.user:
         if request.method == "POST":
-            data = get_object_or_404(Data, uuid=uuid)
             form = DataForm(request.POST or None, request.FILES or None, instance=data)
             if form.is_valid():
                 form.save()
