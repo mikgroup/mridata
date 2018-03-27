@@ -43,7 +43,7 @@
 	</tr>
 
         <tr>
-          <th><label for="{{ form.fullysampled.id_for_label }}">Fullysampled:</label></th>
+          <th>Fullysampled:</th>
           <td>
 	    {{ form.fullysampled }}
 	  </td>
@@ -64,6 +64,18 @@
         </tr>
 	
 	{% include "mridata/upload_file.html" %}
+	
+        <tr>
+          <th>Thumbnail Transform:</th>
+          <td>
+	    Horizontal flip:
+	    &nbsp;&nbsp;{{ form.thumbnail_horizontal_flip }}
+	    &nbsp;&nbsp;Vertical flip:
+	    &nbsp;&nbsp;{{ form.thumbnail_vertical_flip }}
+	    &nbsp;&nbsp;Rotate 90 &deg;:
+	    &nbsp;&nbsp;{{ form.thumbnail_rotate_90_degree }}
+	  </td>
+        </tr>
       </table>
       <div class="text-center terms-container">
 	<input type="checkbox" required>
@@ -75,6 +87,10 @@
   </div>
 </div>
 {% include "mridata/terms_modal.html" %}
+{% endblock %}
+
+{% block css_block %}
+<link rel="stylesheet" href="{% static 'css/terms.css' %}" type="text/css" >
 {% endblock %}
 
 {% block js_block %}

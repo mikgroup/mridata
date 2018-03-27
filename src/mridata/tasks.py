@@ -129,6 +129,9 @@ def convert_temp_data_to_data(temp_data, dtype, data):
     data.fullysampled = temp_data.fullysampled
     data.references = temp_data.references
     data.comments = temp_data.comments
+    data.horizontal_flip_thumbnail = temp_data.horizontal_flip_thumbnail
+    data.thumbnail_vertical_flip = temp_data.thumbnail_vertical_flip
+    data.transpose_flip_thumbnail = temp_data.transpose_flip_thumbnail
 
     if dtype == GeData:
         convert_ge_data(temp_data.uuid)

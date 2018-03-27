@@ -8,7 +8,30 @@
 	   {% else %}
 	   {% static "images/default_thumbnail.png" %}
 	   {% endif %}
-	   class="rounded" height="128">
+	   height="128"
+	   class=
+	   {% if data.thumbnail_rotate_90_degree %}
+	   {% if data.thumbnail_horizontal_flip and data.thumbnail_vertical_flip %}
+	   "rounded img-hor-vert-rot90"
+	   {% elif not data.thumbnail_horizontal_flip and data.thumbnail_vertical_flip %}
+	   "rounded img-vert-rot90"
+	   {% elif data.thumbnail_horizontal_flip and not data.thumbnail_vertical_flip %}
+	   "rounded img-hor-rot90"
+	   {% else %}
+	   "rounded"
+	   {% endif %}
+	   {% else %}
+	   {% if data.thumbnail_horizontal_flip and data.thumbnail_vertical_flip %}
+	   "rounded img-hor-vert"
+	   {% elif not data.thumbnail_horizontal_flip and data.thumbnail_vertical_flip %}
+	   "rounded img-vert"
+	   {% elif data.thumbnail_horizontal_flip and not data.thumbnail_vertical_flip %}
+	   "rounded img-hor"
+	   {% else %}
+	   "rounded"
+	   {% endif %}
+	   {% endif %}
+	   >
     </td>
     <td align="left" class="text-muted">
       Anatomy:

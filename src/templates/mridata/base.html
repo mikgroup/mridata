@@ -40,7 +40,6 @@
 
     {% load staticfiles %}
     {% block js_block %}{% endblock %}
-    <link rel="stylesheet" href="{% static 'css/terms.css' %}" type="text/css" >
-    <link rel="stylesheet" href="{% static 'css/base.css' %}" type="text/css" >
+    {% block css_block %}{% endblock %}
   </body>
 </html>

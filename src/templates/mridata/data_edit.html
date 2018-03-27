@@ -1,5 +1,7 @@
 {% extends 'mridata/base.html' %}
 
+{% load staticfiles %}
+
 {% block body_block %}
 {% if user == data.uploader.user %}
 <br>
@@ -18,4 +20,8 @@
 <br>
 <br>
 {% endif %}
+{% endblock %}
+
+{% block css_block %}
+<link rel="stylesheet" href="{% static 'css/thumbnail.css' %}" type="text/css" >
 {% endblock %}

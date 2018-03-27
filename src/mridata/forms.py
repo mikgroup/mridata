@@ -28,11 +28,14 @@ class DataForm(forms.ModelForm):
                   'references',
                   'comments',
                   'thumbnail_file',
+                  'thumbnail_horizontal_flip',
+                  'thumbnail_vertical_flip',
+                  'thumbnail_rotate_90_degree',
                   'ismrmrd_file',
         )
         widgets = {
-          'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
-          'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
+            'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
+            'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
         }
         
 
@@ -52,10 +55,13 @@ class PhilipsDataForm(forms.ModelForm):
             'philips_lab_file',
             'philips_raw_file',
             'philips_sin_file',
+            'thumbnail_horizontal_flip',
+            'thumbnail_vertical_flip',
+            'thumbnail_rotate_90_degree',
         )
         widgets = {
-          'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
-          'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
+            'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
+            'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
         }
 
 
@@ -71,10 +77,13 @@ class GeDataForm(forms.ModelForm):
             'references',
             'comments',
             'ge_pfile',
+            'thumbnail_horizontal_flip',
+            'thumbnail_vertical_flip',
+            'thumbnail_rotate_90_degree',
         ]
         widgets = {
-          'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
-          'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
+            'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
+            'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
         }
 
 
@@ -90,10 +99,13 @@ class SiemensDataForm(forms.ModelForm):
             'references',
             'comments',
             'siemens_dat_file',
+            'thumbnail_horizontal_flip',
+            'thumbnail_vertical_flip',
+            'thumbnail_rotate_90_degree',
         )
         widgets = {
-          'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
-          'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
+            'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
+            'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
         }
 
         
@@ -109,8 +121,11 @@ class IsmrmrdDataForm(forms.ModelForm):
             'references',
             'comments',
             'ismrmrd_file',
+            'thumbnail_horizontal_flip',
+            'thumbnail_vertical_flip',
+            'thumbnail_rotate_90_degree',
         )
         widgets = {
-          'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
-          'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
+            'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
+            'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
         }
