@@ -55,12 +55,12 @@ class Data(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, primary_key=True)
 
     anatomy = models.CharField(max_length=100, default='Unknown')
-    sequence_name = models.CharField(max_length=100, default='Unknown')
-    trajectory = models.CharField(max_length=100, default='Unknown')
+    sequence_name = models.CharField(max_length=100, default='N/A')
+    trajectory = models.CharField(max_length=100, default='N/A')
     fullysampled = models.NullBooleanField()
     
-    scanner_vendor = models.CharField(max_length=100, default='Unknown')
-    scanner_model = models.CharField(max_length=100, default='Unknown')
+    scanner_vendor = models.CharField(max_length=100, default='N/A')
+    scanner_model = models.CharField(max_length=100, default='N/A')
     scanner_field = models.FloatField(verbose_name='Field Strength [T]', default=-1)
     
     matrix_size_x = models.IntegerField(default=-1)
