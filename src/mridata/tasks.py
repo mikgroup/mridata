@@ -2,7 +2,6 @@ from celery.decorators import task
 from celery.utils.log import get_task_logger
 
 import os
-import shutil
 import traceback
 import ismrmrd
 import subprocess
@@ -46,13 +45,6 @@ def process_temp_data(dtype, uuid):
     
     try:
         convert_temp_data_to_data(temp_data, dtype, data)
-        upload_to_media(data.ismrmrd_file.name)
-    except Exception as e:
-        raise_temp_data_error(temp_data, traceback.format_exc())
-        set_uploader_refresh(uploader)
-        raise e
-        
-    try:
         parse_ismrmrd(data)
     except Exception as e:
         raise_temp_data_error(temp_data, traceback.format_exc())
@@ -61,9 +53,16 @@ def process_temp_data(dtype, uuid):
 
     try:
         create_thumbnail(data)
-        upload_to_media(data.thumbnail_file.name)
+        move_to_media(data.thumbnail_file.name)
     except Exception as e:
         pass
+
+    try:
+        move_to_media(data.ismrmrd_file.name)
+    except Exception as e:
+        raise_temp_data_error(temp_data, traceback.format_exc())
+        set_uploader_refresh(uploader)
+        raise e
 
     data.save()
     temp_data.delete()
@@ -91,11 +90,19 @@ def convert_siemens_data(uuid):
     
     if not os.path.exists(siemens_dat_file):
         raise IOError('{} does not exists.'.format(siemens_dat_file))
+
+    # Get last measurement number
+    stdout = subprocess.run(['siemens_to_ismrmrd', '-f', siemens_dat_file,
+                             '-H', '-o', ismrmrd_file],
+                            stdout=subprocess.PIPE).stdout
+    start = stdout.find(b'This file contains ') + len('This file contains ')
+    end = stdout.find(b' measurement(s)')
+    meas_num = stdout[start:end].decode("utf-8") 
     
     logger.info('Converting SiemensData to ISMRMRD...')
     subprocess.check_output(['siemens_to_ismrmrd',
                              '-f', siemens_dat_file,
-                             '-o', ismrmrd_file])
+                             '-o', ismrmrd_file, '-z', meas_num])
     logger.info('Conversion SUCCESS')
 
 
@@ -146,7 +153,7 @@ def raise_temp_data_error(temp_data, error_message):
     temp_data.save()
     
     
-def upload_to_media(fname):
+def move_to_media(fname):
     
     local_file = os.path.join(settings.TEMP_ROOT, fname)
     if not os.path.exists(local_file):
@@ -158,9 +165,10 @@ def upload_to_media(fname):
 
         media_file = os.path.join(settings.AWS_MEDIA_LOCATION, fname)
         bucket.upload_file(local_file, media_file, ExtraArgs={'ACL': 'public-read'})
+        os.remove(local_file)
     else:
         media_file = os.path.join(settings.MEDIA_ROOT, fname)
-        shutil.copyfile(local_file, media_file)
+        os.rename(local_file, media_file)
 
         
 def parse_ismrmrd(data):
@@ -273,66 +281,70 @@ def parse_ismrmrd(data):
     logger.info('Parse SUCCESS')
 
 
+def make_valid_num(num):
+    if num == -1:
+        return 1
+    else:
+        return num
+
+
 def create_thumbnail(data):
+    '''
+    Derived from:
+    https://github.com/ismrmrd/ismrmrd-python-tools/blob/master/recon_ismrmrd_dataset.py
+    '''
 
     local_ismrmrd_file = os.path.join(settings.TEMP_ROOT, data.ismrmrd_file.name)
     if not os.path.exists(local_ismrmrd_file):
         raise IOError('{} does not exists.'.format(local_ismrmrd_file))
 
     dset = ismrmrd.Dataset(local_ismrmrd_file, 'dataset', create_if_needed=False)
-    hdr = ismrmrd.xsd.CreateFromDocument(dset.read_xml_header())
     logger.info('Creating thumbnail...')
+    
+    header = ismrmrd.xsd.CreateFromDocument(dset.read_xml_header())
+    enc = header.encoding[0]
+    # Matrix size
+    eNx = enc.encodedSpace.matrixSize.x
+    eNy = enc.encodedSpace.matrixSize.y
+    eNz = enc.encodedSpace.matrixSize.z
+    rNx = enc.reconSpace.matrixSize.x
 
-    enc = hdr.encoding[0]
-    nx = enc.encodedSpace.matrixSize.x
-    ny = enc.encodedSpace.matrixSize.y
-    nz = enc.encodedSpace.matrixSize.z
+    ncoils = make_valid_num(data.number_of_channels)
+    nslices = make_valid_num(data.number_of_slices)
+    nreps = make_valid_num(data.number_of_repetitions)
+    ncontrasts = make_valid_num(data.number_of_contrasts)
 
-    ncoils = hdr.acquisitionSystemInformation.receiverChannels
-    if enc.encodingLimits.slice is not None:
-        nslices = enc.encodingLimits.slice.maximum + 1
+    if rNx < eNx:
+        ksp_mix = np.zeros([ncoils, eNz, eNy, rNx], dtype=np.complex64)
     else:
-        nslices = 1
-
-    if enc.encodingLimits.repetition is not None:
-        nreps = enc.encodingLimits.repetition.maximum + 1
-    else:
-        nreps = 1
-
-    if enc.encodingLimits.contrast is not None:
-        ncontrasts = enc.encodingLimits.contrast.maximum + 1
-    else:
-        ncontrasts = 1
-
-    NZ = 64
-    NY = 128
-    NX = 128
-    ksp = np.zeros([ncoils, min(nz, NZ), min(ny, NY), min(nx, NX)], dtype=np.complex64)
+        ksp_mix = np.zeros([ncoils, eNz, eNy, eNx], dtype=np.complex64)
+        
     logger.info('Reading k-space...')
     for acqnum in range(dset.number_of_acquisitions()):
         acq = dset.read_acquisition(acqnum)
         if acq.isFlagSet(ismrmrd.ACQ_IS_NOISE_MEASUREMENT):
             continue
 
-        rep = acq.idx.repetition
+        repetition = acq.idx.repetition
         contrast = acq.idx.contrast
         slice = acq.idx.slice
-        if (rep == nreps // 2 and contrast == ncontrasts // 2 and slice == nslices // 2):
-            y = acq.idx.kspace_encode_step_1 - max(ny - NY, 0) // 2
-            z = acq.idx.kspace_encode_step_2 - max(nz - NZ, 0) // 2
-            if (y >= 0 and y < NY) and (z >= 0 and z < NZ):
-                ksp[:, z, y, :] = crop(acq.data, [ncoils, min(nx, NX)])
+        if repetition == nreps // 2 and contrast == ncontrasts // 2 and slice == nslices // 2:
+            y = acq.idx.kspace_encode_step_1
+            z = acq.idx.kspace_encode_step_2
+            if rNx < eNx:
+                ksp_mix[:, z, y, :] = crop(ifftc(acq.data, axes=[-1]), [ncoils, rNx])
+            else:
+                ksp_mix[:, z, y, :] = ifftc(acq.data, axes=[-1])
+                
     logger.info('Finished reading k-space.')
 
     logger.info('Transforming k-space...')
-    ksp_mix = ifftc(ksp, axes=[-3])
+    ksp_mix = ifftc(ksp_mix, axes=[-3])
     slice_energy = rss(ksp_mix, axes=(-1, -2, -4))
-    ksp_slice = ksp_mix[:, np.argmax(slice_energy), :, :]
-    img_slice = rss(ifftc(ksp_slice, axes=[-1, -2]))
-    img_slice = crop(img_slice, [min(ny, NY), min(nx, NX)])
+    ksp_mix_slice = ksp_mix[:, np.argmax(slice_energy), :, :]  # choose slice with max energy
+    thumbnail = rss(ifftc(ksp_mix_slice, axes=[-2])).T
     logger.info('Finished transforming k-space.')
     
-    thumbnail = zpad(img_slice, [NY, NX]).T
     thumbnail = thumbnail / np.percentile(thumbnail, 99)
     thumbnail = np.clip(thumbnail, 0, 1) * 255
     thumbnail = thumbnail.astype(np.uint8)
