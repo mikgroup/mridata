@@ -32,7 +32,9 @@
 {% endblock %}
 
 {% block js_block %}
+{% if user.is_authenticated %}
 <script type="text/javascript" src="{% static 'js/data_list.js' %}"> </script>
+{% endif %}
 {% endblock %}
 
 {% block css_block %}

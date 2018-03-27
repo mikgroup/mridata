@@ -72,8 +72,8 @@ def upload_ismrmrd(request):
 @login_required
 def upload_ge(request):
     if request.method == "POST":
-        for ge_pfile in request.FILES.getlist('ge_pfile'):
-            request.FILES['ge_pfile'] = ge_pfile
+        for ge_file in request.FILES.getlist('ge_file'):
+            request.FILES['ge_file'] = ge_file
             form = GeDataForm(request.POST, request.FILES)
             if form.is_valid():
                 ge_data = form.save(commit=False)
@@ -171,7 +171,7 @@ def temp_data_delete(request, uuid):
         except:
             pass
         try:
-            temp_data.ge_pfile.delete()
+            temp_data.ge_file.delete()
         except:
             pass
         try:

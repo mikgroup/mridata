@@ -18,51 +18,44 @@
 {% endif %}
 
 <table class="table table-striped" style="width:100%" align="center">
-
-      {% if data.references != '' %}
+  
   <tr>
-    <th>References</th>
+    <th>Protocol Name</th>
+    <td>{{ data.protocol_name }}</td> 
+  </tr>
+  
+  <tr>
+    <th>Series Description</th>
+    <td>{{ data.protocol_name }}</td> 
+  </tr>
+  
+  <tr>
+    <th>System Vendor</th>
+    <td>{{ data.system_vendor }}</td> 
+  </tr>
+  
+  <tr>
+    <th>System Model</th>
+    <td>{{ data.system_model }}</td> 
+  </tr>
+  
+  {% if data.system_field_strength != -1 %}
+  <tr>
+    <th>System Field Strength</th>
     <td>
-      {{ data.references }}
-    </td>
-  </tr>
-      {% endif %}
-  
-      {% if data.comments != '' %}
-  <tr>
-    <th>Comments</th>
-    <td>
-      {{ data.comments }}
-    </td>
-  </tr>
-      {% endif %}
-  
-  <tr>
-    <th>Sequence Name</th>
-    <td>{{ data.sequence_name }}</td> 
-  </tr>
-  
-  <tr>
-    <th>Trajectory</th>
-    <td>{{ data.trajectory }}</td> 
-  </tr>
-  
-  <tr>
-    <th>Matrix Size</th>
-    <td>
-      {{data.matrix_size_x}} x {{data.matrix_size_y}}
-      {% if data.matrix_size_z > 1 %}x {{data.matrix_size_z}}{% endif %}
+      {{ data.system_field_strength }} T
     </td> 
   </tr>
+  {% endif %}
   
+  {% if data.relative_receiver_noise_bandwidth != -1 %}
   <tr>
-    <th>Resolution</th>
+    <th>Relative Receiver Noise Bandwidth</th>
     <td>
-      {{data.resolution_x|floatformat}} mm x {{data.resolution_y|floatformat}} mm 
-      {% if data.matrix_size_z > 1 %}x {{data.resolution_z|floatformat}} mm{% endif %}
-      {% if data.number_of_time_frames > 1 %}x {{data.resolution_t|floatformat}} ms{% endif %}
+      {{ data.relative_receiver_noise_bandwidth }}
     </td> 
   </tr>
+  {% endif %}
   
   {% if data.number_of_channels != -1 %}
   <tr>
@@ -73,11 +66,79 @@
   </tr>
   {% endif %}
   
+  {% if data.coil_name != '' %}
+  <tr>
+    <th>Coil Name</th>
+    <td>
+      {{ data.coil_name }}
+    </td> 
+  </tr>
+  {% endif %}
+  
+  {% if data.institution_name != '' %}
+  <tr>
+    <th>Institution Name</th>
+    <td>
+      {{ data.institution_name }}
+    </td> 
+  </tr>
+  {% endif %}
+  
+  {% if data.station_name != '' %}
+  <tr>
+    <th>Station Name</th>
+    <td>
+      {{ data.station_name }}
+    </td> 
+  </tr>
+  {% endif %}
+  
+  {% if data.h1_resonance_frequency != -1 %}
+  <tr>
+    <th>H1 Resonance Frequency</th>
+    <td>
+      {{ data.h1_resonance_frequency }} Hz
+    </td> 
+  </tr>
+  {% endif %}
+  
+  <tr>
+    <th>Matrix Size</th>
+    <td>
+      {{data.matrix_size_x}} x {{data.matrix_size_y}} x {{data.matrix_size_z}}
+    </td> 
+  </tr>
+  
+  <tr>
+    <th>Field Of View</th>
+    <td>
+      {{data.field_of_view_x|floatformat}} mm x {{data.field_of_view_y|floatformat}} mm x {{data.field_of_view_z|floatformat}} mm
+    </td> 
+  </tr>
+  
+  {% if data.number_of_averages != -1 %}
+  <tr>
+    <th>Number of Averages</th>
+    <td>
+      {{ data.number_of_averages }}
+    </td> 
+  </tr>
+  {% endif %}
+  
   {% if data.number_of_slices != -1 %}
   <tr>
     <th>Number of Slices</th>
     <td>
       {{ data.number_of_slices }}
+    </td> 
+  </tr>
+  {% endif %}
+  
+  {% if data.number_of_phases != -1 %}
+  <tr>
+    <th>Number of Phases</th>
+    <td>
+      {{ data.number_of_phases }}
     </td> 
   </tr>
   {% endif %}
@@ -100,40 +161,42 @@
   </tr>
   {% endif %}
   
+  {% if data.number_of_sets != -1 %}
   <tr>
-    <th>Scanner Vendor</th>
-    <td>{{ data.scanner_vendor }}</td> 
-  </tr>
-  
-  <tr>
-    <th>Scanner Model</th>
-    <td>{{ data.scanner_model }}</td> 
-  </tr>
-  
-      {% if data.scanner_field != -1 %}
-  <tr>
-    <th>Scanner Field Strength</th>
+    <th>Number of Sets</th>
     <td>
-      {{ data.scanner_field }} T
+      {{ data.number_of_sets }}
     </td> 
-  </tr>
-      {% endif %}
-  
-  {% if data.flip_angle != -1 %}
-  <tr>
-    <th>Flip Angle</th>
-    <td>
-      {{ data.flip_angle|floatformat }} &deg;
-    </td>
   </tr>
   {% endif %}
   
-      {% if data.te != -1 %}
+  {% if data.number_of_segments != -1 %}
   <tr>
-    <th>Echo Time</th>
+    <th>Number of Segments</th>
     <td>
-      {{ data.te|floatformat }} ms
-    </td>
+      {{ data.number_of_segments }}
+    </td> 
+  </tr>
+  {% endif %}
+  
+  <tr>
+    <th>Trajectory</th>
+    <td>{{ data.trajectory }}</td> 
+  </tr>
+  
+  {% if data.parallel_imaging_factor_y != -1 and data.parallel_imaging_factor_z != -1 %}
+  <tr>
+    <th>Parallel Imaging Factor</th>
+    <td>{{ data.parallel_imaging_factor_y }} x {{ data.parallel_imaging_factor_z }}</td> 
+  </tr>
+  {% endif %}
+  
+  {% if data.echo_train_length != -1 %}
+  <tr>
+    <th>Echo Train Length</th>
+    <td>
+      {{ data.echo_train_length }}
+    </td> 
   </tr>
   {% endif %}
   
@@ -142,6 +205,15 @@
     <th>Repetition Time</th>
     <td>
       {{ data.tr|floatformat }} ms
+    </td>
+  </tr>
+  {% endif %}
+  
+  {% if data.te != -1 %}
+  <tr>
+    <th>Echo Time</th>
+    <td>
+      {{ data.te|floatformat }} ms
     </td>
   </tr>
   {% endif %}
@@ -155,6 +227,51 @@
   </tr>
   {% endif %}
   
+  {% if data.flip_angle != -1 %}
+  <tr>
+    <th>Flip Angle</th>
+    <td>
+      {{ data.flip_angle|floatformat }} &deg;
+    </td>
+  </tr>
+  {% endif %}
+  
+  {% if data.sequence_type != '' %}
+  <tr>
+    <th>Sequence Type</th>
+    <td>
+      {{ data.sequence_type }}
+    </td> 
+  </tr>
+  {% endif %}
+  
+  {% if data.echo_spacing != -1 %}
+  <tr>
+    <th>Echo Spacing</th>
+    <td>
+      {{ data.echo_spacing }} ms
+    </td>
+  </tr>
+  {% endif %}
+  
+  {% if data.references != '' %}
+  <tr>
+    <th>References</th>
+    <td>
+      {{ data.references }}
+    </td>
+  </tr>
+  {% endif %}
+  
+  {% if data.comments != '' %}
+  <tr>
+    <th>Comments</th>
+    <td>
+      {{ data.comments }}
+    </td>
+  </tr>
+  {% endif %}
+  
   <tr>
     <th>UUID</th>
     <td>{{ data.uuid }}</td> 
@@ -164,4 +281,5 @@
     <th>Upload Date</th>
     <td>{{ data.upload_date }}</td> 
   </tr>
+  
 </table>

@@ -71,16 +71,16 @@ def process_temp_data(dtype, uuid):
 
 def convert_ge_data(uuid):
     ismrmrd_file = os.path.join(settings.TEMP_ROOT, '{}.h5'.format(uuid))
-    ge_pfile = os.path.join(settings.TEMP_ROOT, 'P{}.7'.format(uuid))
+    ge_file = os.path.join(settings.TEMP_ROOT, 'P{}.7'.format(uuid))
 
-    if not os.path.exists(ge_pfile):
-        raise IOError('{} does not exists.'.format(ge_pfile))
+    if not os.path.exists(ge_file):
+        raise IOError('{} does not exists.'.format(ge_file))
     
     logger.info('Converting GeData to ISMRMRD')
     subprocess.check_output(['ge_to_ismrmrd',
                              '--verbose',
                              '-o', ismrmrd_file,
-                             ge_pfile])
+                             ge_file])
     logger.info('Conversion SUCCESS')
 
 
@@ -129,9 +129,9 @@ def convert_temp_data_to_data(temp_data, dtype, data):
     data.fullysampled = temp_data.fullysampled
     data.references = temp_data.references
     data.comments = temp_data.comments
-    data.horizontal_flip_thumbnail = temp_data.horizontal_flip_thumbnail
+    data.thumbnail_horizontal_flip = temp_data.thumbnail_horizontal_flip
     data.thumbnail_vertical_flip = temp_data.thumbnail_vertical_flip
-    data.transpose_flip_thumbnail = temp_data.transpose_flip_thumbnail
+    data.thumbnail_rotate_90_degree = temp_data.thumbnail_rotate_90_degree
 
     if dtype == GeData:
         convert_ge_data(temp_data.uuid)
@@ -187,52 +187,68 @@ def parse_ismrmrd(data):
     hdr = ismrmrd.xsd.CreateFromDocument(dset.read_xml_header())
 
     try:
-        data.sequence_name = hdr.measurementInformation.protocolName
+        if hdr.measurementInformation.protocolName is not None:
+            data.protocol_name = hdr.measurementInformation.protocolName
     except Exception:
         pass
-
+    
     try:
-        data.number_of_channels = hdr.acquisitionSystemInformation.receiverChannels
+        if hdr.measurementInformation.seriesDescription is not None:
+            data.series_description = hdr.measurementInformation.seriesDescription
     except Exception:
         pass
         
     try:
-        data.scanner_vendor = hdr.acquisitionSystemInformation.systemVendor
+        if hdr.acquisitionSystemInformation.systemVendor is not None:
+            data.system_vendor = hdr.acquisitionSystemInformation.systemVendor
     except Exception:
         pass
         
     try:
-        data.scanner_model = hdr.acquisitionSystemInformation.systemModel
+        if hdr.acquisitionSystemInformation.systemModel is not None:
+            data.system_model = hdr.acquisitionSystemInformation.systemModel
     except Exception:
         pass
     
     try:
-        data.scanner_field = hdr.acquisitionSystemInformation.systemFieldStrength_T
-    except Exception:
-        pass
-
-    try:
-        data.tr = hdr.sequenceParameters.TR[0]
+        if hdr.acquisitionSystemInformation.systemFieldStrength_T is not None:
+            data.system_field_strength = hdr.acquisitionSystemInformation.systemFieldStrength_T
     except Exception:
         pass
     
     try:
-        data.te = hdr.sequenceParameters.TE[0]
+        if hdr.acquisitionSystemInformation.relativeReceiverNoiseBandwidth is not None:
+            data.relative_receiver_noise_bandwidth = hdr.acquisitionSystemInformation.relativeReceiverNoiseBandwidth
     except Exception:
         pass
     
     try:
-        data.ti = hdr.sequenceParameters.TI[0]
+        if hdr.acquisitionSystemInformation.receiverChannels is not None:
+            data.number_of_channels = hdr.acquisitionSystemInformation.receiverChannels
     except Exception:
         pass
     
     try:
-        data.flip_angle = hdr.sequenceParameters.flipAngle_deg[0]
+        if hdr.acquisitionSystemInformation.coilLabel[0].coilName is not None:
+            data.coil_name = hdr.acquisitionSystemInformation.coilLabel[0].coilName
     except Exception:
         pass
-
+    
     try:
-        data.trajectory = hdr.encoding[0].trajectory
+        if hdr.acquisitionSystemInformation.institutionName is not None:
+            data.institution_name = hdr.acquisitionSystemInformation.institutionName
+    except Exception:
+        pass
+    
+    try:
+        if hdr.acquisitionSystemInformation.stationName is not None:
+            data.station_name = hdr.acquisitionSystemInformation.stationName
+    except Exception:
+        pass
+    
+    try:
+        if hdr.experimentalConditions.H1reconanceFrequency_Hz is not None:
+            data.h1_resonance_frequency = hdr.experimentalConditions.H1reconanceFrequency_Hz
     except Exception:
         pass
     
@@ -252,17 +268,22 @@ def parse_ismrmrd(data):
         pass
     
     try:
-        data.resolution_x = hdr.encoding[0].encodedSpace.fieldOfView_mm.x / data.matrix_size_x
+        data.field_of_view_x = hdr.encoding[0].encodedSpace.fieldOfView_mm.x
     except Exception:
         pass
     
     try:
-        data.resolution_y = hdr.encoding[0].encodedSpace.fieldOfView_mm.y / data.matrix_size_y
+        data.field_of_view_y = hdr.encoding[0].encodedSpace.fieldOfView_mm.y
     except Exception:
         pass
     
     try:
-        data.resolution_z = hdr.encoding[0].encodedSpace.fieldOfView_mm.z / data.matrix_size_z
+        data.field_of_view_z = hdr.encoding[0].encodedSpace.fieldOfView_mm.z
+    except Exception:
+        pass
+    
+    try:
+        data.number_of_averages = hdr.encoding[0].encodingLimits.average.maximum + 1
     except Exception:
         pass
     
@@ -278,6 +299,81 @@ def parse_ismrmrd(data):
         
     try:
         data.number_of_contrasts = hdr.encoding[0].encodingLimits.contrast.maximum + 1
+    except Exception:
+        pass
+    
+    try:
+        data.number_of_phases = hdr.encoding[0].encodingLimits.phase.maximum + 1
+    except Exception:
+        pass
+        
+    try:
+        data.number_of_sets = hdr.encoding[0].encodingLimits.set.maximum + 1
+    except Exception:
+        pass
+        
+    try:
+        data.number_of_segments = hdr.encoding[0].encodingLimits.segments.maximum + 1
+    except Exception:
+        pass
+
+    try:
+        if hdr.encoding[0].trajectory is not None:
+            data.trajectory = hdr.encoding[0].trajectory
+    except Exception:
+        pass
+    
+    try:
+        if hdr.encoding[0].parallelImaging.accelerationFactor.kspace_encoding_step_1 is not None:
+            data.parallel_imaging_factor_y = hdr.encoding[0].parallelImaging.accelerationFactor.kspace_encoding_step_1
+    except Exception:
+        pass
+    
+    try:
+        if hdr.encoding[0].parallelImaging.accelerationFactor.kspace_encoding_step_2 is not None:
+            data.parallel_imaging_factor_z = hdr.encoding[0].parallelImaging.accelerationFactor.kspace_encoding_step_2
+    except Exception:
+        pass
+
+    try:
+        if hdr.encoding[0].echoTrainLength is not None:
+            data.echo_train_length = hdr.encoding[0].echoTrainLength
+    except Exception:
+        pass
+
+    try:
+        if hdr.sequenceParameters.TR[0] is not None:
+            data.tr = hdr.sequenceParameters.TR[0]
+    except Exception:
+        pass
+    
+    try:
+        if hdr.sequenceParameters.TE[0] is not None:
+            data.te = hdr.sequenceParameters.TE[0]
+    except Exception:
+        pass
+    
+    try:
+        if hdr.sequenceParameters.TI[0] is not None:
+            data.ti = hdr.sequenceParameters.TI[0]
+    except Exception:
+        pass
+    
+    try:
+        if hdr.sequenceParameters.flipAngle_deg[0] is not None:
+            data.flip_angle = hdr.sequenceParameters.flipAngle_deg[0]
+    except Exception:
+        pass
+    
+    try:
+        if hdr.sequenceParameters.sequence_type is not None:
+            data.sequence_type = hdr.sequenceParameters.sequence_type
+    except Exception:
+        pass
+    
+    try:
+        if hdr.sequenceParameters.echo_spacing[0] is not None:
+            data.echo_spacing = hdr.sequenceParameters.echo_spacing[0]
     except Exception:
         pass
         

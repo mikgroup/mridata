@@ -35,8 +35,11 @@ def save_siemens_dat_file(data, filename):
     return filename
 
 
-def save_ge_pfile(data, filename):
-    filename = 'P{}.7'.format(data.uuid)
+def save_ge_file(data, filename):
+    if os.path.splitext(filename)[-1] == '.h5':
+        filename = '{}.h5'.format(data.uuid)
+    else:
+        filename = 'P{}.7'.format(data.uuid)
     return filename
 
 
@@ -55,41 +58,61 @@ class Data(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, primary_key=True)
 
     anatomy = models.CharField(max_length=100, default='Unknown')
-    sequence_name = models.CharField(max_length=100, default='N/A')
-    trajectory = models.CharField(max_length=100, default='N/A')
     fullysampled = models.NullBooleanField()
     
-    scanner_vendor = models.CharField(max_length=100, default='N/A')
-    scanner_model = models.CharField(max_length=100, default='N/A')
-    scanner_field = models.FloatField(verbose_name='Field Strength [T]', default=-1)
+    protocol_name = models.CharField(max_length=100, default='', blank=True)
+    series_description = models.TextField(default='', blank=True)
     
+    system_vendor = models.CharField(max_length=100, default='', blank=True)
+    system_model = models.CharField(max_length=100, default='', blank=True)
+    system_field_strength = models.FloatField(verbose_name='Field Strength [T]', default=-1)
+    relative_receiver_noise_bandwidth = models.FloatField(default=-1)
+    number_of_channels = models.IntegerField(default=-1)
+    coil_name= models.CharField(max_length=100, default='', blank=True)
+    institution_name = models.CharField(max_length=100, default='', blank=True)
+    station_name = models.CharField(max_length=100, default='', blank=True)
+    
+    h1_resonance_frequency = models.FloatField(verbose_name='H1 Resonance Frequency [Hz]',
+                                               default=-1)
     matrix_size_x = models.IntegerField(default=-1)
     matrix_size_y = models.IntegerField(default=-1)
     matrix_size_z = models.IntegerField(default=-1)
-    number_of_channels = models.IntegerField(default=-1)
+    
+    field_of_view_x = models.FloatField(verbose_name='Field of View x [mm]', default=-1)
+    field_of_view_y = models.FloatField(verbose_name='Field of View y [mm]', default=-1)
+    field_of_view_z = models.FloatField(verbose_name='field of View z [mm]', default=-1)
+    
+    number_of_averages = models.IntegerField(default=-1)
     number_of_slices = models.IntegerField(default=-1)
     number_of_repetitions = models.IntegerField(default=-1)
     number_of_contrasts = models.IntegerField(default=-1)
+    number_of_phases = models.IntegerField(default=-1)
+    number_of_sets = models.IntegerField(default=-1)
+    number_of_segments = models.IntegerField(default=-1)
     
-    resolution_x = models.FloatField(verbose_name='Resolution x [mm]', default=-1)
-    resolution_y = models.FloatField(verbose_name='Resolution y [mm]', default=-1)
-    resolution_z = models.FloatField(verbose_name='Resolution z [mm]', default=-1)
+    trajectory = models.CharField(max_length=100, default='', blank=True)
+    parallel_imaging_factor_y = models.FloatField(default=-1)
+    parallel_imaging_factor_z = models.FloatField(default=-1)
+    echo_train_length = models.IntegerField(default=-1)
     
-    flip_angle = models.FloatField(verbose_name='Flip Angle [degree]', default=-1)
-    te = models.FloatField(verbose_name='Echo Time [ms]', default=-1)
     tr = models.FloatField(verbose_name='Repetition Time [ms]', default=-1)
+    te = models.FloatField(verbose_name='Echo Time [ms]', default=-1)
     ti = models.FloatField(verbose_name='Inversion Time [ms]', default=-1)
+    flip_angle = models.FloatField(verbose_name='Flip Angle [degree]', default=-1)
+    sequence_type = models.CharField(max_length=100, default='', blank=True)
+    echo_spacing = models.FloatField(verbose_name='Echo Spacing [ms]', default=-1)
     
     references = models.TextField(blank=True, default='')
     comments = models.TextField(blank=True, default='')
-    
-    ismrmrd_file = models.FileField(upload_to=save_ismrmrd_file,
-                                    verbose_name='ISMRMRD File')
 
     thumbnail_file = models.ImageField()
     thumbnail_horizontal_flip = models.BooleanField(default=False)
     thumbnail_vertical_flip = models.BooleanField(default=False)
     thumbnail_rotate_90_degree = models.BooleanField(default=False)
+    
+    ismrmrd_file = models.FileField(upload_to=save_ismrmrd_file,
+                                    verbose_name='ISMRMRD File')
+    
     upload_date = models.DateTimeField(default=timezone.now)
     uploader = models.ForeignKey(Uploader, on_delete=models.CASCADE)
 
@@ -145,12 +168,12 @@ class SiemensData(TempData):
         
 class GeData(TempData):
 
-    ge_pfile = models.FileField(upload_to=save_ge_pfile,
-                                storage=temp_storage)
+    ge_file = models.FileField(upload_to=save_ge_file,
+                               storage=temp_storage)
 
     def delete(self, *args, **kwargs):
 
-        self.ge_pfile.delete()
+        self.ge_file.delete()
         super().delete(*args, **kwargs)
 
         

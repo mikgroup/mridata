@@ -9,31 +9,61 @@ class DataForm(forms.ModelForm):
         model = Data
         fields = ('anatomy',
                   'fullysampled',
-                  'sequence_name',
-                  'trajectory',
+                  
+                  'protocol_name',
+                  'series_description',
+                  
+                  'system_vendor',
+                  'system_model',
+                  'system_field_strength',
+                  'relative_receiver_noise_bandwidth',
+                  'number_of_channels',
+                  'coil_name',
+                  'institution_name',
+                  'station_name',
+                  
+                  'h1_resonance_frequency',
+                  
                   'matrix_size_x',
                   'matrix_size_y',
                   'matrix_size_z',
-                  'number_of_channels',
+                  
+                  'field_of_view_x',
+                  'field_of_view_y',
+                  'field_of_view_z',
+                  
+                  'number_of_averages',
                   'number_of_slices',
                   'number_of_repetitions',
                   'number_of_contrasts',
-                  'resolution_x',
-                  'resolution_y',
-                  'resolution_z',
-                  'flip_angle',
-                  'te',
+                  'number_of_phases',
+                  'number_of_sets',
+                  'number_of_segments',
+                  
+                  'trajectory',
+                  'parallel_imaging_factor_y',
+                  'parallel_imaging_factor_z',
+                  'echo_train_length',
+                  
                   'tr',
+                  'te',
                   'ti',
+                  'flip_angle',
+                  'sequence_type',
+                  'echo_spacing',
+                  
                   'references',
                   'comments',
+                  
                   'thumbnail_file',
                   'thumbnail_horizontal_flip',
                   'thumbnail_vertical_flip',
                   'thumbnail_rotate_90_degree',
+                  
                   'ismrmrd_file',
         )
         widgets = {
+            'series_description': forms.Textarea(attrs={'rows':3, 'cols':30}),
             'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
             'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
         }
@@ -67,7 +97,7 @@ class PhilipsDataForm(forms.ModelForm):
 
 class GeDataForm(forms.ModelForm):
     
-    ge_pfile = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    ge_file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
     class Meta:
         model = GeData
@@ -76,7 +106,7 @@ class GeDataForm(forms.ModelForm):
             'fullysampled',
             'references',
             'comments',
-            'ge_pfile',
+            'ge_file',
             'thumbnail_horizontal_flip',
             'thumbnail_vertical_flip',
             'thumbnail_rotate_90_degree',
