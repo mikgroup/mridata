@@ -7,12 +7,19 @@ ENV SDKTOP /orchestra-sdk-1.6-1
 ENV LD_LIBRARY_PATH /usr/local/lib
 ENV HDF5_DISABLE_VERSION_CHECK 2
 
-ADD build_scripts build_scripts
-
+ADD build_scripts/build_ismrmrd.sh build_scripts/build_ismrmrd.sh
 RUN bash build_scripts/build_ismrmrd.sh
+
+ADD build_scripts/build_siemens.sh build_scripts/build_siemens.sh
 RUN bash build_scripts/build_siemens.sh
+
+ADD build_scripts/build_philips.sh build_scripts/build_philips.sh
 RUN bash build_scripts/build_philips.sh
+
+ADD build_scripts/build_ge.sh build_scripts/build_ge.sh
 RUN bash build_scripts/build_ge.sh
+
+ADD build_scripts/build_python.sh build_scripts/build_python.sh
 RUN bash build_scripts/build_python.sh
 
 ADD start_worker.sh start_worker.sh

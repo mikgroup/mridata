@@ -20,9 +20,9 @@ apt-get update \
 	       sudo
 
 git clone https://github.com/ismrmrd/ismrmrd.git
-cd ismrmrd && \
-    mkdir build && \
-    cd build && \
-    cmake .. && \
-    make && \
-    sudo make install
+cd ismrmrd
+mkdir build
+cd build
+cmake ..
+make
+sudo make install

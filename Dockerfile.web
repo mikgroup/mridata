@@ -2,7 +2,7 @@ FROM python
 
 MAINTAINER Frank Ong <frankong@berkeley.edu>
 
-ADD build_scripts build_scripts
+ADD build_scripts/build_python.sh build_scripts/build_python.sh
 
 RUN bash build_scripts/build_python.sh
 
