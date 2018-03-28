@@ -63,9 +63,9 @@ class DataForm(forms.ModelForm):
                   'ismrmrd_file',
         )
         widgets = {
-            'series_description': forms.Textarea(attrs={'rows':3, 'cols':30}),
-            'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
-            'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
+            'series_description': forms.Textarea(attrs={'rows':3, 'cols':50}),
+            'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
+            'comments': forms.Textarea(attrs={'rows':3, 'cols':50}),
         }
         
 
@@ -90,8 +90,8 @@ class PhilipsDataForm(forms.ModelForm):
             'thumbnail_rotate_90_degree',
         )
         widgets = {
-            'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
-            'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
+            'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
+            'comments': forms.Textarea(attrs={'rows':3, 'cols':50}),
         }
 
 
@@ -112,8 +112,8 @@ class GeDataForm(forms.ModelForm):
             'thumbnail_rotate_90_degree',
         ]
         widgets = {
-            'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
-            'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
+            'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
+            'comments': forms.Textarea(attrs={'rows':3, 'cols':50}),
         }
 
 
@@ -134,8 +134,8 @@ class SiemensDataForm(forms.ModelForm):
             'thumbnail_rotate_90_degree',
         )
         widgets = {
-            'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
-            'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
+            'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
+            'comments': forms.Textarea(attrs={'rows':3, 'cols':50}),
         }
 
         
@@ -156,6 +156,6 @@ class IsmrmrdDataForm(forms.ModelForm):
             'thumbnail_rotate_90_degree',
         )
         widgets = {
-            'references': forms.Textarea(attrs={'rows':3, 'cols':30}),
-            'comments': forms.Textarea(attrs={'rows':3, 'cols':30}),
+            'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
+            'comments': forms.Textarea(attrs={'rows':3, 'cols':50}),
         }
