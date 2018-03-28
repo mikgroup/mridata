@@ -1,7 +1,6 @@
 # db
 *.sqlite3
 *.rdb
-media
 
 # Mac
 .DS_Store
@@ -113,7 +112,6 @@ ENV/
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 P*.7
-temp
 
 eb_*
 README_aws.md
