@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import urllib
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -191,7 +192,8 @@ else:
 
 # Celery
 if USE_AWS:
-    BROKER_URL = "sqs://%s:%s@" % (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+    BROKER_URL = 'sqs://%s:%s@' % (urllib.quote(AWS_ACCESS_KEY_ID, safe=''),
+                                   urllib.quote(AWS_SECRET_ACCESS_KEY, safe=''))
     BROKER_TRANSPORT = 'sqs'
     BROKER_TRANSPORT_OPTIONS = {
         'region': 'us-west-2',
