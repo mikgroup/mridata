@@ -11,10 +11,9 @@
 
 <div class="col text-center">
   <div class="card container">
-    <form method="POST" class="data-form data-form-default" enctype="multipart/form-data">
+    <form method="POST" class="form" enctype="multipart/form-data">
       {% csrf_token %}
       <table class="table">
-	
 	<tr>
 	  <th>
 	    Anatomy:
@@ -95,4 +94,13 @@
 
 {% block js_block %}
 <script type="text/javascript" src="{% static 'js/upload.js' %}"></script>
+<script src="{% static 'js/bootstrap-filestyle.min.js' %}"></script>
+<script src="{% static 'js/bootstrap-uploadprogress.js' %}"></script>
+
+<script>
+  $(":file").filestyle({btnClass: "btn-primary"});
+  $("form").uploadprogress({
+    redirect_url: "/"
+  });
+</script>
 {% endblock %}
