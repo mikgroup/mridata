@@ -166,25 +166,6 @@ def temp_data_delete(request, uuid):
     temp_data = get_object_or_404(TempData, uuid=uuid)
     
     if request.user == temp_data.uploader.user:
-        try:
-            temp_data.siemens_dat_file.delete()
-        except:
-            pass
-        try:
-            temp_data.ge_file.delete()
-        except:
-            pass
-        try:
-            temp_data.philips_lab_file.delete()
-            temp_data.philips_sin_file.delete()
-            temp_data.philips_raw_file.delete()
-        except:
-            pass
-        try:
-            temp_data.ismrmrd_file.delete()
-        except:
-            pass
-            
         temp_data.delete()
     return redirect("data_list")
 

@@ -5,7 +5,6 @@ from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
-from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -38,7 +37,7 @@ def save_siemens_dat_file(data, filename):
 
 def save_ge_file(data, filename):
     if os.path.splitext(filename)[-1] == '.h5':
-        filename = '{}.h5'.format(data.uuid)
+        filename = '{}_archive.h5'.format(data.uuid)
     else:
         filename = 'P{}.7'.format(data.uuid)
     return filename
@@ -117,9 +116,6 @@ class Data(models.Model):
     upload_date = models.DateTimeField(default=timezone.now)
     uploader = models.ForeignKey(Uploader, on_delete=models.CASCADE)
 
-    
-temp_storage = FileSystemStorage(location=settings.TEMP_ROOT, base_url=settings.TEMP_URL)
-
 
 class TempData(models.Model):
 
@@ -142,12 +138,9 @@ class TempData(models.Model):
 
 class PhilipsData(TempData):
     
-    philips_raw_file = models.FileField(upload_to=save_philips_raw_file,
-                                        storage=temp_storage)
-    philips_sin_file = models.FileField(upload_to=save_philips_sin_file,
-                                        storage=temp_storage)
-    philips_lab_file = models.FileField(upload_to=save_philips_lab_file,
-                                        storage=temp_storage)
+    philips_raw_file = models.FileField(upload_to=save_philips_raw_file)
+    philips_sin_file = models.FileField(upload_to=save_philips_sin_file)
+    philips_lab_file = models.FileField(upload_to=save_philips_lab_file)
 
     def delete(self, *args, **kwargs):
 
@@ -158,8 +151,7 @@ class PhilipsData(TempData):
 
 class SiemensData(TempData):
     
-    siemens_dat_file = models.FileField(upload_to=save_siemens_dat_file,
-                                        storage=temp_storage)
+    siemens_dat_file = models.FileField(upload_to=save_siemens_dat_file)
 
     def delete(self, *args, **kwargs):
 
@@ -169,8 +161,7 @@ class SiemensData(TempData):
         
 class GeData(TempData):
 
-    ge_file = models.FileField(upload_to=save_ge_file,
-                               storage=temp_storage)
+    ge_file = models.FileField(upload_to=save_ge_file)
 
     def delete(self, *args, **kwargs):
 
@@ -180,8 +171,7 @@ class GeData(TempData):
         
 class IsmrmrdData(TempData):
     
-    ismrmrd_file = models.FileField(upload_to=save_ismrmrd_file,
-                                    storage=temp_storage)
+    ismrmrd_file = models.FileField(upload_to=save_ismrmrd_file)
 
     def delete(self, *args, **kwargs):
 

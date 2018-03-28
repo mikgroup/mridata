@@ -48,20 +48,20 @@ def process_temp_data(dtype, uuid):
         convert_temp_data_to_data(temp_data, dtype, data)
         parse_ismrmrd(data)
     except Exception as e:
-        raise_temp_data_error(temp_data, traceback.format_exc())
+        raise_temp_data_error(temp_data, dtype, traceback.format_exc())
         set_uploader_refresh(uploader)
         raise e
 
     try:
         create_thumbnail(data)
-        move_to_media(data.thumbnail_file.name)
+        upload_to_media(data.thumbnail_file.name)
     except Exception as e:
         pass
 
     try:
-        move_to_media(data.ismrmrd_file.name)
+        upload_to_media(data.ismrmrd_file.name)
     except Exception as e:
-        raise_temp_data_error(temp_data, traceback.format_exc())
+        raise_temp_data_error(temp_data, dtype, traceback.format_exc())
         set_uploader_refresh(uploader)
         raise e
 
@@ -71,11 +71,13 @@ def process_temp_data(dtype, uuid):
 
 
 def convert_ge_data(uuid):
-    ismrmrd_file = os.path.join(settings.TEMP_ROOT, '{}.h5'.format(uuid))
-    ge_file = os.path.join(settings.TEMP_ROOT, 'P{}.7'.format(uuid))
-
-    if not os.path.exists(ge_file):
-        raise IOError('{} does not exists.'.format(ge_file))
+    ismrmrd_file = '{}.h5'.format(uuid)
+    try:
+        ge_file = 'P{}.7'.format(uuid)
+        download_from_media(ge_file)
+    except Exception:
+        ge_file = '{}_archive.h5'.format(uuid)
+        download_from_media(ge_file)
     
     logger.info('Converting GeData to ISMRMRD')
     subprocess.check_output(['ge_to_ismrmrd',
@@ -84,13 +86,14 @@ def convert_ge_data(uuid):
                              ge_file])
     logger.info('Conversion SUCCESS')
 
+    os.remove(ge_file)
+
 
 def convert_siemens_data(uuid):
-    ismrmrd_file = os.path.join(settings.TEMP_ROOT, '{}.h5'.format(uuid))
-    siemens_dat_file = os.path.join(settings.TEMP_ROOT, '{}.dat'.format(uuid))
+    ismrmrd_file = '{}.h5'.format(uuid)
+    siemens_dat_file = '{}.dat'.format(uuid)
     
-    if not os.path.exists(siemens_dat_file):
-        raise IOError('{} does not exists.'.format(siemens_dat_file))
+    download_from_media(siemens_dat_file)
 
     # Get last measurement number
     stdout = subprocess.run(['siemens_to_ismrmrd', '-f', siemens_dat_file,
@@ -106,19 +109,30 @@ def convert_siemens_data(uuid):
                              '-o', ismrmrd_file, '-z', meas_num])
     logger.info('Conversion SUCCESS')
 
+    os.remove(siemens_dat_file)
 
 def convert_philips_data(uuid):
     
-    philips_basename = os.path.join(settings.TEMP_ROOT, str(uuid))
+    philips_lab_file = '{}.lab'.format(uuid)
+    philips_sin_file = '{}.sin'.format(uuid)
+    philips_raw_file = '{}.raw'.format(uuid)
     schema_file = os.path.join(settings.STATICFILES_DIRS[0], 'schema', 'ismrmrd_philips.xsl')
-    ismrmrd_file = os.path.join(settings.TEMP_ROOT, '{}.h5'.format(uuid))
+    ismrmrd_file = '{}.h5'.format(uuid)
+    
+    download_from_media(philips_lab_file)
+    download_from_media(philips_sin_file)
+    download_from_media(philips_raw_file)
     
     logger.info('Converting PhilipsData to ISMRMRD')
     subprocess.check_output(['philips_to_ismrmrd',
-                             '-f', philips_basename,
+                             '-f', str(uuid),
                              '-x', schema_file,
                              '-o', ismrmrd_file])
     logger.info('Conversion SUCCESS')
+    
+    os.remove(philips_lab_file)
+    os.remove(philips_sin_file)
+    os.remove(philips_raw_file)
 
 
 def convert_temp_data_to_data(temp_data, dtype, data):
@@ -150,41 +164,72 @@ def set_uploader_refresh(uploader):
     uploader.save()
 
     
-def raise_temp_data_error(temp_data, error_message):
+def raise_temp_data_error(temp_data, dtype, error_message):
     
     temp_data.failed = True
     temp_data.error_message = error_message
     temp_data.save()
+
+    if dtype == GeData:
+        if os.path.exists('P{}.7'.format(temp_data.uuid)):
+            os.remove('P{}.7'.format(temp_data.uuid))
+        if os.path.exists('{}_archive.h5'.format(temp_data.uuid)):
+            os.remove('{}_archive.h5'.format(temp_data.uuid))
+    elif dtype == SiemensData:
+        if os.path.exists('{}.dat'.format(temp_data.uuid)):
+            os.remove('{}.dat'.format(temp_data.uuid))
+    elif dtype == PhilipsData:
+        if os.path.exists('{}.lab'.format(temp_data.uuid)):
+            os.remove('{}.lab'.format(temp_data.uuid))
+        if os.path.exists('{}.sin'.format(temp_data.uuid)):
+            os.remove('{}.sin'.format(temp_data.uuid))
+        if os.path.exists('{}.raw'.format(temp_data.uuid)):
+            os.remove('{}.raw'.format(temp_data.uuid))
+            
+    if os.path.exists('{}.h5'.format(temp_data.uuid)):
+        os.remove('{}.h5'.format(temp_data.uuid))        
+            
     
-    
-def move_to_media(fname):
-    
-    local_file = os.path.join(settings.TEMP_ROOT, fname)
-    if not os.path.exists(local_file):
-        raise IOError('{} does not exists.'.format(local_file))
+def download_from_media(file):
 
     if settings.USE_AWS:
         s3 = boto3.resource('s3')
         bucket = s3.Bucket(settings.AWS_STORAGE_BUCKET_NAME)
 
-        media_file = os.path.join(settings.AWS_MEDIA_LOCATION, fname)
-        bucket.upload_file(local_file, media_file, ExtraArgs={'ACL': 'public-read'})
-        os.remove(local_file)
+        bucket.download_file(file, file)
+        bucket.delete_object(file)
     else:
-        media_file = os.path.join(settings.MEDIA_ROOT, fname)
-        shutil.move(local_file, media_file)
+        media_file = os.path.join(settings.MEDIA_ROOT, file)
+        shutil.move(media_file, file)
+    
+    
+def upload_to_media(file):
+    
+    if not os.path.exists(file):
+        raise IOError('{} does not exists.'.format(file))
+
+    if settings.USE_AWS:
+        s3 = boto3.resource('s3')
+        bucket = s3.Bucket(settings.AWS_STORAGE_BUCKET_NAME)
+
+        media_file = os.path.join(settings.AWS_MEDIA_LOCATION, file)
+        bucket.upload_file(file, media_file, ExtraArgs={'ACL': 'public-read'})
+        os.remove(file)
+    else:
+        media_file = os.path.join(settings.MEDIA_ROOT, file)
+        shutil.move(file, media_file)
 
         
 def parse_ismrmrd(data):
     
-    local_ismrmrd_file = os.path.join(settings.TEMP_ROOT, data.ismrmrd_file.name)
+    ismrmrd_file = data.ismrmrd_file.name
     
-    if not os.path.exists(local_ismrmrd_file):
-        raise IOError('{} does not exists.'.format(local_ismrmrd_file))
+    if not os.path.exists(ismrmrd_file):
+        raise IOError('{} does not exists.'.format(ismrmrd_file))
 
     logger.info('Parsing ISMRMRD...')
 
-    dset = ismrmrd.Dataset(local_ismrmrd_file, 'dataset', create_if_needed=False)
+    dset = ismrmrd.Dataset(ismrmrd_file, 'dataset', create_if_needed=False)
     hdr = ismrmrd.xsd.CreateFromDocument(dset.read_xml_header())
 
     try:
@@ -394,11 +439,11 @@ def create_thumbnail(data):
     https://github.com/ismrmrd/ismrmrd-python-tools/blob/master/recon_ismrmrd_dataset.py
     '''
 
-    local_ismrmrd_file = os.path.join(settings.TEMP_ROOT, data.ismrmrd_file.name)
-    if not os.path.exists(local_ismrmrd_file):
-        raise IOError('{} does not exists.'.format(local_ismrmrd_file))
+    ismrmrd_file = data.ismrmrd_file.name
+    if not os.path.exists(ismrmrd_file):
+        raise IOError('{} does not exists.'.format(ismrmrd_file))
 
-    dset = ismrmrd.Dataset(local_ismrmrd_file, 'dataset', create_if_needed=False)
+    dset = ismrmrd.Dataset(ismrmrd_file, 'dataset', create_if_needed=False)
     logger.info('Creating thumbnail...')
     
     header = ismrmrd.xsd.CreateFromDocument(dset.read_xml_header())
@@ -452,7 +497,7 @@ def create_thumbnail(data):
     # Save
     thumbnail_file = '{}.png'.format(data.uuid)
     pil = Image.fromarray(thumbnail)
-    pil.save(os.path.join(settings.TEMP_ROOT, thumbnail_file))
+    pil.save(thumbnail_file)
 
     logger.info('Thumbnail creation SUCCESS')
     data.thumbnail_file = thumbnail_file

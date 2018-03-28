@@ -161,14 +161,6 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
 
-# Temp
-
-TEMP_URL = '/temp/'
-if 'TEMP_ROOT' in os.environ:
-    TEMP_ROOT = os.environ['TEMP_ROOT']
-else:
-    TEMP_ROOT = os.path.join(BASE_DIR, 'temp')
-
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # STATIC and MEDIA
