@@ -2,6 +2,7 @@ from celery.decorators import task
 from celery.utils.log import get_task_logger
 
 import os
+import shutil
 import traceback
 import ismrmrd
 import subprocess
@@ -171,7 +172,7 @@ def move_to_media(fname):
         os.remove(local_file)
     else:
         media_file = os.path.join(settings.MEDIA_ROOT, fname)
-        os.rename(local_file, media_file)
+        shutil.move(local_file, media_file)
 
         
 def parse_ismrmrd(data):

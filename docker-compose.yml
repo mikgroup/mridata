@@ -21,8 +21,12 @@ services:
       - redis
     environment:
       - DEBUG=1
+      - MEDIA_ROOT=/media
+      - TEMP_ROOT=/temp
     volumes:
       - ./src:/src
+      - ./media:/media
+      - ./temp:/temp
   web:
     container_name: mridata_web
     build:
@@ -39,5 +43,9 @@ services:
       - db
     environment:
       - DEBUG=1
+      - MEDIA_ROOT=/media
+      - TEMP_ROOT=/temp
     volumes:
       - ./src:/src
+      - ./media:/media
+      - ./temp:/temp

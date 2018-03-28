@@ -160,10 +160,12 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'America/Los_Angeles'
 
-TEMP_ROOT = os.path.join(BASE_DIR, 'temp')
 TEMP_URL = '/temp/'
+if 'TEMP_ROOT' in os.environ:
+    TEMP_ROOT = os.environ['TEMP_ROOT']
+else:
+    TEMP_ROOT = os.path.join(BASE_DIR, 'temp')
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # AWS
 if 'AWS_ACCESS_KEY_ID' in os.environ:
@@ -192,3 +194,7 @@ else:
 
     # Media
     MEDIA_URL = '/media/'
+    if 'MEDIA_ROOT' in os.environ:
+        MEDIA_ROOT = os.environ['MEDIA_ROOT']
+    else:
+        MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
