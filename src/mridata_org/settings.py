@@ -142,6 +142,15 @@ USE_L10N = True
 
 USE_TZ = True
 
+# AWS
+if 'AWS_ACCESS_KEY_ID' in os.environ:
+    USE_AWS = True
+    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+    AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+else:
+    USE_AWS = False
+
 
 # Registration
 
@@ -152,13 +161,7 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
 
-# CELERY
-BROKER_URL = 'redis://redis:6379'
-CELERY_RESULT_BACKEND = 'redis://redis:6379'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'America/Los_Angeles'
+# Temp
 
 TEMP_URL = '/temp/'
 if 'TEMP_ROOT' in os.environ:
@@ -167,19 +170,15 @@ else:
     TEMP_ROOT = os.path.join(BASE_DIR, 'temp')
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-# AWS
-if 'AWS_ACCESS_KEY_ID' in os.environ:
-    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-    AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
-    
+
+# STATIC and MEDIA
+if USE_AWS:
     AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
     AWS_S3_OBJECT_PARAMETERS = {
         'CacheControl': 'max-age=86400',
     }
     AWS_STATIC_LOCATION = 'static'
     AWS_MEDIA_LOCATION = 'media'
-    USE_AWS = True
 
     # Static files (CSS, JavaScript, Images)
     STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_STATIC_LOCATION)
@@ -190,7 +189,6 @@ if 'AWS_ACCESS_KEY_ID' in os.environ:
 else:
     # Static files (CSS, JavaScript, Images)
     STATIC_URL = '/static/'
-    USE_AWS = False
 
     # Media
     MEDIA_URL = '/media/'
@@ -198,3 +196,22 @@ else:
         MEDIA_ROOT = os.environ['MEDIA_ROOT']
     else:
         MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Celery
+if USE_AWS:
+    BROKER_URL = "sqs://%s:%s@" % (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+    BROKER_TRANSPORT = 'sqs'
+    BROKER_TRANSPORT_OPTIONS = {
+        'region': 'us-west-2',
+    }
+    BROKER_USER = AWS_ACCESS_KEY_ID
+    BROKER_PASSWORD = AWS_SECRET_ACCESS_KEY
+    CELERY_RESULT_BACKEND = None
+else:
+    BROKER_URL = 'redis://redis:6379'
+    CELERY_RESULT_BACKEND = 'redis://redis:6379'
+    
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'America/Los_Angeles'
