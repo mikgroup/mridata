@@ -20,28 +20,28 @@
 <table class="table table-striped" style="width:100%" align="center">
   
   <tr>
-    <th>Protocol Name</th>
+    <th width="30%">Protocol Name</th>
     <td>{{ data.protocol_name }}</td> 
   </tr>
   
   <tr>
-    <th>Series Description</th>
+    <th width="30%">Series Description</th>
     <td>{{ data.protocol_name }}</td> 
   </tr>
   
   <tr>
-    <th>System Vendor</th>
+    <th width="30%">System Vendor</th>
     <td>{{ data.system_vendor }}</td> 
   </tr>
   
   <tr>
-    <th>System Model</th>
+    <th width="30%">System Model</th>
     <td>{{ data.system_model }}</td> 
   </tr>
   
   {% if data.system_field_strength != -1 %}
   <tr>
-    <th>System Field Strength</th>
+    <th width="30%">System Field Strength</th>
     <td>
       {{ data.system_field_strength }} T
     </td> 
@@ -50,7 +50,7 @@
   
   {% if data.relative_receiver_noise_bandwidth != -1 %}
   <tr>
-    <th>Relative Receiver Noise Bandwidth</th>
+    <th width="30%">Relative Receiver Noise Bandwidth</th>
     <td>
       {{ data.relative_receiver_noise_bandwidth }}
     </td> 
@@ -59,7 +59,7 @@
   
   {% if data.number_of_channels != -1 %}
   <tr>
-    <th>Number of Channels</th>
+    <th width="30%">Number of Channels</th>
     <td>
       {{ data.number_of_channels }}
     </td> 
@@ -68,7 +68,7 @@
   
   {% if data.coil_name != '' %}
   <tr>
-    <th>Coil Name</th>
+    <th width="30%">Coil Name</th>
     <td>
       {{ data.coil_name }}
     </td> 
@@ -77,7 +77,7 @@
   
   {% if data.institution_name != '' %}
   <tr>
-    <th>Institution Name</th>
+    <th width="30%">Institution Name</th>
     <td>
       {{ data.institution_name }}
     </td> 
@@ -86,7 +86,7 @@
   
   {% if data.station_name != '' %}
   <tr>
-    <th>Station Name</th>
+    <th width="30%">Station Name</th>
     <td>
       {{ data.station_name }}
     </td> 
@@ -95,7 +95,7 @@
   
   {% if data.h1_resonance_frequency != -1 %}
   <tr>
-    <th>H1 Resonance Frequency</th>
+    <th width="30%">H1 Resonance Frequency</th>
     <td>
       {{ data.h1_resonance_frequency }} Hz
     </td> 
@@ -103,14 +103,14 @@
   {% endif %}
   
   <tr>
-    <th>Matrix Size</th>
+    <th width="30%">Matrix Size</th>
     <td>
       {{data.matrix_size_x}} x {{data.matrix_size_y}} x {{data.matrix_size_z}}
     </td> 
   </tr>
   
   <tr>
-    <th>Field Of View</th>
+    <th width="30%">Field Of View</th>
     <td>
       {{data.field_of_view_x|floatformat}} mm x {{data.field_of_view_y|floatformat}} mm x {{data.field_of_view_z|floatformat}} mm
     </td> 
@@ -118,7 +118,7 @@
   
   {% if data.number_of_averages != -1 %}
   <tr>
-    <th>Number of Averages</th>
+    <th width="30%">Number of Averages</th>
     <td>
       {{ data.number_of_averages }}
     </td> 
@@ -127,7 +127,7 @@
   
   {% if data.number_of_slices != -1 %}
   <tr>
-    <th>Number of Slices</th>
+    <th width="30%">Number of Slices</th>
     <td>
       {{ data.number_of_slices }}
     </td> 
@@ -136,7 +136,7 @@
   
   {% if data.number_of_phases != -1 %}
   <tr>
-    <th>Number of Phases</th>
+    <th width="30%">Number of Phases</th>
     <td>
       {{ data.number_of_phases }}
     </td> 
@@ -145,7 +145,7 @@
   
   {% if data.number_of_repetitions != -1 %}
   <tr>
-    <th>Number of Repetition</th>
+    <th width="30%">Number of Repetition</th>
     <td>
       {{ data.number_of_repetitions }}
     </td> 
@@ -154,7 +154,7 @@
   
   {% if data.number_of_contrasts != -1 %}
   <tr>
-    <th>Number of Contrasts</th>
+    <th width="30%">Number of Contrasts</th>
     <td>
       {{ data.number_of_contrasts }}
     </td> 
@@ -163,7 +163,7 @@
   
   {% if data.number_of_sets != -1 %}
   <tr>
-    <th>Number of Sets</th>
+    <th width="30%">Number of Sets</th>
     <td>
       {{ data.number_of_sets }}
     </td> 
@@ -172,7 +172,7 @@
   
   {% if data.number_of_segments != -1 %}
   <tr>
-    <th>Number of Segments</th>
+    <th width="30%">Number of Segments</th>
     <td>
       {{ data.number_of_segments }}
     </td> 
@@ -180,20 +180,20 @@
   {% endif %}
   
   <tr>
-    <th>Trajectory</th>
+    <th width="30%">Trajectory</th>
     <td>{{ data.trajectory }}</td> 
   </tr>
   
   {% if data.parallel_imaging_factor_y != -1 and data.parallel_imaging_factor_z != -1 %}
   <tr>
-    <th>Parallel Imaging Factor</th>
+    <th width="30%">Parallel Imaging Factor</th>
     <td>{{ data.parallel_imaging_factor_y }} x {{ data.parallel_imaging_factor_z }}</td> 
   </tr>
   {% endif %}
   
   {% if data.echo_train_length != -1 %}
   <tr>
-    <th>Echo Train Length</th>
+    <th width="30%">Echo Train Length</th>
     <td>
       {{ data.echo_train_length }}
     </td> 
@@ -202,7 +202,7 @@
   
   {% if data.tr != -1 %}
   <tr>
-    <th>Repetition Time</th>
+    <th width="30%">Repetition Time</th>
     <td>
       {{ data.tr|floatformat }} ms
     </td>
@@ -211,7 +211,7 @@
   
   {% if data.te != -1 %}
   <tr>
-    <th>Echo Time</th>
+    <th width="30%">Echo Time</th>
     <td>
       {{ data.te|floatformat }} ms
     </td>
@@ -220,7 +220,7 @@
 
   {% if data.ti != -1 %}
   <tr>
-    <th>Inversion Time</th>
+    <th width="30%">Inversion Time</th>
     <td>
       {{ data.ti|floatformat }} ms
     </td>
@@ -229,7 +229,7 @@
   
   {% if data.flip_angle != -1 %}
   <tr>
-    <th>Flip Angle</th>
+    <th width="30%">Flip Angle</th>
     <td>
       {{ data.flip_angle|floatformat }} &deg;
     </td>
@@ -238,7 +238,7 @@
   
   {% if data.sequence_type != '' %}
   <tr>
-    <th>Sequence Type</th>
+    <th width="30%">Sequence Type</th>
     <td>
       {{ data.sequence_type }}
     </td> 
@@ -247,7 +247,7 @@
   
   {% if data.echo_spacing != -1 %}
   <tr>
-    <th>Echo Spacing</th>
+    <th width="30%">Echo Spacing</th>
     <td>
       {{ data.echo_spacing }} ms
     </td>
@@ -256,7 +256,7 @@
   
   {% if data.references != '' %}
   <tr>
-    <th>References</th>
+    <th width="30%">References</th>
     <td>
       {{ data.references }}
     </td>
@@ -265,7 +265,7 @@
   
   {% if data.comments != '' %}
   <tr>
-    <th>Comments</th>
+    <th width="30%">Comments</th>
     <td>
       {{ data.comments }}
     </td>
@@ -273,12 +273,12 @@
   {% endif %}
   
   <tr>
-    <th>UUID</th>
+    <th width="30%">UUID</th>
     <td>{{ data.uuid }}</td> 
   </tr>
   
   <tr>
-    <th>Upload Date</th>
+    <th width="30%">Upload Date</th>
     <td>{{ data.upload_date }}</td> 
   </tr>
   
