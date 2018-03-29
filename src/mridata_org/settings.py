@@ -175,10 +175,11 @@ if USE_AWS:
 
     # Static files (CSS, JavaScript, Images)
     STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_STATIC_LOCATION)
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STATICFILES_STORAGE = 'mridata_org.storage_backends.StaticStorage'
 
     # Media
     MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_MEDIA_LOCATION)
+    DEFAULT_FILE_STORAGE = 'mridata_org.storage_backends.MediaStorage'
 else:
     # Static files (CSS, JavaScript, Images)
     STATIC_URL = '/static/'
