@@ -31,7 +31,7 @@ else:
 if 'DEBUG' in os.environ:
     DEBUG = os.environ['DEBUG']
 else:
-    DEBUG = True
+    DEBUG = False
 
 if DEBUG:
     ALLOWED_HOSTS = ['*']
