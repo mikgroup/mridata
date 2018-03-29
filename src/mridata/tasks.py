@@ -192,9 +192,10 @@ def download_from_media(file):
         s3 = boto3.resource('s3')
         bucket = s3.Bucket(settings.AWS_STORAGE_BUCKET_NAME)
 
-        media_file = os.path.join(settings.AWS_MEDIA_LOCATION, file)
-        bucket.download_file(media_file, file)
-        bucket.delete_objects(media_file)
+        key = os.path.join(settings.AWS_MEDIA_LOCATION, file)
+        media_file = bucket.Object(key)
+        media_file.download_file(file)
+        media_file.delete()
     else:
         media_file = os.path.join(settings.MEDIA_ROOT, file)
         shutil.move(media_file, file)
@@ -209,8 +210,9 @@ def upload_to_media(file):
         s3 = boto3.resource('s3')
         bucket = s3.Bucket(settings.AWS_STORAGE_BUCKET_NAME)
 
-        media_file = os.path.join(settings.AWS_MEDIA_LOCATION, file)
-        bucket.upload_file(file, media_file, ExtraArgs={'ACL': 'public-read'})
+        key = os.path.join(settings.AWS_MEDIA_LOCATION, file)
+        media_file = bucket.Object(key)
+        media_file.upload_file(file, ExtraArgs={'ACL': 'public-read'})
         os.remove(file)
     else:
         media_file = os.path.join(settings.MEDIA_ROOT, file)
