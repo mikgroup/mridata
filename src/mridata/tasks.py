@@ -194,7 +194,7 @@ def download_from_media(file):
 
         media_file = os.path.join(settings.AWS_MEDIA_LOCATION, file)
         bucket.download_file(media_file, file)
-        bucket.delete_object(file)
+        bucket.delete_objects(media_file)
     else:
         media_file = os.path.join(settings.MEDIA_ROOT, file)
         shutil.move(media_file, file)
