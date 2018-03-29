@@ -197,6 +197,7 @@ if USE_AWS:
     BROKER_TRANSPORT = 'sqs'
     BROKER_TRANSPORT_OPTIONS = {
         'region': 'us-west-2',
+        'port': 9324
     }
     BROKER_USER = AWS_ACCESS_KEY_ID
     BROKER_PASSWORD = AWS_SECRET_ACCESS_KEY
