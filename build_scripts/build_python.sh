@@ -11,7 +11,8 @@ pip install django \
     pyxb \
     django-el-pagination \
     django-registration-redux \
-    redis
+    redis \
+    pycurl
     
 # ISMRMRD-python
 git clone https://github.com/ismrmrd/ismrmrd-python.git
