@@ -4,8 +4,8 @@
 {% block body_block %}
 <br>
 <div class="col text-center align-middle">
-  <div class="card container alert alert-warning">
-    Please read the Terms of Service and make sure your datasets do not contain patient information before uploading!
+  <div class="container alert alert-warning text-center">
+    Please read the <a class="terms" href="#">Terms of Service</a> and make sure your datasets do not contain patient information before uploading!
   </div>
 </div>
 
@@ -93,6 +93,7 @@
 {% endblock %}
 
 {% block js_block %}
+<script type="text/javascript" src="{% static 'js/terms.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/upload.js' %}"></script>
 <script src="{% static 'js/bootstrap-filestyle.min.js' %}"></script>
 <script src="{% static 'js/bootstrap-uploadprogress.js' %}"></script>

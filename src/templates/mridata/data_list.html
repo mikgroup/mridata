@@ -8,6 +8,9 @@
   {% include "mridata/sidebar.html" %}
 
   <div class="col">
+    <div class="container alert alert-warning text-center">
+      By using this website, you are agreeing to our <a class="terms" href="#">Terms of Service</a>.
+    </div>
     {% paginate filter.qs as objects%}
     
     {% if user.is_authenticated %}
@@ -29,14 +32,17 @@
 </div>
 <br>
 <br>
-{% endblock %}
-
-{% block js_block %}
-{% if user.is_authenticated %}
-<script type="text/javascript" src="{% static 'js/data_list.js' %}"> </script>
-{% endif %}
+{% include "mridata/terms_modal.html" %}
 {% endblock %}
 
 {% block css_block %}
+<link rel="stylesheet" href="{% static 'css/terms.css' %}" type="text/css" >
 <link rel="stylesheet" href="{% static 'css/thumbnail.css' %}" type="text/css" >
+{% endblock %}
+
+{% block js_block %}
+<script type="text/javascript" src="{% static 'js/terms.js' %}"></script>
+{% if user.is_authenticated %}
+<script type="text/javascript" src="{% static 'js/data_list.js' %}"> </script>
+{% endif %}
 {% endblock %}

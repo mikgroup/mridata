@@ -1,7 +1,6 @@
 $(document).ready(function() {
     toggleCustomField();
     selectListener();
-    termsModalListener();
 });
 
 var toggleCustomField = function(){
@@ -15,16 +14,4 @@ var selectListener = function(){
     $('#default-options-select').change(function() {
 	$('#id_anatomy').val(this.value)
     })
-}
-
-var termsModalListener = function() {
-    var modal = $('.terms-modal');
-    
-    $('.terms').on("click", function(){
-	modal.removeClass("hidden")
-    });
-
-    $('.terms-modal-close').on("click", function(){
-	modal.addClass("hidden")
-    }); 
 }
