@@ -65,6 +65,7 @@ def upload_ismrmrd(request):
                 ismrmrd_data.upload_date = timezone.now()
                 ismrmrd_data.uploader = request.user.uploader
                 ismrmrd_data.save()
+                request.user.uploader.refresh = True
                 process_ismrmrd_data.apply_async(args=[ismrmrd_data.uuid],
                                                  task_id=str(ismrmrd_data.uuid))
             else:
@@ -84,6 +85,7 @@ def upload_ge(request):
                 ge_data.upload_date = timezone.now()
                 ge_data.uploader = request.user.uploader
                 ge_data.save()
+                request.user.uploader.refresh = True
                 process_ge_data.apply_async(args=[ge_data.uuid],
                                             task_id=str(ge_data.uuid))
             else:
@@ -111,6 +113,7 @@ def upload_philips(request):
                 philips_data.upload_date = timezone.now()
                 philips_data.uploader = request.user.uploader
                 philips_data.save()
+                request.user.uploader.refresh = True
                 process_philips_data.apply_async(args=[philips_data.uuid],
                                                  task_id=str(philips_data.uuid))
             else:
@@ -130,6 +133,7 @@ def upload_siemens(request):
                 siemens_data.upload_date = timezone.now()
                 siemens_data.uploader = request.user.uploader
                 siemens_data.save()
+                request.user.uploader.refresh = True
                 process_siemens_data.apply_async(args=[siemens_data.uuid],
                                                  task_id=str(siemens_data.uuid))
             else:
