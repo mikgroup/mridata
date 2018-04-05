@@ -19,6 +19,24 @@
 
 <table class="table table-striped" style="width:100%" align="center">
   
+  {% if data.references != '' %}
+  <tr>
+    <th width="30%">References</th>
+    <td class="text-justify small">
+      {{ data.references }}
+    </td>
+  </tr>
+  {% endif %}
+  
+  {% if data.comments != '' %}
+  <tr>
+    <th width="30%">Comments</th>
+    <td class="text-justify small">
+      {{ data.comments }}
+    </td>
+  </tr>
+  {% endif %}
+  
   <tr>
     <th width="30%">Protocol Name</th>
     <td>{{ data.protocol_name }}</td> 
@@ -50,7 +68,7 @@
   
   {% if data.relative_receiver_noise_bandwidth != -1 %}
   <tr>
-    <th width="30%">Relative Receiver Noise Bandwidth</th>
+    <th width="30%">Receiver Bandwidth</th>
     <td>
       {{ data.relative_receiver_noise_bandwidth }}
     </td> 
@@ -250,24 +268,6 @@
     <th width="30%">Echo Spacing</th>
     <td>
       {{ data.echo_spacing }} ms
-    </td>
-  </tr>
-  {% endif %}
-  
-  {% if data.references != '' %}
-  <tr>
-    <th width="30%">References</th>
-    <td>
-      {{ data.references }}
-    </td>
-  </tr>
-  {% endif %}
-  
-  {% if data.comments != '' %}
-  <tr>
-    <th width="30%">Comments</th>
-    <td>
-      {{ data.comments }}
     </td>
   </tr>
   {% endif %}
