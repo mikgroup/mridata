@@ -5,7 +5,7 @@
 <br>
 <div class="col text-center align-middle">
   <div class="container alert alert-warning text-center">
-    Please read the <a class="terms" href="#">Terms of Service</a> and make sure your datasets do not contain patient information before uploading!
+    Please read the <a href="{% url 'terms' %}">Terms of Service</a> and make sure your datasets do not contain patient information before uploading!
   </div>
 </div>
 
@@ -78,22 +78,16 @@
       </table>
       <div class="text-center terms-container">
 	<input type="checkbox" required>
-	<label>I agree to the <a class="terms" href="#">Terms of Service</a></label>
+	<label>I agree to the <a href="{% url 'terms' %}">Terms of Service</a></label>
       </div>
       <button type="submit" class="save btn btn-primary">Upload</button>
     </form>
     <br>
   </div>
 </div>
-{% include "mridata/terms_modal.html" %}
-{% endblock %}
-
-{% block css_block %}
-<link rel="stylesheet" href="{% static 'css/terms.css' %}" type="text/css" >
 {% endblock %}
 
 {% block js_block %}
-<script type="text/javascript" src="{% static 'js/terms.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/upload.js' %}"></script>
 <script src="{% static 'js/bootstrap-filestyle.min.js' %}"></script>
 <script src="{% static 'js/bootstrap-uploadprogress.js' %}"></script>

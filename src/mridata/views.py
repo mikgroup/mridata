@@ -22,6 +22,10 @@ def faq(request):
     return render(request, 'mridata/faq.html')
 
 
+def terms(request):
+    return render(request, 'mridata/terms.html')
+
+
 def data_list(request):
     filter = DataFilter(request.GET, Data.objects.all().order_by('-upload_date'))
 
