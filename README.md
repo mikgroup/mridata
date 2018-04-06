@@ -8,11 +8,11 @@ A local server can be set up using Docker, to test and extend features.
 
 Install Docker Community Edition for your platform:
 
-	https://docs.docker.com/engine/installation/
+https://docs.docker.com/engine/installation/
 
 Install docker-compose for your platform:
 
-	https://docs.docker.com/compose/install/#install-compose
+https://docs.docker.com/compose/install/#install-compose
 
 ## Build and run using docker-compose
 
