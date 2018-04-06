@@ -24,7 +24,7 @@ Clone the repo, go to that directory and run:
 The first time would take a long time to build.
 The website can be accessed at http://127.0.0.1:8000
 
-## Web architecture locally
+## Local web architecture
 
 Django is used for web framework and development. 
 
@@ -38,14 +38,20 @@ Each of these packages (Django, PostgresSQL, Celery, and Redis) runs in their ow
 
 ## Code structure
 
-The [src] folder contains the Django source code for the website. [src/mridata_org] contains the project code, and [src/mridata] contains code for the Django app (mridata). [src/templates] contains the HTML template code for each webpage.
+- [src](src) contains the Django source code for the website. 
+..- [src/mridata_org](src/mridata_org) is the project directory, which includes settings for celery, storages, and apps.
+..- [src/mridata](src/mridata) contains code for the mridata Django app. This is where most of the code is.
+..- [src/templates](src/templates) contains the HTML template code for each webpage.
+..- [src/static](src/static) contains logos, javascripts, and css.
 
-### mridata
+### mridata Django app.
 
-Data models, which include scan parameters and links to thumbnails and data files, are described in [src/mridata/models.py]. There are two main types of models: Data and TempData. Data is the final model for the stored ISMRMRD data. It must have the thumbnail file, and ismrmrd file populated. TempData has four sub-classes: GeData, SiemensData, PhilipsData, and IsmrmrdData.
+- [models.py](src/mridata/models.py) contains two main models. Data, which contains scan parameters and links to thumbnails and the final ISMRMD data file. And TempData, which links to the temporary uploaded data, and has four sub-classes: GeData, SiemensData, PhilipsData, and IsmrmrdData.
 
-Backend processing tasks, including ISMRMRD conversion, and thumbnail extraction, are described in [src/mridata/tasks.py].
+- [tasks.py](src/mridata/tasks.py) contains backend processing tasks, including ISMRMRD conversion, and thumbnail extraction. Failure of ISMRMRD conversion traces back to here.
 
-Filter options on the main page are described in [src/mridata/filters.py]
+- [views.py](src/mridata/views.py) contains how GET and POST requests are processed for each page.
 
-Uploading form options are described in [src/mridata/forms.py]
+- [filters.py](src/mridata/filters.py) contains filter options on the main page.
+
+- [forms.py](src/mridata/forms.py) contains upload form options.
