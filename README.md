@@ -39,10 +39,10 @@ Each of these packages (Django, PostgresSQL, Celery, and Redis) runs in their ow
 ## Code structure
 
 - [src](src) contains the Django source code for the website. 
-..- [src/mridata_org](src/mridata_org) is the project directory, which includes settings for celery, storages, and apps.
-..- [src/mridata](src/mridata) contains code for the mridata Django app. This is where most of the code is.
-..- [src/templates](src/templates) contains the HTML template code for each webpage.
-..- [src/static](src/static) contains logos, javascripts, and css.
+	- [src/mridata_org](src/mridata_org) is the project directory, which includes settings for celery, storages, and apps.
+	- [src/mridata](src/mridata) contains code for the mridata Django app. This is where most of the code is.
+	- [src/templates](src/templates) contains the HTML template code for each webpage.
+	- [src/static](src/static) contains logos, javascripts, and css.
 
 ### mridata Django app.
 
