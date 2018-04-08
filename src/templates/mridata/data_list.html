@@ -34,10 +34,6 @@
 <br>
 {% endblock %}
 
-{% block css_block %}
-<link rel="stylesheet" href="{% static 'css/thumbnail.css' %}" type="text/css" >
-{% endblock %}
-
 {% block js_block %}
 {% if user.is_authenticated %}
 <script type="text/javascript" src="{% static 'js/data_list.js' %}"> </script>
