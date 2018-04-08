@@ -9,7 +9,8 @@
   <div class="card text-center">
     <form method="POST" class="data-form" enctype="multipart/form-data">
         {% csrf_token %}
-        <table class="table table-striped" style="width:100%">
+	<br>
+        <table class="table-sm" width="100%">
   	     {{ form.as_table }}
         </table>
         <button type="submit" class="save btn btn-primary">Update</button>
