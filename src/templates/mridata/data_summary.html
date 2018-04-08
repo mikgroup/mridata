@@ -1,7 +1,7 @@
 {% load staticfiles %}
-<table class="table" align="left">
+<table class="table-sm" align="center" width="100%">
   <tr>
-    <td rowspan="3" width="30%" align="center">
+    <td rowspan="4" width="30%" align="center">
       <img src=
 	   {% if data.thumbnail_file %}
 	   "{{ data.thumbnail_file.url }}"
@@ -9,9 +9,17 @@
 	   {% static "images/default_thumbnail.png" %}
 	   {% endif %}
 	   style="max-height:128px;max-width:128px;height:auto;width:auto;"
-	   class="rounded"
-	   >
+	   class="rounded">
     </td>
+    <td align="left" class="text-dark">
+      Project Name:
+    </td>
+    <td align="left" class="text-dark">
+      {{ data.project_name }}
+    </td>
+  </tr>
+
+  <tr>
     <td align="left" class="text-dark">
       Anatomy:
     </td>
@@ -19,6 +27,7 @@
       {{ data.anatomy }}
     </td>
   </tr>
+  
   <tr>
     <td align="left" class="text-dark">
       Fullysampled:
@@ -33,6 +42,7 @@
       {% endif %}
     </td>
   </tr>
+  
   <tr>
     <td align="left" class="text-dark">
       Uploader:

@@ -7,7 +7,8 @@ class DataForm(forms.ModelForm):
 
     class Meta:
         model = Data
-        fields = ('anatomy',
+        fields = ('project_name',
+                  'anatomy',
                   'fullysampled',
                   'references',
                   'comments',
@@ -30,6 +31,7 @@ class PhilipsDataForm(forms.ModelForm):
         fields = (
             'anatomy',
             'fullysampled',
+            'project_name',
             'references',
             'comments',
             'philips_lab_file',
@@ -55,6 +57,7 @@ class GeDataForm(forms.ModelForm):
         fields = [
             'anatomy',
             'fullysampled',
+            'project_name',
             'references',
             'comments',
             'ge_file',
@@ -78,6 +81,7 @@ class SiemensDataForm(forms.ModelForm):
         fields = (
             'anatomy',
             'fullysampled',
+            'project_name',
             'references',
             'comments',
             'siemens_dat_file',
@@ -101,6 +105,7 @@ class IsmrmrdDataForm(forms.ModelForm):
         fields = (
             'anatomy',
             'fullysampled',
+            'project_name',
             'references',
             'comments',
             'ismrmrd_file',

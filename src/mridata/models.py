@@ -59,6 +59,9 @@ class Data(models.Model):
 
     anatomy = models.CharField(max_length=100, default='Unknown')
     fullysampled = models.NullBooleanField()
+    project_name = models.CharField(max_length=100, default='')
+    references = models.TextField(blank=True, default='')
+    comments = models.TextField(blank=True, default='')
     
     protocol_name = models.CharField(max_length=100, default='', blank=True)
     series_description = models.TextField(default='', blank=True)
@@ -101,9 +104,6 @@ class Data(models.Model):
     flip_angle = models.FloatField(verbose_name='Flip Angle [degree]', default=-1)
     sequence_type = models.CharField(max_length=100, default='', blank=True)
     echo_spacing = models.FloatField(verbose_name='Echo Spacing [ms]', default=-1)
-    
-    references = models.TextField(blank=True, default='')
-    comments = models.TextField(blank=True, default='')
 
     thumbnail_file = models.ImageField()
     
@@ -119,7 +119,7 @@ class TempData(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, primary_key=True)
     anatomy = models.CharField(max_length=100, default='Unknown')
     fullysampled = models.NullBooleanField()
-    
+    project_name = models.CharField(max_length=100, default='')
     references = models.TextField(blank=True, default='')
     comments = models.TextField(blank=True, default='')
     

@@ -13,7 +13,15 @@
   <div class="card container">
     <form method="POST" class="form" enctype="multipart/form-data">
       {% csrf_token %}
-      <table class="table">
+      <br>
+      <table class="table-sm">
+        <tr>
+          <th>Project Name:</th>
+          <td>
+	    {{ form.project_name }}
+	  </td>
+        </tr>
+	
 	<tr>
 	  <th>
 	    Anatomy:
@@ -63,21 +71,32 @@
         </tr>
 	
 	{% include "mridata/upload_file.html" %}
-	
+
         <tr>
           <th>Thumbnail Options:</th>
           <td>
-	    Horizontal flip:
-	    &nbsp;{{ form.thumbnail_horizontal_flip }}
-	    &nbsp;&nbsp;&nbsp;&nbsp;
-	    Vertical flip:
-	    &nbsp;{{ form.thumbnail_vertical_flip }}
-	    <br>
-	    Transpose:
-	    &nbsp;{{ form.thumbnail_transpose }}
-	    &nbsp;&nbsp;&nbsp;&nbsp;
-	    FFT Shift along z:
-	    &nbsp;{{ form.thumbnail_fftshift_along_z }}
+	    <table class="table-sm text-center" align="center">
+	      <tr>
+		<td>
+		  Horizontal flip:
+		  {{ form.thumbnail_horizontal_flip }}
+		</td>
+		<td>
+		  Vertical flip:
+		  {{ form.thumbnail_vertical_flip }}
+		</td>
+	      </tr>
+	      <tr>
+		<td>
+		  Transpose:
+		  {{ form.thumbnail_transpose }}
+		</td>
+		<td>
+		  FFT Shift along z:
+		  {{ form.thumbnail_fftshift_along_z }}
+		</td>
+	      </tr>
+	    </table>
 	  </td>
         </tr>
       </table>
