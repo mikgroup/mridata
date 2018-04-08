@@ -9,61 +9,11 @@ class DataForm(forms.ModelForm):
         model = Data
         fields = ('anatomy',
                   'fullysampled',
-                  
-                  'protocol_name',
-                  'series_description',
-                  
-                  'system_vendor',
-                  'system_model',
-                  'system_field_strength',
-                  'relative_receiver_noise_bandwidth',
-                  'number_of_channels',
-                  'coil_name',
-                  'institution_name',
-                  'station_name',
-                  
-                  'h1_resonance_frequency',
-                  
-                  'matrix_size_x',
-                  'matrix_size_y',
-                  'matrix_size_z',
-                  
-                  'field_of_view_x',
-                  'field_of_view_y',
-                  'field_of_view_z',
-                  
-                  'number_of_averages',
-                  'number_of_slices',
-                  'number_of_repetitions',
-                  'number_of_contrasts',
-                  'number_of_phases',
-                  'number_of_sets',
-                  'number_of_segments',
-                  
-                  'trajectory',
-                  'parallel_imaging_factor_y',
-                  'parallel_imaging_factor_z',
-                  'echo_train_length',
-                  
-                  'tr',
-                  'te',
-                  'ti',
-                  'flip_angle',
-                  'sequence_type',
-                  'echo_spacing',
-                  
                   'references',
                   'comments',
-                  
                   'thumbnail_file',
-                  'thumbnail_horizontal_flip',
-                  'thumbnail_vertical_flip',
-                  'thumbnail_rotate_90_degree',
-                  
-                  'ismrmrd_file',
         )
         widgets = {
-            'series_description': forms.Textarea(attrs={'rows':3, 'cols':50}),
             'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
             'comments': forms.Textarea(attrs={'rows':3, 'cols':50}),
         }
@@ -87,7 +37,8 @@ class PhilipsDataForm(forms.ModelForm):
             'philips_sin_file',
             'thumbnail_horizontal_flip',
             'thumbnail_vertical_flip',
-            'thumbnail_rotate_90_degree',
+            'thumbnail_transpose',
+            'thumbnail_no_ifft_along_readout',
         )
         widgets = {
             'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
@@ -109,7 +60,8 @@ class GeDataForm(forms.ModelForm):
             'ge_file',
             'thumbnail_horizontal_flip',
             'thumbnail_vertical_flip',
-            'thumbnail_rotate_90_degree',
+            'thumbnail_transpose',
+            'thumbnail_no_ifft_along_readout',
         ]
         widgets = {
             'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
@@ -131,7 +83,8 @@ class SiemensDataForm(forms.ModelForm):
             'siemens_dat_file',
             'thumbnail_horizontal_flip',
             'thumbnail_vertical_flip',
-            'thumbnail_rotate_90_degree',
+            'thumbnail_transpose',
+            'thumbnail_no_ifft_along_readout',
         )
         widgets = {
             'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
@@ -153,7 +106,8 @@ class IsmrmrdDataForm(forms.ModelForm):
             'ismrmrd_file',
             'thumbnail_horizontal_flip',
             'thumbnail_vertical_flip',
-            'thumbnail_rotate_90_degree',
+            'thumbnail_transpose',
+            'thumbnail_no_ifft_along_readout',
         )
         widgets = {
             'references': forms.Textarea(attrs={'rows':3, 'cols':50}),

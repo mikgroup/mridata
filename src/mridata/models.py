@@ -11,35 +11,35 @@ from django.db.models.signals import post_save
 
 
 def save_ismrmrd_file(data, filename):
-    filename = '{}.h5'.format(data.uuid)
+    filename = 'temp_{}.h5'.format(data.uuid)
     return filename
 
 
 def save_philips_raw_file(data, filename):
-    filename = '{}.raw'.format(data.uuid)
+    filename = 'temp_{}.raw'.format(data.uuid)
     return filename
 
 
 def save_philips_sin_file(data, filename):
-    filename = '{}.sin'.format(data.uuid)
+    filename = 'temp_{}.sin'.format(data.uuid)
     return filename
 
 
 def save_philips_lab_file(data, filename):
-    filename = '{}.lab'.format(data.uuid)
+    filename = 'temp_{}.lab'.format(data.uuid)
     return filename
 
 
 def save_siemens_dat_file(data, filename):
-    filename = '{}.dat'.format(data.uuid)
+    filename = 'temp_{}.dat'.format(data.uuid)
     return filename
 
 
 def save_ge_file(data, filename):
     if os.path.splitext(filename)[-1] == '.h5':
-        filename = '{}_archive.h5'.format(data.uuid)
+        filename = 'temp_{}.h5'.format(data.uuid)
     else:
-        filename = 'P{}.7'.format(data.uuid)
+        filename = 'Ptemp_{}.7'.format(data.uuid)
     return filename
 
 
@@ -106,9 +106,6 @@ class Data(models.Model):
     comments = models.TextField(blank=True, default='')
 
     thumbnail_file = models.ImageField()
-    thumbnail_horizontal_flip = models.BooleanField(default=False)
-    thumbnail_vertical_flip = models.BooleanField(default=False)
-    thumbnail_rotate_90_degree = models.BooleanField(default=False)
     
     ismrmrd_file = models.FileField(upload_to=save_ismrmrd_file,
                                     verbose_name='ISMRMRD File')
@@ -131,7 +128,8 @@ class TempData(models.Model):
     
     thumbnail_horizontal_flip = models.BooleanField(default=False)
     thumbnail_vertical_flip = models.BooleanField(default=False)
-    thumbnail_rotate_90_degree = models.BooleanField(default=False)
+    thumbnail_transpose = models.BooleanField(default=False)
+    thumbnail_no_ifft_along_readout = models.BooleanField(default=False)
     
     failed = models.NullBooleanField(default=False)
     error_message = models.TextField(blank=True)

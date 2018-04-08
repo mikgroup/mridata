@@ -65,14 +65,17 @@
 	{% include "mridata/upload_file.html" %}
 	
         <tr>
-          <th>Thumbnail Transform:</th>
+          <th>Thumbnail Options:</th>
           <td>
 	    Horizontal flip:
 	    &nbsp;&nbsp;{{ form.thumbnail_horizontal_flip }}
 	    &nbsp;&nbsp;Vertical flip:
 	    &nbsp;&nbsp;{{ form.thumbnail_vertical_flip }}
-	    &nbsp;&nbsp;Rotate 90 &deg;:
-	    &nbsp;&nbsp;{{ form.thumbnail_rotate_90_degree }}
+	    <br>
+	    &nbsp;&nbsp;Transpose:
+	    &nbsp;&nbsp;{{ form.thumbnail_transpose }}
+	    &nbsp;&nbsp;No IFFT along readout:
+	    &nbsp;&nbsp;{{ form.thumbnail_no_ifft_along_readout }}
 	  </td>
         </tr>
       </table>

@@ -46,20 +46,39 @@ def process_temp_data(dtype, uuid):
     
     try:
         convert_temp_data_to_data(temp_data, dtype, data)
-        parse_ismrmrd(data)
+        
+        ismrmrd_file = '{}.h5'.format(uuid)
+        data.ismrmrd_file = ismrmrd_file
+    
+        if not os.path.exists(ismrmrd_file):
+            raise IOError('{} ISMRMRD conversion failed.'.format(uuid))
+        
+        parse_ismrmrd(ismrmrd_file, data)
+        
     except Exception as e:
+        
         raise_temp_data_error(temp_data, traceback.format_exc())
         set_uploader_refresh(uploader)
         raise e
 
     try:
-        create_thumbnail(data)
-        upload_to_media(data.thumbnail_file.name)
+        thumbnail = create_thumbnail(ismrmrd_file,
+                                     thumbnail_horizontal_flip=temp_data.thumbnail_horizontal_flip,
+                                     thumbnail_vertical_flip=temp_data.thumbnail_vertical_flip,
+                                     thumbnail_transpose=temp_data.thumbnail_transpose,
+                                     thumbnail_no_ifft_along_readout=temp_data.thumbnail_no_ifft_along_readout)
+        
+        thumbnail_file = '{}.png'.format(uuid)
+        pil = Image.fromarray(thumbnail)
+        pil.save(thumbnail_file)
+        data.thumbnail_file = thumbnail_file
+        
+        upload_to_media(thumbnail_file)
     except Exception as e:
         pass
 
     try:
-        upload_to_media(data.ismrmrd_file.name)
+        upload_to_media(ismrmrd_file)
     except Exception as e:
         raise_temp_data_error(temp_data, traceback.format_exc())
         set_uploader_refresh(uploader)
@@ -73,10 +92,10 @@ def process_temp_data(dtype, uuid):
 def convert_ge_data(uuid):
     ismrmrd_file = '{}.h5'.format(uuid)
     try:
-        ge_file = 'P{}.7'.format(uuid)
+        ge_file = 'Ptemp_{}.7'.format(uuid)
         download_from_media(ge_file)
     except Exception:
-        ge_file = '{}_archive.h5'.format(uuid)
+        ge_file = 'temp_{}.h5'.format(uuid)
         download_from_media(ge_file)
     
     logger.info('Converting GeData to ISMRMRD')
@@ -91,7 +110,7 @@ def convert_ge_data(uuid):
 
 def convert_siemens_data(uuid):
     ismrmrd_file = '{}.h5'.format(uuid)
-    siemens_dat_file = '{}.dat'.format(uuid)
+    siemens_dat_file = 'temp_{}.dat'.format(uuid)
     
     download_from_media(siemens_dat_file)
 
@@ -110,12 +129,13 @@ def convert_siemens_data(uuid):
     logger.info('Conversion SUCCESS')
 
     os.remove(siemens_dat_file)
+    
 
 def convert_philips_data(uuid):
     
-    philips_lab_file = '{}.lab'.format(uuid)
-    philips_sin_file = '{}.sin'.format(uuid)
-    philips_raw_file = '{}.raw'.format(uuid)
+    philips_lab_file = 'temp_{}.lab'.format(uuid)
+    philips_sin_file = 'temp_{}.sin'.format(uuid)
+    philips_raw_file = 'temp_{}.raw'.format(uuid)
     schema_file = os.path.join(settings.STATICFILES_DIRS[0], 'schema', 'ismrmrd_philips.xsl')
     ismrmrd_file = '{}.h5'.format(uuid)
     
@@ -135,6 +155,15 @@ def convert_philips_data(uuid):
     os.remove(philips_raw_file)
 
 
+def convert_ismrmrd_data(uuid):
+    ismrmrd_file = '{}.h5'.format(uuid)
+    temp_ismrmrd_file = 'temp_{}.h5'.format(uuid)
+    
+    download_from_media(temp_ismrmrd_file)
+    os.rename(temp_ismrmrd_file, ismrmrd_file)
+    logger.info('Conversion SUCCESS')
+
+
 def convert_temp_data_to_data(temp_data, dtype, data):
     
     data.uuid = temp_data.uuid
@@ -144,9 +173,6 @@ def convert_temp_data_to_data(temp_data, dtype, data):
     data.fullysampled = temp_data.fullysampled
     data.references = temp_data.references
     data.comments = temp_data.comments
-    data.thumbnail_horizontal_flip = temp_data.thumbnail_horizontal_flip
-    data.thumbnail_vertical_flip = temp_data.thumbnail_vertical_flip
-    data.thumbnail_rotate_90_degree = temp_data.thumbnail_rotate_90_degree
 
     if dtype == GeData:
         convert_ge_data(temp_data.uuid)
@@ -154,8 +180,8 @@ def convert_temp_data_to_data(temp_data, dtype, data):
         convert_siemens_data(temp_data.uuid)
     elif dtype == PhilipsData:
         convert_philips_data(temp_data.uuid)
-
-    data.ismrmrd_file = '{}.h5'.format(temp_data.uuid)
+    elif dtype == IsmrmrdData:
+        convert_ismrmrd_data(temp_data.uuid)
 
 
 def set_uploader_refresh(uploader):
@@ -219,12 +245,7 @@ def upload_to_media(file):
         shutil.move(file, media_file)
 
         
-def parse_ismrmrd(data):
-    
-    ismrmrd_file = data.ismrmrd_file.name
-    
-    if not os.path.exists(ismrmrd_file):
-        raise IOError('{} does not exists.'.format(ismrmrd_file))
+def parse_ismrmrd(ismrmrd_file, data):
 
     logger.info('Parsing ISMRMRD...')
 
@@ -432,36 +453,81 @@ def make_valid_num(num):
         return num
 
 
-def create_thumbnail(data):
+def create_thumbnail(ismrmrd_file,
+                     thumbnail_horizontal_flip=False,
+                     thumbnail_vertical_flip=False,
+                     thumbnail_transpose=False,
+                     thumbnail_no_ifft_along_readout=False):
     '''
     Derived from:
     https://github.com/ismrmrd/ismrmrd-python-tools/blob/master/recon_ismrmrd_dataset.py
     '''
-
-    ismrmrd_file = data.ismrmrd_file.name
-    if not os.path.exists(ismrmrd_file):
-        raise IOError('{} does not exists.'.format(ismrmrd_file))
-
+    
     dset = ismrmrd.Dataset(ismrmrd_file, 'dataset', create_if_needed=False)
     logger.info('Creating thumbnail...')
     
-    header = ismrmrd.xsd.CreateFromDocument(dset.read_xml_header())
-    enc = header.encoding[0]
-    # Matrix size
-    eNx = enc.encodedSpace.matrixSize.x
-    eNy = enc.encodedSpace.matrixSize.y
-    eNz = enc.encodedSpace.matrixSize.z
-    rNx = enc.reconSpace.matrixSize.x
+    hdr = ismrmrd.xsd.CreateFromDocument(dset.read_xml_header())
 
-    ncoils = make_valid_num(data.number_of_channels)
-    nslices = make_valid_num(data.number_of_slices)
-    nreps = make_valid_num(data.number_of_repetitions)
-    ncontrasts = make_valid_num(data.number_of_contrasts)
+    try:
+        if hdr.acquisitionSystemInformation.receiverChannels is not None:
+            number_of_channels = hdr.acquisitionSystemInformation.receiverChannels
+        else:
+            number_of_channels = 1
+    except Exception:
+        number_of_channels = 1
+    
+    try:
+        matrix_size_x = hdr.encoding[0].encodedSpace.matrixSize.x
+    except Exception:
+        matrix_size_x = 1
+    
+    try:
+        matrix_size_y = hdr.encoding[0].encodedSpace.matrixSize.y
+    except Exception:
+        matrix_size_y = 1
+    
+    try:
+        matrix_size_z = hdr.encoding[0].encodedSpace.matrixSize.z
+    except Exception:
+        matrix_size_z = 1
+    
+    try:
+        number_of_averages = hdr.encoding[0].encodingLimits.average.maximum + 1
+    except Exception:
+        number_of_averages = 1
+    
+    try:
+        number_of_slices = hdr.encoding[0].encodingLimits.slice.maximum + 1
+    except Exception:
+        number_of_slices = 1
+        
+    try:
+        number_of_repetitions = hdr.encoding[0].encodingLimits.repetition.maximum + 1
+    except Exception:
+        number_of_repetitions = 1
+        
+    try:
+        number_of_contrasts = hdr.encoding[0].encodingLimits.contrast.maximum + 1
+    except Exception:
+        number_of_contrasts = 1
+    
+    try:
+        number_of_phases = hdr.encoding[0].encodingLimits.phase.maximum + 1
+    except Exception:
+        number_of_phases = 1
+        
+    try:
+        number_of_sets = hdr.encoding[0].encodingLimits.set.maximum + 1
+    except Exception:
+        number_of_sets = 1
+        
+    try:
+        number_of_segments = hdr.encoding[0].encodingLimits.segments.maximum + 1
+    except Exception:
+        number_of_segments = 1
 
-    if rNx < eNx:
-        ksp_mix = np.zeros([ncoils, eNz, eNy, rNx], dtype=np.complex64)
-    else:
-        ksp_mix = np.zeros([ncoils, eNz, eNy, eNx], dtype=np.complex64)
+    Nz = min(matrix_size_z, 32)
+    ksp = np.zeros([number_of_channels, Nz, matrix_size_y, matrix_size_x], dtype=np.complex64)
         
     logger.info('Reading k-space...')
     for acqnum in range(dset.number_of_acquisitions()):
@@ -469,34 +535,47 @@ def create_thumbnail(data):
         if acq.isFlagSet(ismrmrd.ACQ_IS_NOISE_MEASUREMENT):
             continue
 
-        repetition = acq.idx.repetition
-        contrast = acq.idx.contrast
-        slice = acq.idx.slice
-        if repetition == nreps // 2 and contrast == ncontrasts // 2 and slice == nslices // 2:
+        if (acq.idx.average == number_of_averages // 2 and
+            acq.idx.slice == number_of_slices // 2 and
+            acq.idx.repetition == number_of_repetitions // 2 and
+            acq.idx.contrast == number_of_contrasts // 2 and
+            acq.idx.phase == number_of_phases // 2 and
+            acq.idx.set == number_of_sets // 2 and
+            acq.idx.segment == number_of_segments // 2):
+            
             y = acq.idx.kspace_encode_step_1
             z = acq.idx.kspace_encode_step_2
-            if rNx < eNx:
-                ksp_mix[:, z, y, :] = crop(ifftc(acq.data, axes=[-1]), [ncoils, rNx])
-            else:
-                ksp_mix[:, z, y, :] = ifftc(acq.data, axes=[-1])
+
+            start = matrix_size_z // 2 - Nz // 2
+            if (z >= start and z < start + Nz):
+                ksp[:, z - start, y, :] = acq.data
                 
     logger.info('Finished reading k-space.')
 
     logger.info('Transforming k-space...')
-    ksp_mix = ifftc(ksp_mix, axes=[-3])
+    ksp_mix = ifftc(ksp, axes=[-3])
     slice_energy = rss(ksp_mix, axes=(-1, -2, -4))
-    ksp_mix_slice = ksp_mix[:, np.argmax(slice_energy), :, :]  # choose slice with max energy
-    thumbnail = rss(ifftc(ksp_mix_slice, axes=[-2])).T
+    ksp_slice = ksp_mix[:, np.argmax(slice_energy), :, :]  # choose slice with max energy
+    if thumbnail_no_ifft_along_readout:
+        cimg_slice = ifftc(ksp_slice, axes=[-2])
+    else:
+        cimg_slice = ifftc(ksp_slice, axes=[-1, -2])
+
+    thumbnail = rss(cimg_slice).T
+    if thumbnail_horizontal_flip:
+        thumbnail = thumbnail[::-1, :]
+
+    if thumbnail_vertical_flip:
+        thumbnail = thumbnail[:, ::-1]
+
+    if thumbnail_transpose:
+        thumbnail = thumbnail.T
     logger.info('Finished transforming k-space.')
     
     thumbnail = thumbnail / np.percentile(thumbnail, 99)
     thumbnail = np.clip(thumbnail, 0, 1) * 255
     thumbnail = thumbnail.astype(np.uint8)
-
-    # Save
-    thumbnail_file = '{}.png'.format(data.uuid)
-    pil = Image.fromarray(thumbnail)
-    pil.save(thumbnail_file)
-
+    
     logger.info('Thumbnail creation SUCCESS')
-    data.thumbnail_file = thumbnail_file
+
+    return thumbnail

@@ -1,8 +1,6 @@
 
 import numpy as np
 import math
-import struct
-import warnings
 
 
 def rss(x, axes=(0, )):
