@@ -1,7 +1,7 @@
 {% load staticfiles %}
 <table class="table-sm" align="center" width="100%">
   <tr>
-    <td rowspan="4" width="30%" align="center">
+    <td rowspan="4" width="20%" align="center">
       <img src=
 	   {% if data.thumbnail_file %}
 	   "{{ data.thumbnail_file.url }}"
@@ -11,28 +11,28 @@
 	   style="max-height:128px;max-width:128px;height:auto;width:auto;"
 	   class="rounded">
     </td>
-    <td align="left" class="text-dark">
+    <th class="text-dark text-left">
       Project Name:
-    </td>
-    <td align="left" class="text-dark">
+    </th>
+    <td class="text-dark text-center">
       {{ data.project_name }}
     </td>
   </tr>
 
   <tr>
-    <td align="left" class="text-dark">
+    <th class="text-dark text-left">
       Anatomy:
-    </td>
-    <td align="left" class="text-dark">
+    </th>
+    <td class="text-dark text-center">
       {{ data.anatomy }}
     </td>
   </tr>
   
   <tr>
-    <td align="left" class="text-dark">
+    <th class="text-dark text-left">
       Fullysampled:
-    </td>
-    <td align="left" class="text-dark">
+    </th>
+    <td class="text-dark text-center">
       {% if data.fullysampled is None %}
       Unknown
       {% elif data.fullysampled %}
@@ -44,10 +44,10 @@
   </tr>
   
   <tr>
-    <td align="left" class="text-dark">
+    <th class="text-dark text-left">
       Uploader:
-    </td>
-    <td align="left" class="text-dark">
+    </th>
+    <td class="text-dark text-center">
       {{ data.uploader }}
     </td>
   </tr>
