@@ -112,6 +112,7 @@ ENV/
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 P*.7
+*.h5
 
 eb_*
 README_aws.md

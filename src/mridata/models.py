@@ -129,7 +129,7 @@ class TempData(models.Model):
     thumbnail_horizontal_flip = models.BooleanField(default=False)
     thumbnail_vertical_flip = models.BooleanField(default=False)
     thumbnail_transpose = models.BooleanField(default=False)
-    thumbnail_no_ifft_along_readout = models.BooleanField(default=False)
+    thumbnail_fftshift_along_z = models.BooleanField(default=False)
     
     failed = models.NullBooleanField(default=False)
     error_message = models.TextField(blank=True)

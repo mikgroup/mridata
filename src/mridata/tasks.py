@@ -66,7 +66,7 @@ def process_temp_data(dtype, uuid):
                                      thumbnail_horizontal_flip=temp_data.thumbnail_horizontal_flip,
                                      thumbnail_vertical_flip=temp_data.thumbnail_vertical_flip,
                                      thumbnail_transpose=temp_data.thumbnail_transpose,
-                                     thumbnail_no_ifft_along_readout=temp_data.thumbnail_no_ifft_along_readout)
+                                     thumbnail_fftshift_along_z=temp_data.thumbnail_fftshift_along_z)
         
         thumbnail_file = '{}.png'.format(uuid)
         pil = Image.fromarray(thumbnail)
@@ -457,7 +457,7 @@ def create_thumbnail(ismrmrd_file,
                      thumbnail_horizontal_flip=False,
                      thumbnail_vertical_flip=False,
                      thumbnail_transpose=False,
-                     thumbnail_no_ifft_along_readout=False):
+                     thumbnail_fftshift_along_z=False):
     '''
     Derived from:
     https://github.com/ismrmrd/ismrmrd-python-tools/blob/master/recon_ismrmrd_dataset.py
@@ -554,12 +554,12 @@ def create_thumbnail(ismrmrd_file,
 
     logger.info('Transforming k-space...')
     ksp_mix = ifftc(ksp, axes=[-3])
-    slice_energy = rss(ksp_mix, axes=(-1, -2, -4))
-    ksp_slice = ksp_mix[:, np.argmax(slice_energy), :, :]  # choose slice with max energy
-    if thumbnail_no_ifft_along_readout:
-        cimg_slice = ifftc(ksp_slice, axes=[-2])
+    if thumbnail_fftshift_along_z:
+        ksp_slice = ksp_mix[:, 0, :, :]
     else:
-        cimg_slice = ifftc(ksp_slice, axes=[-1, -2])
+        ksp_slice = ksp_mix[:, Nz // 2, :, :]
+        
+    cimg_slice = ifftc(ksp_slice, axes=[-1, -2])
 
     thumbnail = rss(cimg_slice).T
     if thumbnail_horizontal_flip:
