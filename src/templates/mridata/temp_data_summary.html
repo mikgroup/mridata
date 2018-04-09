@@ -1,7 +1,7 @@
 {% load staticfiles %}
 <table class="table-sm" align="center" width="100%">
   <tr>
-    <td rowspan="4" width="20%" align="center">
+    <td rowspan="4" width="25%" align="center">
       <img src=
 	   {% if temp_data.failed %}
 	   {% static "images/failed.png" %}
@@ -11,27 +11,27 @@
 	   class="rounded" width="128" height="128">
     </td>
     
-    <th class="text-muted text-left">
+    <td class="text-muted text-left" width="15%">
       Project Name:
-    </th>
+    </td>
     <td class="text-muted align-center">
       {{ temp_data.project_name }}
     </td>
   </tr>
   
   <tr>
-    <th class="text-muted text-left">
+    <td class="text-muted text-left" width="15%">
       Anatomy:
-    </th>
+    </td>
     <td class="text-muted align-center">
       {{ temp_data.anatomy }}
     </td>
   </tr>
   
   <tr>
-    <th class="text-muted text-left">
+    <td class="text-muted text-left" width="15%">
       Fullysampled:
-    </th>
+    </td>
     <td class="text-muted align-center">
       {% if temp_data.fullysampled is None %}
       Unknown
@@ -44,9 +44,9 @@
   </tr>
   
   <tr>
-    <th class="text-muted text-left">
+    <td class="text-muted text-left" width="15%">
       Uploader:
-    </th>
+    </td>
     <td class="text-muted align-center">
       {{ temp_data.uploader }}
     </td>
