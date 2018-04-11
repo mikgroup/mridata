@@ -1,0 +1,36 @@
+{% extends 'mridata/base.html' %}
+{% load staticfiles %}
+
+{% block body_block %}
+<br>
+<div class="col">
+  <div class="card container">
+    <div class="card-title text-center">
+      <img src={% static "favicons/android-chrome-192x192.png" %} width="128" height="128">
+      <h5>
+	Welcome to mridata.org!
+      </h5>
+    </div>
+    <div class="card-block">
+      <p class="card-text text-justify">
+	mridata.org is an open platform for researchers to share magnetic resonance imaging (MRI) raw datasets. The website is designed to facilitate sharing MRI datasets from different vendors, with features including automatic ISMRMRD conversion and thumbnail extraction. We hope that with contributions from many researchers, this website can provide more datasets to train and validate machine learning models for MRI reconstruction.
+	<br>
+	<br>
+	To start, you can browse projects contributed by users below. To view all available datasets, we refer you to the <a href="{% url 'data_list' %}">Data List</a>. After registering as a user, you can upload datasets from GE, Philips and Siemens. To know more about using the website, we refer you to our <a href="{% url 'faq' %}">FAQ</a>.
+      </p>
+    </div>
+    <br>
+    <br>
+    <h5 class="card-title text-center">
+      Projects Contributed by Users
+    </h5>
+    <div class="card-columns">
+      {% for project in projects %}
+      {% include "mridata/project_card.html" with project=project %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<br>
+<br>
+{% endblock %}

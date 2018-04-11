@@ -1,10 +1,13 @@
+import logging
 from django import forms
 from registration.forms import RegistrationForm
-from .models import Data, PhilipsData, SiemensData, GeData, IsmrmrdData
+from .models import Data, PhilipsData, SiemensData, GeData, IsmrmrdData, Project
 
 
 class DataForm(forms.ModelForm):
 
+    project_name = forms.CharField()
+    
     class Meta:
         model = Data
         fields = ('project_name',
@@ -22,6 +25,7 @@ class DataForm(forms.ModelForm):
 
 class PhilipsDataForm(forms.ModelForm):
     
+    project_name = forms.CharField()
     philips_lab_file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
     philips_raw_file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
     philips_sin_file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
@@ -29,9 +33,9 @@ class PhilipsDataForm(forms.ModelForm):
     class Meta:
         model = PhilipsData
         fields = (
+            'project_name',
             'anatomy',
             'fullysampled',
-            'project_name',
             'references',
             'comments',
             'philips_lab_file',
@@ -50,14 +54,15 @@ class PhilipsDataForm(forms.ModelForm):
 
 class GeDataForm(forms.ModelForm):
     
+    project_name = forms.CharField()
     ge_file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
     class Meta:
         model = GeData
         fields = [
+            'project_name',
             'anatomy',
             'fullysampled',
-            'project_name',
             'references',
             'comments',
             'ge_file',
@@ -74,14 +79,15 @@ class GeDataForm(forms.ModelForm):
 
 class SiemensDataForm(forms.ModelForm):
 
+    project_name = forms.CharField()
     siemens_dat_file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
     
     class Meta:
         model = SiemensData
         fields = (
+            'project_name',
             'anatomy',
             'fullysampled',
-            'project_name',
             'references',
             'comments',
             'siemens_dat_file',
@@ -98,14 +104,15 @@ class SiemensDataForm(forms.ModelForm):
         
 class IsmrmrdDataForm(forms.ModelForm):
     
+    project_name = forms.CharField()
     ismrmrd_file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
     class Meta:
         model = IsmrmrdData
         fields = (
+            'project_name',
             'anatomy',
             'fullysampled',
-            'project_name',
             'references',
             'comments',
             'ismrmrd_file',

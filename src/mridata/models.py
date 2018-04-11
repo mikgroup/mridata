@@ -43,13 +43,20 @@ def save_ge_file(data, filename):
     return filename
 
 
+class Project(models.Model):
+
+    name = models.CharField(max_length=100, default='')
+    
+    def __str__(self):
+        return self.name
+
+
 class Uploader(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     refresh = models.BooleanField(default=False)
     
     def __str__(self):
-
         return self.user.__str__()
 
 
@@ -59,7 +66,7 @@ class Data(models.Model):
 
     anatomy = models.CharField(max_length=100, default='Unknown')
     fullysampled = models.NullBooleanField()
-    project_name = models.CharField(max_length=100, default='')
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True)
     references = models.TextField(blank=True, default='')
     comments = models.TextField(blank=True, default='')
     
@@ -113,13 +120,20 @@ class Data(models.Model):
     upload_date = models.DateTimeField(default=timezone.now)
     uploader = models.ForeignKey(Uploader, on_delete=models.CASCADE)
 
+    def delete(self, *args, **kwargs):
+
+        if len(self.project.data_set.all()) == 1:
+            self.project.delete()
+            
+        super().delete(*args, **kwargs)
+
 
 class TempData(models.Model):
 
     uuid = models.UUIDField(default=uuid.uuid4, primary_key=True)
     anatomy = models.CharField(max_length=100, default='Unknown')
     fullysampled = models.NullBooleanField()
-    project_name = models.CharField(max_length=100, default='')
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True)
     references = models.TextField(blank=True, default='')
     comments = models.TextField(blank=True, default='')
     
@@ -134,6 +148,14 @@ class TempData(models.Model):
     failed = models.NullBooleanField(default=False)
     error_message = models.TextField(blank=True)
 
+    def delete(self, *args, **kwargs):
+
+        if len(self.project.data_set.all()) == 0:
+            self.project.delete()
+            
+        super().delete(*args, **kwargs)
+        
+
 class PhilipsData(TempData):
     
     philips_raw_file = models.FileField(upload_to=save_philips_raw_file)
@@ -147,6 +169,7 @@ class PhilipsData(TempData):
         self.philips_lab_file.delete()
         super().delete(*args, **kwargs)
 
+        
 class SiemensData(TempData):
     
     siemens_dat_file = models.FileField(upload_to=save_siemens_dat_file)

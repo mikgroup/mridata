@@ -170,7 +170,7 @@ def convert_temp_data_to_data(temp_data, dtype, data):
     data.uploader_id = temp_data.uploader_id
     data.upload_date = temp_data.upload_date
     data.anatomy = temp_data.anatomy
-    data.project_name = temp_data.project_name
+    data.project = temp_data.project
     data.references = temp_data.references
     data.comments = temp_data.comments
 

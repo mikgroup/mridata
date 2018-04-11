@@ -1,0 +1,18 @@
+{% load staticfiles %}
+<div class="card">
+  <a href="{% url 'data_list' %}?project={{project.name}}">
+    <h6 class="card-title text-dark text-center">
+      {{ project.name }}
+    </h6>
+    <div class="text-center">
+      <img src=
+	   {% if project.data_set.first.thumbnail_file %}
+	   "{{ project.data_set.first.thumbnail_file.url }}"
+	   {% else %}
+	   {% static "images/default_thumbnail.png" %}
+	   {% endif %}
+	   style="max-height:128px;max-width:128px;height:auto;width:auto;"
+	   class="rounded">
+    </div>
+  </a>
+</div>

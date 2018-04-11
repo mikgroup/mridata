@@ -25,6 +25,13 @@
       	    {% endif %}>
           <a class="nav-link" href="{% url 'faq' %}">FAQ</a>
         </li>
+      	<li {% if request.path == "/data/list" %}
+      	    class="nav-item active"
+      	    {% else %}
+      	    class="nav-item"
+      	    {% endif %}>
+          <a class="nav-link" href="{% url 'data_list' %}">Data List</a>
+        </li>
         {% if user.is_authenticated %}
         <li {% if "upload" in request.path %}
       	    class="nav-item dropdown active"

@@ -9,10 +9,17 @@ from django.utils import timezone
 from django.urls import reverse
 from celery.result import AsyncResult
 
-from .models import Data, TempData, Uploader
+from .models import Data, TempData, Uploader, Project
 from .forms import PhilipsDataForm, SiemensDataForm, GeDataForm, IsmrmrdDataForm, DataForm
 from .filters import DataFilter
 from .tasks import process_ge_data, process_ismrmrd_data, process_philips_data, process_siemens_data
+
+
+def main(request):
+    projects = Project.objects.all().order_by('-name')
+    
+    return render(request, 'mridata/main.html', {'projects': projects})
+
 
 def about(request):
     return render(request, 'mridata/about.html')
@@ -36,8 +43,9 @@ def data_list(request):
         temp_datasets = []
     
     return render(request, 'mridata/data_list.html',
-                  {'filter': filter,
-                   'temp_datasets': temp_datasets
+                  {
+                      'filter': filter,
+                      'temp_datasets': temp_datasets
                   })
 
 
@@ -61,7 +69,11 @@ def upload_ismrmrd(request):
             request.FILES['ismrmrd_file'] = ismrmrd_file
             form = IsmrmrdDataForm(request.POST, request.FILES)
             if form.is_valid():
+                project, created = Project.objects.get_or_create(
+                    name=form.cleaned_data['project_name'],
+                )
                 ismrmrd_data = form.save(commit=False)
+                ismrmrd_data.project = project
                 ismrmrd_data.upload_date = timezone.now()
                 ismrmrd_data.uploader = request.user.uploader
                 ismrmrd_data.save()
@@ -72,6 +84,7 @@ def upload_ismrmrd(request):
             else:
                 return render(request, 'mridata/upload.html', {'form': IsmrmrdDataForm})               
         return redirect('data_list')
+    
     return render(request, 'mridata/upload.html', {'form': IsmrmrdDataForm})
 
 
@@ -82,7 +95,11 @@ def upload_ge(request):
             request.FILES['ge_file'] = ge_file
             form = GeDataForm(request.POST, request.FILES)
             if form.is_valid():
+                project, created = Project.objects.get_or_create(
+                    name=form.cleaned_data['project_name'],
+                )
                 ge_data = form.save(commit=False)
+                ge_data.project = project
                 ge_data.upload_date = timezone.now()
                 ge_data.uploader = request.user.uploader
                 ge_data.save()
@@ -92,7 +109,9 @@ def upload_ge(request):
                                             task_id=str(ge_data.uuid))
             else:
                 return render(request, 'mridata/upload.html', {'form': GeDataForm})
+            
         return redirect('data_list')
+    
     return render(request, 'mridata/upload.html', {'form': GeDataForm})
 
 
@@ -111,7 +130,11 @@ def upload_philips(request):
             
             form = PhilipsDataForm(request.POST, request.FILES)
             if form.is_valid():
+                project, created = Project.objects.get_or_create(
+                    name=form.cleaned_data['project_name'],
+                )
                 philips_data = form.save(commit=False)
+                philips_data.project = project
                 philips_data.upload_date = timezone.now()
                 philips_data.uploader = request.user.uploader
                 philips_data.save()
@@ -132,7 +155,11 @@ def upload_siemens(request):
             request.FILES['siemens_dat_file'] = siemens_dat_file
             form = SiemensDataForm(request.POST, request.FILES)
             if form.is_valid():
+                project, created = Project.objects.get_or_create(
+                    name=form.cleaned_data['project_name'],
+                )
                 siemens_data = form.save(commit=False)
+                siemens_data.project = project
                 siemens_data.upload_date = timezone.now()
                 siemens_data.uploader = request.user.uploader
                 siemens_data.save()
@@ -155,11 +182,17 @@ def data_edit(request, uuid):
         if request.method == "POST":
             form = DataForm(request.POST or None, request.FILES or None, instance=data)
             if form.is_valid():
-                form.save()
+                data = form.save(commit=False)
+                project, created = Project.objects.get_or_create(
+                    name=form.cleaned_data['project_name'],
+                )
+                data.project = project
+                data.save()
+                
                 return redirect("data_list")
         else:
             data = get_object_or_404(Data, uuid=uuid)
-            form = DataForm(instance=data)
+            form = DataForm(instance=data, initial={'project_name': data.project.name})
             return render(request, 'mridata/data_edit.html', {'data': data, 'form': form})
 
 
