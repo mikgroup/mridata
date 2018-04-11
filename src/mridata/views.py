@@ -192,7 +192,7 @@ def data_edit(request, uuid):
                 return redirect("data_list")
         else:
             data = get_object_or_404(Data, uuid=uuid)
-            form = DataForm(instance=data)#, initial={'project_name': data.project.name})
+            form = DataForm(instance=data, initial={'project_name': data.project.name})
             return render(request, 'mridata/data_edit.html', {'data': data, 'form': form})
 
 
