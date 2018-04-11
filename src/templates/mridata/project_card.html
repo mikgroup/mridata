@@ -1,9 +1,10 @@
 {% load staticfiles %}
-<div class="card">
+<div class="card container">
   <a href="{% url 'data_list' %}?project={{project.name}}">
-    <h6 class="card-title text-dark text-center">
+    <br>
+    <div class="small card-title text-dark text-center">
       {{ project.name }}
-    </h6>
+    </div>
     <div class="text-center">
       <img src=
 	   {% if project.data_set.first.thumbnail_file %}
@@ -14,5 +15,6 @@
 	   style="max-height:128px;max-width:128px;height:auto;width:auto;"
 	   class="rounded">
     </div>
+    <br>
   </a>
 </div>

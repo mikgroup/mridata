@@ -8,7 +8,7 @@
   {% include "mridata/sidebar.html" %}
 
   <div class="col">
-    <div class="container alert alert-warning text-center">
+    <div class="container alert alert-warning text-center small">
       By using this website, you are agreeing to our <a href="{% url 'terms' %}">Terms of Service</a>.
     </div>
     {% paginate filter.qs as objects%}
