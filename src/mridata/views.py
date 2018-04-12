@@ -41,8 +41,12 @@ def data_list(request):
         temp_datasets = TempData.objects.filter(uploader=uploader).order_by('-upload_date')
     else:
         temp_datasets = []
-    
-    return render(request, 'mridata/data_list.html',
+
+    if request.is_ajax():
+        template = 'mridata/data_list_page.html'
+    else:
+        template = 'mridata/data_list.html'
+    return render(request, template,
                   {
                       'filter': filter,
                       'temp_datasets': temp_datasets

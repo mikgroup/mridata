@@ -1,0 +1,8 @@
+{% load el_pagination_tags %}
+
+{% paginate filter.qs as datasets %}
+{% for data in datasets %}
+{% include "mridata/data_card.html" with data=data %}
+{% endfor %}
+
+{% show_more %}
