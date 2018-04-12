@@ -1,9 +1,9 @@
 {% load staticfiles %}
-<div class="navbar navbar-expand-md navbar-light bg-light fixed-top" role="navigation">
+<div class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" role="navigation">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="/">
-	<img src={% static "favicons/android-chrome-192x192.png" %} height="25"> mridata.org
+      <a class="navbar-brand " href="/">
+	mridata.org
       </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#myNavbar">
         <span class="navbar-toggler-icon"></span>
@@ -11,21 +11,28 @@
     </div>
     <div class="navbar-collapse collapse" id="myNavbar">
       <ul class="nav navbar-nav navbar-left mr-auto">
-      	<li {% if request.path == "/about/" %}
+      	<li {% if "/about" in request.path %}
       	    class="nav-item active"
       	    {% else %}
       	    class="nav-item"
       	    {% endif %}>
           <a class="nav-link" href="{% url 'about' %}">About</a>
         </li>
-      	<li {% if request.path == "/faq/" %}
+      	<li {% if "/faq" in request.path %}
       	    class="nav-item active"
       	    {% else %}
       	    class="nav-item"
       	    {% endif %}>
           <a class="nav-link" href="{% url 'faq' %}">FAQ</a>
         </li>
-      	<li {% if request.path == "/data/list" %}
+      	<li {% if "/terms" in request.path %}
+      	    class="nav-item active"
+      	    {% else %}
+      	    class="nav-item"
+      	    {% endif %}>
+          <a class="nav-link" href="{% url 'terms' %}">Terms</a>
+        </li>
+      	<li {% if "/data/list" in request.path %}
       	    class="nav-item active"
       	    {% else %}
       	    class="nav-item"
@@ -66,15 +73,15 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
 	<li class="nav-item">
-	  <a  href="http://www.berkeley.edu/">
-	    <img src={% static "images/berkeley.png" %}
-		 height="26" hspace="7" vspace="6">
+	  <a href="http://www.berkeley.edu/">
+	    <img src={% static "images/berkeley.png" %} height="24"
+		 style="margin: 7px 7px 0px 0px">
 	  </a>
 	</li>
 	<li>
-	  <a  href="http://www.stanford.edu/">
-	    <img src={% static "images/stanford.png" %}
-		 height="30" vspace="4">
+	  <a href="http://www.stanford.edu/">
+	    <img src={% static "images/stanford.png" %} height="18"
+		 style="margin: 3px 0px 0px 0px">
 	  </a>
 	</li>
       </ul>

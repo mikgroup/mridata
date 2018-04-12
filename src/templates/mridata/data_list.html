@@ -2,15 +2,18 @@
 {% load el_pagination_tags %}
 {% load staticfiles %}
 
-
 {% block body_block %}
 <div id="data_list" class="row">
-  {% include "mridata/sidebar.html" %}
-
+  <div class="col-md-auto text-center">
+    <form action="" method="get">
+      <table class="table-sm text-left mb-3">
+	{{ filter.form.as_table }}
+      </table>
+      <button type="submit" class="save btn btn-primary">Search</button>
+    </form>
+  </div>
+  
   <div class="col">
-    <div class="container alert alert-warning text-center small">
-      By using this website, you are agreeing to our <a href="{% url 'terms' %}">Terms of Service</a>.
-    </div>
     {% paginate filter.qs as objects%}
     
     {% if user.is_authenticated %}
@@ -20,7 +23,7 @@
     {% for temp_data in temp_datasets %}
     {% include "mridata/temp_data_card.html" with temp_data=temp_data%}
     {% endfor %}
-    
+
     {% for data in objects %}
     {% include "mridata/data_card.html" with data=data%}
     {% endfor %}

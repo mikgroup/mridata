@@ -2,19 +2,13 @@
 {% load staticfiles %}
 
 {% block body_block %}
-<br>
-<div class="col text-center align-middle">
-  <div class="container alert alert-warning text-center">
-    Please read the <a href="{% url 'terms' %}">Terms of Service</a> and make sure your datasets do not contain patient information before uploading!
-  </div>
-</div>
 
-<div class="col text-center">
-  <div class="card container">
-    <form method="POST" class="form" enctype="multipart/form-data">
+<div class="col text-center mb-3">
+  <div class="card">
+    <form method="POST" class="form mb-3" enctype="multipart/form-data">
       <br>
       {% csrf_token %}
-      <table class="table-sm">
+      <table class="table-sm mb-3">
         <tr>
           <th>Project Name:</th>
           <td>
@@ -100,13 +94,13 @@
 	  </td>
         </tr>
       </table>
-      <div class="text-center terms-container">
+      
+      <div>
 	<input type="checkbox" required>
 	<label>I agree to the <a href="{% url 'terms' %}">Terms of Service</a></label>
       </div>
       <button type="submit" class="save btn btn-primary">Upload</button>
     </form>
-    <br>
   </div>
 </div>
 {% endblock %}
@@ -119,7 +113,7 @@
 <script>
   $(":file").filestyle({btnClass: "btn-primary"});
   $("form").uploadprogress({
-    redirect_url: "/"
+    redirect_url: "{% url 'data_list' %}"
   });
 </script>
 {% endblock %}

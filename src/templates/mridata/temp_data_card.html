@@ -1,15 +1,15 @@
-<div class="card text-center">
-  <div class="card-block">
+<div class="card my-2">
+  <div class="container my-2">
     <a data-toggle="collapse" href="#collapse{{ temp_data.uuid }}">
       {% include "mridata/temp_data_summary.html" with temp_data=temp_data %}
     </a>
+    
+    {% if temp_data.failed %}
+    <div id="collapse{{ temp_data.uuid }}" class="card-collapse collapse">
+      <p class="card-text text-center">
+	{% include "mridata/temp_data_detail.html" with temp_data=temp_data %}
+      </p>
+    </div>
+    {% endif %}
   </div>
-  {% if temp_data.failed %}
-  <div id="collapse{{ temp_data.uuid }}" class="card-collapse collapse">
-    <p class="card-text">
-      {% include "mridata/temp_data_detail.html" with temp_data=temp_data %}
-    </p>
-  </div>
-  {% endif %}
 </div>
-<br>

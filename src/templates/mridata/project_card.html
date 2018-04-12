@@ -1,20 +1,20 @@
 {% load staticfiles %}
-<div class="card container">
-  <a href="{% url 'data_list' %}?project={{project.name}}">
-    <br>
-    <div class="small card-title text-dark text-center">
-      {{ project.name }}
-    </div>
-    <div class="text-center">
-      <img src=
-	   {% if project.data_set.first.thumbnail_file %}
-	   "{{ project.data_set.first.thumbnail_file.url }}"
-	   {% else %}
-	   {% static "images/default_thumbnail.png" %}
-	   {% endif %}
-	   style="max-height:128px;max-width:128px;height:auto;width:auto;"
-	   class="rounded">
-    </div>
-    <br>
-  </a>
+<div class="card">
+  <div class="container my-2">
+    <a href="{% url 'data_list' %}?project={{project.name}}">
+      <div class="small card-title text-muted text-center">
+	{{ project.name }}
+      </div>
+      <div class="text-center">
+	<img src=
+	     {% if project.data_set.first.thumbnail_file %}
+	     "{{ project.data_set.first.thumbnail_file.url }}"
+	     {% else %}
+	     {% static "images/default_thumbnail.png" %}
+	     {% endif %}
+	     style="max-height:128px;max-width:128px;height:auto;width:auto;"
+	     class="rounded">
+      </div>
+    </a>
+  </div>
 </div>

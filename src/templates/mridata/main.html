@@ -2,8 +2,11 @@
 {% load staticfiles %}
 
 {% block body_block %}
-<div class="col">
+<div class="col mb-4">
   <div class="container">
+    <div class="alert alert-warning text-center mb-2">
+      By using this website, you are agreeing to our <a href="{% url 'terms' %}">Terms of Service</a>.
+    </div>
     <div class="card-title text-center">
       <img src={% static "favicons/android-chrome-192x192.png" %} width="128" height="128">
       <h5>
@@ -18,8 +21,11 @@
 	To start, you can browse projects contributed by users below. To view all available datasets, we refer you to our <a href="{% url 'data_list' %}">Data List</a>. After registering as a user, you can upload datasets from GE, Philips and Siemens. To know more about using the website, we refer you to our <a href="{% url 'faq' %}">FAQ</a>.
       </p>
     </div>
-    <br>
-    <br>
+  </div>
+</div>
+
+<div class="col">
+  <div class="container">
     <h5 class="card-title text-center">
       Projects Contributed by Users
     </h5>
@@ -30,5 +36,4 @@
     </div>
   </div>
 </div>
-<br>
 {% endblock %}

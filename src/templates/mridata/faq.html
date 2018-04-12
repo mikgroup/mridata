@@ -3,65 +3,63 @@
 {% block body_block %}
 <div class="col">
   <div class="container">
-    <div class="card-block">
-      <p class="card-text">
-	<h4>What is ISMRMRD?</h4>
-	The <a href="http://ismrmrd.github.io">ISMRM Raw Data Format (ISMRMRD)</a> is an open source raw data format developed by Michael S. Hansen, Nick Zwart, Souheil Inati, Joe Naegele, Kaveh Vahedipour, and others. It is the only data format that supports conversion from vendor specific files from GE, Philips, and Siemens, while retaining relevant scan parameters.
-	<br>
-	Briefly, ISMRMRD is stored in HDF5 format. Within the HDF5 file, data is stored under the group <code>/dataset</code>. Scan parameters are stored in the variable <code>/dataset/xml</code> in XML configuration and the data array is stored in <code>/dataset/data</code>. For more detail, we refer you to the ISMRMRD <a href="http://ismrmrd.github.io">website</a>, and <a href="http://onlinelibrary.wiley.com/doi/10.1002/mrm.26089/full">paper</a>.
-	<br>
-	<br>
-	<h4>How can I read and write ISMRMRD files?</h4>
-	Functions and examples to read and write ISMRMRD files in Matlab and Python can be found here:
-	<br>
-	<br>
-	<div class="container">
-	  <ul class="list-group">
-	    <li class="list-group-item">
-	      Matlab:
-	      <a href="https://github.com/ismrmrd/ismrmrd/tree/master/matlab/%2Bismrmrd">
-		functions
-	      </a> and
-	      <a href="https://github.com/ismrmrd/ismrmrd/tree/master/examples/matlab">
-		example scripts
-	      </a>
-	    </li>
-	    <li class="list-group-item">
-	      Python:
-	      <a href="https://github.com/ismrmrd/ismrmrd-python">
-		functions
-	      </a> and
-	      <a href="https://github.com/ismrmrd/ismrmrd-python-tools">
-		example scripts
-	      </a>
-	    </li>	  
-	  </ul>
-	</div>
-	<br>
-	<h4>How do I download datasets in batch?</h4>
-	Batch downloading requires user login. Once logged in, ISMRMRD links for batch download will appear at the top of the page for each search. One way to download all the data files is to save the links into a text file (e.g. links.txt), and use the command: <code>cat links.txt | wget -i</code>
-	<br>
-	<br>
-	<h4>How do I upload datasets?</h4>
-	Uploading requires user login. Currently, the website supports ISMRMRD files, and vendor specific data files from GE (Pfile, and ScanArchive), Philips (.lab, .sin, and .raw), and Siemens (.dat).
-	<br>
-	Once uploaded, data files are converted into ISMRMRD in the background. Parameters, such as matrix size, resolution, and TE/TR, are automatically extracted from the vendor specific files. Thumbnails are created automatically by extracting the center slice.
-	<br>
-	<br>
-	<h4>How do I upload datasets in batch?</h4>
-	When choosing files in the uploading page, simply select multiple files allows you to upload datasets in batch. Note that the specified Anatomy, Fullysampled, References, and Comments, will apply to all of selected datasets.
-	<br>
-	<br>
-	<h4>What should I do if I find bugs?</h4>
-	If you encounter any problem on this website, please report the issue on our public github issue page: <a href="https://github.com/mikgroup/mridata/issues">https://github.com/mikgroup/mridata/issues</a>.
-	<br>
-	<br>
-	<h4>How can I contribute to the development of this website?</h4>
-	Great! The source code for the website is available at: <a href="https://github.com/mikgroup/mridata">https://github.com/mikgroup/mridata</a>. We welcome contributions to the website, whether it is about data conversion, thumbnail generation, or even aesthetic changes. Once the changes are merged, we can easily deploy them on the actual website.
-	<br>
-	<br>
-      </p>
-    </div>
+    <p class="card-text">
+      <h4>What is ISMRMRD?</h4>
+      The <a href="http://ismrmrd.github.io">ISMRM Raw Data Format (ISMRMRD)</a> is an open source raw data format developed by Michael S. Hansen, Nick Zwart, Souheil Inati, Joe Naegele, Kaveh Vahedipour, and others. It is the only data format that supports conversion from vendor specific files from GE, Philips, and Siemens, while retaining relevant scan parameters.
+      <br>
+      Briefly, ISMRMRD is stored in HDF5 format. Within the HDF5 file, data is stored under the group <code>/dataset</code>. Scan parameters are stored in the variable <code>/dataset/xml</code> in XML configuration and the data array is stored in <code>/dataset/data</code>. For more detail, we refer you to the ISMRMRD <a href="http://ismrmrd.github.io">website</a>, and <a href="http://onlinelibrary.wiley.com/doi/10.1002/mrm.26089/full">paper</a>.
+      <br>
+      <br>
+      <h4>How can I read and write ISMRMRD files?</h4>
+      Functions and examples to read and write ISMRMRD files in Matlab and Python can be found here:
+      <br>
+      <br>
+      <div class="container">
+	<ul class="list-group">
+	  <li class="list-group-item">
+	    Matlab:
+	    <a href="https://github.com/ismrmrd/ismrmrd/tree/master/matlab/%2Bismrmrd">
+	      functions
+	    </a> and
+	    <a href="https://github.com/ismrmrd/ismrmrd/tree/master/examples/matlab">
+	      example scripts
+	    </a>
+	  </li>
+	  <li class="list-group-item">
+	    Python:
+	    <a href="https://github.com/ismrmrd/ismrmrd-python">
+	      functions
+	    </a> and
+	    <a href="https://github.com/ismrmrd/ismrmrd-python-tools">
+	      example scripts
+	    </a>
+	  </li>	  
+	</ul>
+      </div>
+      <br>
+      <h4>How do I download datasets in batch?</h4>
+      Batch downloading requires user login. Once logged in, ISMRMRD links for batch download will appear at the top of the page for each search. One way to download all the data files is to save the links into a text file (e.g. links.txt), and use the command: <code>cat links.txt | wget -i</code>
+      <br>
+      <br>
+      <h4>How do I upload datasets?</h4>
+      Uploading requires user login. Currently, the website supports ISMRMRD files, and vendor specific data files from GE (Pfile, and ScanArchive), Philips (.lab, .sin, and .raw), and Siemens (.dat).
+      <br>
+      Once uploaded, data files are converted into ISMRMRD in the background. Parameters, such as matrix size, resolution, and TE/TR, are automatically extracted from the vendor specific files. Thumbnails are created automatically by extracting the center slice.
+      <br>
+      <br>
+      <h4>How do I upload datasets in batch?</h4>
+      When choosing files in the uploading page, simply select multiple files allows you to upload datasets in batch. Note that the specified Anatomy, Fullysampled, References, and Comments, will apply to all of selected datasets.
+      <br>
+      <br>
+      <h4>What should I do if I find bugs?</h4>
+      If you encounter any problem on this website, please report the issue on our public github issue page: <a href="https://github.com/mikgroup/mridata/issues">https://github.com/mikgroup/mridata/issues</a>.
+      <br>
+      <br>
+      <h4>How can I contribute to the development of this website?</h4>
+      Great! The source code for the website is available at: <a href="https://github.com/mikgroup/mridata">https://github.com/mikgroup/mridata</a>. We welcome contributions to the website, whether it is about data conversion, thumbnail generation, or even aesthetic changes. Once the changes are merged, we can easily deploy them on the actual website.
+      <br>
+      <br>
+    </p>
   </div>
 </div>
 

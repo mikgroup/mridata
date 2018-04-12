@@ -1,54 +1,58 @@
 {% load staticfiles %}
-<table class="table-sm small" align="center" width="100%">
-  <tr>
-    <td rowspan="4" width="25%" align="center">
-      <img src=
-	   {% if data.thumbnail_file %}
-	   "{{ data.thumbnail_file.url }}"
-	   {% else %}
-	   {% static "images/default_thumbnail.png" %}
-	   {% endif %}
-	   style="max-height:128px;max-width:128px;height:auto;width:auto;"
-	   class="rounded">
-    </td>
-    <td class="text-dark text-left" width="15%">
-      Project:
-    </td>
-    <td class="text-dark text-center">
-      {{ data.project.name }}
-    </td>
-  </tr>
-
-  <tr>
-    <td class="text-dark text-left" width="15%">
-      Anatomy:
-    </td>
-    <td class="text-dark text-center">
-      {{ data.anatomy }}
-    </td>
-  </tr>
-  
-  <tr>
-    <td class="text-dark text-left" width="15%">
-      Fullysampled:
-    </td>
-    <td class="text-dark text-center">
-      {% if data.fullysampled is None %}
-      Unknown
-      {% elif data.fullysampled %}
-      Yes
-      {% else %}
-      No
-      {% endif %}
-    </td>
-  </tr>
-  
-  <tr>
-    <td class="text-dark text-left">
-      Uploader:
-    </td>
-    <td class="text-dark text-center">
-      {{ data.uploader }}
-    </td>
-  </tr>
-</table>
+<div class="row align-items-center">
+  <div class="col-3 text-center">
+    <img src=
+	 {% if data.thumbnail_file %}
+	 "{{ data.thumbnail_file.url }}"
+	 {% else %}
+	 {% static "images/default_thumbnail.png" %}
+	 {% endif %}
+	 style="max-height:128px;max-width:128px;height:auto;width:auto;"
+	 class="rounded">
+  </div>
+  <div class="col-9">
+    <table class="table-sm">
+      <tr>
+	<td class="text-muted text-left" width="15%">
+	  Project:
+	</td>
+	<td class="text-muted text-center">
+	  {{ data.project.name }}
+	</td>
+      </tr>
+      
+      <tr>
+	<td class="text-muted text-left" width="15%">
+	  Anatomy:
+	</td>
+	<td class="text-muted text-center">
+	  {{ data.anatomy }}
+	</td>
+      </tr>
+      
+      <tr>
+	<td class="text-muted text-left" width="15%">
+	  Fullysampled:
+	</td>
+	<td class="text-muted text-center">
+	  {% if data.fullysampled is None %}
+	  Unknown
+	  {% elif data.fullysampled %}
+	  Yes
+	  {% else %}
+	  No
+	  {% endif %}
+	</td>
+      </tr>
+      
+      <tr>
+	<td class="text-muted text-left" width="15%">
+	  Uploader:
+	</td>
+	<td class="text-muted text-center">
+	  {{ data.uploader }}
+	</td>
+      </tr>
+    </table>
+  </div>
+</div>

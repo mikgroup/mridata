@@ -170,7 +170,7 @@ def upload_siemens(request):
             else:
                 return render(request, 'mridata/upload.html', {'form': SiemensDataForm})
             
-        return redirect('data_list')
+        return redirect("data_list")
     
     return render(request, 'mridata/upload.html', {'form': SiemensDataForm})
 
@@ -182,10 +182,10 @@ def data_edit(request, uuid):
         if request.method == "POST":
             form = DataForm(request.POST or None, request.FILES or None, instance=data)
             if form.is_valid():
-                data = form.save(commit=False)
                 project, created = Project.objects.get_or_create(
                     name=form.cleaned_data['project_name'],
                 )
+                data = form.save(commit=False)
                 data.project = project
                 data.save()
                 
