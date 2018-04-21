@@ -520,11 +520,6 @@ def create_thumbnail(ismrmrd_file,
         number_of_sets = hdr.encoding[0].encodingLimits.set.maximum + 1
     except Exception:
         number_of_sets = 1
-        
-    try:
-        number_of_segments = hdr.encoding[0].encodingLimits.segments.maximum + 1
-    except Exception:
-        number_of_segments = 1
 
     Nz = min(matrix_size_z, 32)
     ksp = np.zeros([number_of_channels, Nz, matrix_size_y, matrix_size_x], dtype=np.complex64)
@@ -540,8 +535,7 @@ def create_thumbnail(ismrmrd_file,
             acq.idx.repetition == number_of_repetitions // 2 and
             acq.idx.contrast == number_of_contrasts // 2 and
             acq.idx.phase == number_of_phases // 2 and
-            acq.idx.set == number_of_sets // 2 and
-            acq.idx.segment == number_of_segments // 2):
+            acq.idx.set == number_of_sets // 2):
             
             y = acq.idx.kspace_encode_step_1
             z = acq.idx.kspace_encode_step_2
