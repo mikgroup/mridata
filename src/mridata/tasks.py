@@ -556,10 +556,10 @@ def create_thumbnail(ismrmrd_file,
     cimg_slice = ifftc(ksp_slice, axes=[-1, -2])
 
     thumbnail = rss(cimg_slice).T
-    if thumbnail_horizontal_flip:
+    if thumbnail_vertical_flip:
         thumbnail = thumbnail[::-1, :]
 
-    if thumbnail_vertical_flip:
+    if thumbnail_horizontal_flip:
         thumbnail = thumbnail[:, ::-1]
 
     if thumbnail_transpose:
