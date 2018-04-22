@@ -11,7 +11,7 @@ var dataListListener = function(){
 	data: "",
 	success: function(json) {
 	    if (json.refresh) {
-		$(".data_list").load(location.href + ".data_list>*","");
+		$("#data_list").load(location.href + " #data_list>*","");
 	    }
 	}
     })

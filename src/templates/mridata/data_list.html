@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block body_block %}
-<div class="row data_list">
+<div class="row">
   <div class="col-md-auto text-center">
     <form action="" method="get">
       <table class="small table-sm text-left mb-3">
@@ -12,14 +12,14 @@
     </form>
   </div>
   
-  <div class="col">
-    
+  
+  <div class="col" id="data_list">
     {% if user.is_authenticated %}
     {% include "mridata/batch_links.html" %}
     {% endif %}
-
+    
     {% for temp_data in temp_datasets %}
-    {% include "mridata/temp_data_card.html" with temp_data=temp_data %}
+    {% include "mridata/temp_data_card.html" %}
     {% endfor %}
     
     {% include "mridata/data_list_page.html" %}
@@ -31,9 +31,7 @@
 
 {% block js_block %}
 <script src="{% static 'js/el-pagination.js' %}"></script>
-<script>$.endlessPaginate({
-  paginateOnScroll: true
-  });</script>
+<script>$.endlessPaginate({paginateOnScroll: true});</script>
 {% if user.is_authenticated %}
 <script type="text/javascript" src="{% static 'js/data_list.js' %}"> </script>
 {% endif %}

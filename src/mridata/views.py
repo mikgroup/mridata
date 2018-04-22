@@ -34,6 +34,7 @@ def terms(request):
 
 
 def data_list(request):
+    
     filter = DataFilter(request.GET, Data.objects.all().order_by('-upload_date'))
 
     if request.user.is_authenticated:
@@ -41,11 +42,12 @@ def data_list(request):
         temp_datasets = TempData.objects.filter(uploader=uploader).order_by('-upload_date')
     else:
         temp_datasets = []
-
-    if request.is_ajax():
+    
+    if request.is_ajax() and 'page' in request.GET:
         template = 'mridata/data_list_page.html'
     else:
         template = 'mridata/data_list.html'
+        
     return render(request, template,
                   {
                       'filter': filter,

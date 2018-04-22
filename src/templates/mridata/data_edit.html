@@ -8,12 +8,12 @@
 <div class="col">
   <div class="card text-center">
     <form method="POST" class="data-form" enctype="multipart/form-data">
-        {% csrf_token %}
-	<br>
-        <table class="table-sm" width="100%">
-  	     {{ form.as_table }}
-        </table>
-        <button type="submit" class="save btn btn-primary">Update</button>
+      {% csrf_token %}
+      <br>
+      <table class="table-sm" width="100%">
+  	{{ form.as_table }}
+      </table>
+      <button type="submit" class="save btn btn-primary">Update</button>
     </form>
     <br>
   </div>
