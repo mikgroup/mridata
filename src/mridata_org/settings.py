@@ -164,6 +164,9 @@ LOGIN_URL = '/accounts/login/'
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
+# TEMP
+TEMP_ROOT = os.environ['TEMP_ROOT']
+
 # STATIC and MEDIA
 if USE_AWS:
     AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
@@ -186,10 +189,7 @@ else:
 
     # Media
     MEDIA_URL = '/media/'
-    if 'MEDIA_ROOT' in os.environ:
-        MEDIA_ROOT = os.environ['MEDIA_ROOT']
-    else:
-        MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    MEDIA_ROOT = os.environ['MEDIA_ROOT']
 
 # Celery
 if USE_AWS:

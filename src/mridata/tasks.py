@@ -8,15 +8,15 @@ import ismrmrd
 import subprocess
 import numpy as np
 import boto3
-from .recon import ifftc, rss, zpad, crop
-from .models import Uploader, Data, TempData, PhilipsData, SiemensData, GeData, IsmrmrdData
+
+from .recon import ifftc, rss
+from .models import Data, PhilipsData, SiemensData, GeData, IsmrmrdData
 from PIL import Image
 
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 
 logger = get_task_logger(__name__)
-
 
 @task(name="process_ge_data")
 def process_ge_data(uuid):
@@ -50,7 +50,7 @@ def process_temp_data(dtype, uuid):
         ismrmrd_file = '{}.h5'.format(uuid)
         data.ismrmrd_file = ismrmrd_file
     
-        if not os.path.exists(ismrmrd_file):
+        if not os.path.exists(os.path.join(settings.TEMP_ROOT, ismrmrd_file)):
             raise IOError('{} ISMRMRD conversion failed.'.format(uuid))
         
         parse_ismrmrd(ismrmrd_file, data)
@@ -70,10 +70,11 @@ def process_temp_data(dtype, uuid):
         
         thumbnail_file = '{}.png'.format(uuid)
         pil = Image.fromarray(thumbnail)
-        pil.save(thumbnail_file)
+        pil.save(os.path.join(settings.TEMP_ROOT, thumbnail_file))
+        upload_to_media(thumbnail_file)
+        
         data.thumbnail_file = thumbnail_file
         
-        upload_to_media(thumbnail_file)
     except Exception as e:
         pass
 
@@ -101,11 +102,11 @@ def convert_ge_data(uuid):
     logger.info('Converting GeData to ISMRMRD')
     subprocess.check_output(['ge_to_ismrmrd',
                              '--verbose',
-                             '-o', ismrmrd_file,
-                             ge_file])
+                             '-o', os.path.join(settings.TEMP_ROOT, ismrmrd_file),
+                             os.path.join(settings.TEMP_ROOT, ge_file)])
     logger.info('Conversion SUCCESS')
 
-    os.remove(ge_file)
+    os.remove(os.path.join(settings.TEMP_ROOT, ge_file))
 
 
 def convert_siemens_data(uuid):
@@ -115,8 +116,9 @@ def convert_siemens_data(uuid):
     download_from_media(siemens_dat_file)
 
     # Get last measurement number
-    stdout = subprocess.run(['siemens_to_ismrmrd', '-f', siemens_dat_file,
-                             '-H', '-o', ismrmrd_file],
+    stdout = subprocess.run(['siemens_to_ismrmrd',
+                             '-f', os.path.join(settings.TEMP_ROOT, siemens_dat_file),
+                             '-H', '-o', os.path.join(settings.TEMP_ROOT, ismrmrd_file)],
                             stdout=subprocess.PIPE).stdout
     start = stdout.find(b'This file contains ') + len('This file contains ')
     end = stdout.find(b' measurement(s)')
@@ -124,11 +126,11 @@ def convert_siemens_data(uuid):
     
     logger.info('Converting SiemensData to ISMRMRD...')
     subprocess.check_output(['siemens_to_ismrmrd',
-                             '-f', siemens_dat_file,
-                             '-o', ismrmrd_file, '-z', meas_num])
+                             '-f', os.path.join(settings.TEMP_ROOT, siemens_dat_file),
+                             '-o', os.path.join(settings.TEMP_ROOT, ismrmrd_file), '-z', meas_num])
     logger.info('Conversion SUCCESS')
 
-    os.remove(siemens_dat_file)
+    os.remove(os.path.join(settings.TEMP_ROOT, siemens_dat_file))
     
 
 def convert_philips_data(uuid):
@@ -145,14 +147,14 @@ def convert_philips_data(uuid):
     
     logger.info('Converting PhilipsData to ISMRMRD')
     subprocess.check_output(['philips_to_ismrmrd',
-                             '-f', str(uuid),
+                             '-f', os.path.join(settings.TEMP_ROOT, str(uuid)),
                              '-x', schema_file,
-                             '-o', ismrmrd_file])
+                             '-o', os.path.join(settings.TEMP_ROOT, ismrmrd_file)])
     logger.info('Conversion SUCCESS')
     
-    os.remove(philips_lab_file)
-    os.remove(philips_sin_file)
-    os.remove(philips_raw_file)
+    os.remove(os.path.join(settings.TEMP_ROOT, philips_lab_file))
+    os.remove(os.path.join(settings.TEMP_ROOT, philips_sin_file))
+    os.remove(os.path.join(settings.TEMP_ROOT, philips_raw_file))
 
 
 def convert_ismrmrd_data(uuid):
@@ -160,7 +162,8 @@ def convert_ismrmrd_data(uuid):
     temp_ismrmrd_file = 'temp_{}.h5'.format(uuid)
     
     download_from_media(temp_ismrmrd_file)
-    os.rename(temp_ismrmrd_file, ismrmrd_file)
+    os.rename(os.path.join(settings.TEMP_ROOT, temp_ismrmrd_file),
+              os.path.join(settings.TEMP_ROOT, ismrmrd_file))
     logger.info('Conversion SUCCESS')
 
 
@@ -196,20 +199,20 @@ def raise_temp_data_error(temp_data, error_message):
     temp_data.error_message = error_message
     temp_data.save()
 
-    if os.path.exists('P{}.7'.format(temp_data.uuid)):
-        os.remove('P{}.7'.format(temp_data.uuid))
-    if os.path.exists('{}_archive.h5'.format(temp_data.uuid)):
-        os.remove('{}_archive.h5'.format(temp_data.uuid))
-    if os.path.exists('{}.dat'.format(temp_data.uuid)):
-        os.remove('{}.dat'.format(temp_data.uuid))
-    if os.path.exists('{}.lab'.format(temp_data.uuid)):
-        os.remove('{}.lab'.format(temp_data.uuid))
-    if os.path.exists('{}.sin'.format(temp_data.uuid)):
-        os.remove('{}.sin'.format(temp_data.uuid))
-    if os.path.exists('{}.raw'.format(temp_data.uuid)):
-        os.remove('{}.raw'.format(temp_data.uuid))
-    if os.path.exists('{}.h5'.format(temp_data.uuid)):
-        os.remove('{}.h5'.format(temp_data.uuid))        
+    if os.path.exists(os.path.join(settings.TEMP_ROOT, 'P{}.7'.format(temp_data.uuid))):
+        os.remove(os.path.join(settings.TEMP_ROOT, 'P{}.7'.format(temp_data.uuid)))
+    if os.path.exists(os.path.join(settings.TEMP_ROOT, '{}_archive.h5'.format(temp_data.uuid))):
+        os.remove(os.path.join(settings.TEMP_ROOT, '{}_archive.h5'.format(temp_data.uuid)))
+    if os.path.exists(os.path.join(settings.TEMP_ROOT, '{}.dat'.format(temp_data.uuid))):
+        os.remove(os.path.join(settings.TEMP_ROOT, '{}.dat'.format(temp_data.uuid)))
+    if os.path.exists(os.path.join(settings.TEMP_ROOT, '{}.lab'.format(temp_data.uuid))):
+        os.remove(os.path.join(settings.TEMP_ROOT, '{}.lab'.format(temp_data.uuid)))
+    if os.path.exists(os.path.join(settings.TEMP_ROOT, '{}.sin'.format(temp_data.uuid))):
+        os.remove(os.path.join(settings.TEMP_ROOT, '{}.sin'.format(temp_data.uuid)))
+    if os.path.exists(os.path.join(settings.TEMP_ROOT, '{}.raw'.format(temp_data.uuid))):
+        os.remove(os.path.join(settings.TEMP_ROOT, '{}.raw'.format(temp_data.uuid)))
+    if os.path.exists(os.path.join(settings.TEMP_ROOT, '{}.h5'.format(temp_data.uuid))):
+        os.remove(os.path.join(settings.TEMP_ROOT, '{}.h5'.format(temp_data.uuid)))   
         
     
 def download_from_media(file):
@@ -220,16 +223,16 @@ def download_from_media(file):
 
         key = os.path.join(settings.AWS_MEDIA_LOCATION, file)
         media_file = bucket.Object(key)
-        media_file.download_file(file)
+        media_file.download_file(os.path.join(settings.TEMP_ROOT, file))
         media_file.delete()
     else:
         media_file = os.path.join(settings.MEDIA_ROOT, file)
-        shutil.move(media_file, file)
+        shutil.move(media_file, os.path.join(settings.TEMP_ROOT, file))
     
     
 def upload_to_media(file):
     
-    if not os.path.exists(file):
+    if not os.path.exists(os.path.join(settings.TEMP_ROOT, file)):
         raise IOError('{} does not exists.'.format(file))
 
     if settings.USE_AWS:
@@ -239,17 +242,17 @@ def upload_to_media(file):
         key = os.path.join(settings.AWS_MEDIA_LOCATION, file)
         media_file = bucket.Object(key)
         media_file.upload_file(file, ExtraArgs={'ACL': 'public-read'})
-        os.remove(file)
+        os.remove(os.path.join(settings.TEMP_ROOT, file))
     else:
         media_file = os.path.join(settings.MEDIA_ROOT, file)
-        shutil.move(file, media_file)
+        shutil.move(os.path.join(settings.TEMP_ROOT, file), media_file)
 
         
 def parse_ismrmrd(ismrmrd_file, data):
 
     logger.info('Parsing ISMRMRD...')
 
-    dset = ismrmrd.Dataset(ismrmrd_file, 'dataset', create_if_needed=False)
+    dset = ismrmrd.Dataset(os.path.join(settings.TEMP_ROOT, ismrmrd_file), 'dataset', create_if_needed=False)
     hdr = ismrmrd.xsd.CreateFromDocument(dset.read_xml_header())
 
     try:
@@ -446,13 +449,6 @@ def parse_ismrmrd(ismrmrd_file, data):
     logger.info('Parse SUCCESS')
 
 
-def make_valid_num(num):
-    if num == -1:
-        return 1
-    else:
-        return num
-
-
 def create_thumbnail(ismrmrd_file,
                      thumbnail_horizontal_flip=False,
                      thumbnail_vertical_flip=False,
@@ -463,7 +459,7 @@ def create_thumbnail(ismrmrd_file,
     https://github.com/ismrmrd/ismrmrd-python-tools/blob/master/recon_ismrmrd_dataset.py
     '''
     
-    dset = ismrmrd.Dataset(ismrmrd_file, 'dataset', create_if_needed=False)
+    dset = ismrmrd.Dataset(os.path.join(settings.TEMP_ROOT, ismrmrd_file), 'dataset', create_if_needed=False)
     logger.info('Creating thumbnail...')
     
     hdr = ismrmrd.xsd.CreateFromDocument(dset.read_xml_header())
@@ -556,10 +552,10 @@ def create_thumbnail(ismrmrd_file,
     cimg_slice = ifftc(ksp_slice, axes=[-1, -2])
 
     thumbnail = rss(cimg_slice).T
-    if thumbnail_vertical_flip:
+    if thumbnail_horizontal_flip:
         thumbnail = thumbnail[::-1, :]
 
-    if thumbnail_horizontal_flip:
+    if thumbnail_vertical_flip:
         thumbnail = thumbnail[:, ::-1]
 
     if thumbnail_transpose:
