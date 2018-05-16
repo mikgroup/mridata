@@ -241,7 +241,8 @@ def upload_to_media(file):
 
         key = os.path.join(settings.AWS_MEDIA_LOCATION, file)
         media_file = bucket.Object(key)
-        media_file.upload_file(file, ExtraArgs={'ACL': 'public-read'})
+        media_file.upload_file(os.path.join(settings.TEMP_ROOT, file),
+                               ExtraArgs={'ACL': 'public-read'})
         os.remove(os.path.join(settings.TEMP_ROOT, file))
     else:
         media_file = os.path.join(settings.MEDIA_ROOT, file)
