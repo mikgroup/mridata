@@ -176,6 +176,7 @@ def convert_temp_data_to_data(temp_data, dtype, data):
     data.project = temp_data.project
     data.references = temp_data.references
     data.comments = temp_data.comments
+    data.funding_support = temp_data.funding_support
 
     if dtype == GeData:
         convert_ge_data(temp_data.uuid)

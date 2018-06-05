@@ -69,6 +69,7 @@ class Data(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True)
     references = models.TextField(blank=True, default='')
     comments = models.TextField(blank=True, default='')
+    funding_support = models.TextField(blank=True, default='')
     
     protocol_name = models.CharField(max_length=100, default='', blank=True)
     series_description = models.TextField(default='', blank=True)
@@ -136,6 +137,7 @@ class TempData(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True)
     references = models.TextField(blank=True, default='')
     comments = models.TextField(blank=True, default='')
+    funding_support = models.TextField(blank=True, default='')
     
     upload_date = models.DateTimeField(default=timezone.now)
     uploader = models.ForeignKey(Uploader, on_delete=models.CASCADE)

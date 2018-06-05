@@ -40,6 +40,15 @@
     </tr>
     {% endif %}
     
+    {% if data.funding_support != '' %}
+    <tr>
+      <th width="30%" >Funding Support</th>
+      <td>
+	{{ data.funding_support }}
+      </td>
+    </tr>
+    {% endif %}
+    
     <tr>
       <th width="30%" >Protocol Name</th>
       <td>{{ data.protocol_name }}</td> 

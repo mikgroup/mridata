@@ -15,11 +15,13 @@ class DataForm(forms.ModelForm):
                   'fullysampled',
                   'references',
                   'comments',
+                  'funding_support',
                   'thumbnail_file',
         )
         widgets = {
             'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
             'comments': forms.Textarea(attrs={'rows':3, 'cols':50}),
+            'funding_support': forms.Textarea(attrs={'rows':3, 'cols':50}),
         }
         
 
@@ -38,6 +40,7 @@ class PhilipsDataForm(forms.ModelForm):
             'fullysampled',
             'references',
             'comments',
+            'funding_support',
             'philips_lab_file',
             'philips_raw_file',
             'philips_sin_file',
@@ -65,6 +68,7 @@ class GeDataForm(forms.ModelForm):
             'fullysampled',
             'references',
             'comments',
+            'funding_support',
             'ge_file',
             'thumbnail_horizontal_flip',
             'thumbnail_vertical_flip',
@@ -74,6 +78,7 @@ class GeDataForm(forms.ModelForm):
         widgets = {
             'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
             'comments': forms.Textarea(attrs={'rows':3, 'cols':50}),
+            'funding_support': forms.Textarea(attrs={'rows':3, 'cols':50}),
         }
 
 
@@ -90,6 +95,7 @@ class SiemensDataForm(forms.ModelForm):
             'fullysampled',
             'references',
             'comments',
+            'funding_support',
             'siemens_dat_file',
             'thumbnail_horizontal_flip',
             'thumbnail_vertical_flip',
@@ -99,6 +105,7 @@ class SiemensDataForm(forms.ModelForm):
         widgets = {
             'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
             'comments': forms.Textarea(attrs={'rows':3, 'cols':50}),
+            'funding_support': forms.Textarea(attrs={'rows':3, 'cols':50}),
         }
 
         
@@ -115,6 +122,7 @@ class IsmrmrdDataForm(forms.ModelForm):
             'fullysampled',
             'references',
             'comments',
+            'funding_support',
             'ismrmrd_file',
             'thumbnail_horizontal_flip',
             'thumbnail_vertical_flip',
@@ -124,4 +132,5 @@ class IsmrmrdDataForm(forms.ModelForm):
         widgets = {
             'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
             'comments': forms.Textarea(attrs={'rows':3, 'cols':50}),
+            'funding_support': forms.Textarea(attrs={'rows':3, 'cols':50}),
         }
