@@ -4,6 +4,10 @@
 {% block body_block %}
 
 <div class="col text-center mb-3">
+  <div class="alert alert-warning text-center mb-2">
+    Please ensure your data does not contain any patient information.
+    By using this website, you are agreeing to our <a href="{% url 'terms' %}">Terms of Service</a>.
+  </div>
   <div class="card">
     <form method="POST" class="form mb-3" enctype="multipart/form-data">
       <br>
