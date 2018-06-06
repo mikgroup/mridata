@@ -8,5 +8,5 @@ if [ -d "${SDK_TOP}/lib" ]; then
     cd build
     cmake -D OX_INSTALL_DIRECTORY=$SDKTOP ..
     make
-    sudo make install
+    make install
 fi
