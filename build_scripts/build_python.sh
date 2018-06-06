@@ -1,5 +1,9 @@
 #! /usr/bin/env bash
 
+wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+
+bash Miniconda3-latest-Linux-x86_64.sh -b -p /miniconda
+
 pip install django \
     h5py  \
     psycopg2 \

@@ -1,6 +1,8 @@
-FROM python:3
+FROM gcc:4.9
 
 MAINTAINER Frank Ong <frankong@berkeley.edu>
+
+ENV PATH=/miniconda/bin:${PATH}
 
 ADD build_scripts/build_python.sh build_scripts/build_python.sh
 

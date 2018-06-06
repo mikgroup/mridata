@@ -1,4 +1,4 @@
-FROM python:3
+FROM gcc:4.9
 
 MAINTAINER Frank Ong <frankong@berkeley.edu>
 
@@ -19,6 +19,7 @@ RUN bash build_scripts/build_philips.sh
 ADD build_scripts/build_ge.sh build_scripts/build_ge.sh
 RUN bash build_scripts/build_ge.sh
 
+ENV PATH=/miniconda/bin:${PATH}
 ADD build_scripts/build_python.sh build_scripts/build_python.sh
 RUN bash build_scripts/build_python.sh
 
