@@ -12,12 +12,7 @@
     </form>
   </div>
   
-  
-  <div class="col" id="data_list">
-    {% if user.is_authenticated %}
-    {% include "mridata/batch_links.html" %}
-    {% endif %}
-    
+  <div class="col" id="data_list">    
     {% for temp_data in temp_datasets %}
     {% include "mridata/temp_data_card.html" %}
     {% endfor %}
