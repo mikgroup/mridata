@@ -5,20 +5,19 @@ wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.
 bash Miniconda3-latest-Linux-x86_64.sh -b -p /miniconda
 
 pip install \
-    setuptools \
-    django \
-    h5py  \
-    psycopg2 \
-    boto3 \
-    pillow \
-    celery \
-    django-filter \
-    django-storages \
-    pyxb \
-    django-el-pagination \
-    django-registration-redux \
-    redis \
-    pycurl
+    boto3==1.7.66 \
+    celery==4.2.1 \
+    Django==1.11.3 \
+    django-el-pagination==3.2.4 \
+    django-filter==1.0.4 \
+    django-registration-redux==1.8 \
+    django-storages==1.6.6 \
+    h5py==2.8.0 \
+    numpy==1.15.0 \
+    Pillow==5.2.0 \
+    psycopg2==2.7.5 \
+    pycurl==7.43.0.2 \
+    PyXB==1.2.6
     
 # ISMRMRD-python
 git clone https://github.com/ismrmrd/ismrmrd-python.git
