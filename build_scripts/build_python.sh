@@ -17,7 +17,8 @@ pip install \
     Pillow==5.2.0 \
     psycopg2==2.7.5 \
     pycurl==7.43.0.2 \
-    PyXB==1.2.6
+    PyXB==1.2.6 \
+    redis==2.10.6
     
 # ISMRMRD-python
 git clone https://github.com/ismrmrd/ismrmrd-python.git
