@@ -170,9 +170,6 @@ TEMP_ROOT = os.environ['TEMP_ROOT']
 # STATIC and MEDIA
 if USE_AWS:
     AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-    AWS_S3_OBJECT_PARAMETERS = {
-        'CacheControl': 'max-age=86400',
-    }
     AWS_STATIC_LOCATION = 'static'
     AWS_MEDIA_LOCATION = 'media'
 
