@@ -174,6 +174,7 @@ def convert_temp_data_to_data(temp_data, dtype, data):
     data.upload_date = temp_data.upload_date
     data.anatomy = temp_data.anatomy
     data.project = temp_data.project
+    data.fullysampled = temp_data.fullysampled
     data.references = temp_data.references
     data.comments = temp_data.comments
     data.funding_support = temp_data.funding_support
