@@ -518,18 +518,33 @@ def create_thumbnail(ismrmrd_file,
         number_of_sets = hdr.encoding[0].encodingLimits.set.maximum + 1
     except Exception:
         number_of_sets = 1
+    logger.info('Reading k-space...')
 
     Nz = min(matrix_size_z, 32)
     ksp = np.zeros([number_of_channels, Nz, matrix_size_y, matrix_size_x], dtype=np.complex64)
-        
-    logger.info('Reading k-space...')
+
+    # Select center slice
+    slice_indices = []
+    slice_positions = []
+    for acqnum in range(dset.number_of_acquisitions()):
+        if len(slice_positions) < number_of_slices:
+            acq = dset.read_acquisition(acqnum)
+            if acq.idx.slice not in slice_indices:
+                slice_indices.append(acq.idx.slice)
+                slice_positions.append(np.linalg.norm(acq.position))
+        else:
+            break
+
+    slice_idx = np.where(
+        slice_positions == np.percentile(slice_positions, 50, interpolation='nearest'))[0][0]
+            
     for acqnum in range(dset.number_of_acquisitions()):
         acq = dset.read_acquisition(acqnum)
         if acq.isFlagSet(ismrmrd.ACQ_IS_NOISE_MEASUREMENT):
             continue
 
         if (acq.idx.average == number_of_averages // 2 and
-            acq.idx.slice == number_of_slices // 2 and
+            acq.idx.slice == slice_idx and
             acq.idx.repetition == number_of_repetitions // 2 and
             acq.idx.contrast == number_of_contrasts // 2 and
             acq.idx.phase == number_of_phases // 2 and
