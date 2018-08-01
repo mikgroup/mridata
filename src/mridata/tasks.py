@@ -65,8 +65,7 @@ def process_temp_data(dtype, uuid):
         thumbnail = create_thumbnail(ismrmrd_file,
                                      thumbnail_horizontal_flip=temp_data.thumbnail_horizontal_flip,
                                      thumbnail_vertical_flip=temp_data.thumbnail_vertical_flip,
-                                     thumbnail_transpose=temp_data.thumbnail_transpose,
-                                     thumbnail_fftshift_along_z=temp_data.thumbnail_fftshift_along_z)
+                                     thumbnail_transpose=temp_data.thumbnail_transpose)
         
         thumbnail_file = '{}.png'.format(uuid)
         pil = Image.fromarray(thumbnail)
@@ -455,8 +454,7 @@ def parse_ismrmrd(ismrmrd_file, data):
 def create_thumbnail(ismrmrd_file,
                      thumbnail_horizontal_flip=False,
                      thumbnail_vertical_flip=False,
-                     thumbnail_transpose=False,
-                     thumbnail_fftshift_along_z=False):
+                     thumbnail_transpose=False):
     '''
     Derived from:
     https://github.com/ismrmrd/ismrmrd-python-tools/blob/master/recon_ismrmrd_dataset.py
@@ -519,53 +517,55 @@ def create_thumbnail(ismrmrd_file,
         number_of_sets = hdr.encoding[0].encodingLimits.set.maximum + 1
     except Exception:
         number_of_sets = 1
-    logger.info('Reading k-space...')
 
-    Nz = min(matrix_size_z, 32)
-    ksp = np.zeros([number_of_channels, Nz, matrix_size_y, matrix_size_x], dtype=np.complex64)
-
-    # Select center slice
-    slice_indices = []
-    slice_positions = []
+    logger.info('Choosing average, slice, repetition, contrast, phase, and set...')
+    energy = np.zeros([number_of_slices, number_of_repetitions,
+                       number_of_contrasts, number_of_phases, number_of_sets], dtype=np.float32)
     for acqnum in range(dset.number_of_acquisitions()):
-        if len(slice_positions) < number_of_slices:
-            acq = dset.read_acquisition(acqnum)
-            if acq.idx.slice not in slice_indices:
-                slice_indices.append(acq.idx.slice)
-                slice_positions.append(np.linalg.norm(acq.position))
-        else:
-            break
+        acq = dset.read_acquisition(acqnum)
+        if acq.isFlagSet(ismrmrd.ACQ_IS_NOISE_MEASUREMENT):
+            continue
+        
+        y = acq.idx.kspace_encode_step_1
+        z = acq.idx.kspace_encode_step_2
+        if z >= 0 and z < matrix_size_z and y >= 0 and y < matrix_size_y:
+            try:
+                energy[acq.idx.slice, acq.idx.repetition,
+                       acq.idx.contrast, acq.idx.phase, acq.idx.set] += np.sum(np.abs(acq.data)**2)
+            except:
+                pass
 
-    slice_idx = np.where(
-        slice_positions == np.percentile(slice_positions, 50, interpolation='nearest'))[0][0]
-            
+    print(energy)
+
+    slice_idx, repetition_idx, contrast_idx, phase_idx, set_idx = np.where(energy == energy.max())
+    
+    logger.info('Reading k-space...')
+    ksp = np.zeros([number_of_channels, matrix_size_z, matrix_size_y, matrix_size_x],
+                   dtype=np.complex64)
     for acqnum in range(dset.number_of_acquisitions()):
         acq = dset.read_acquisition(acqnum)
         if acq.isFlagSet(ismrmrd.ACQ_IS_NOISE_MEASUREMENT):
             continue
 
-        if (acq.idx.average == number_of_averages // 2 and
-            acq.idx.slice == slice_idx and
-            acq.idx.repetition == number_of_repetitions // 2 and
-            acq.idx.contrast == number_of_contrasts // 2 and
-            acq.idx.phase == number_of_phases // 2 and
-            acq.idx.set == number_of_sets // 2):
+        if (acq.idx.slice == slice_idx and
+            acq.idx.repetition == repetition_idx and
+            acq.idx.contrast == contrast_idx and
+            acq.idx.phase == phase_idx and
+            acq.idx.set == set_idx):
             
             y = acq.idx.kspace_encode_step_1
             z = acq.idx.kspace_encode_step_2
 
-            start = matrix_size_z // 2 - Nz // 2
-            if (z >= start and z < start + Nz and y >= 0 and y <= matrix_size_y):
-                ksp[:, z - start, y, :] = acq.data
+            if z >= 0 and z < matrix_size_z and y >= 0 and y < matrix_size_y:
+                ksp[:, z, y, :] += acq.data
                 
     logger.info('Finished reading k-space.')
 
     logger.info('Transforming k-space...')
+    ksp /= np.abs(ksp).max()
     ksp_mix = ifftc(ksp, axes=[-3])
-    if thumbnail_fftshift_along_z:
-        ksp_slice = ksp_mix[:, 0, :, :]
-    else:
-        ksp_slice = ksp_mix[:, Nz // 2, :, :]
+    z_idx = np.argmax(np.sum(np.abs(ksp_mix)**2, axis=(0, 2, 3)))
+    ksp_slice = ksp_mix[:, z_idx, :, :]
         
     cimg_slice = ifftc(ksp_slice, axes=[-1, -2])
 

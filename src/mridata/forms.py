@@ -47,7 +47,6 @@ class PhilipsDataForm(forms.ModelForm):
             'thumbnail_horizontal_flip',
             'thumbnail_vertical_flip',
             'thumbnail_transpose',
-            'thumbnail_fftshift_along_z',
         )
         widgets = {
             'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
@@ -73,7 +72,6 @@ class GeDataForm(forms.ModelForm):
             'thumbnail_horizontal_flip',
             'thumbnail_vertical_flip',
             'thumbnail_transpose',
-            'thumbnail_fftshift_along_z',
         ]
         widgets = {
             'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
@@ -100,7 +98,6 @@ class SiemensDataForm(forms.ModelForm):
             'thumbnail_horizontal_flip',
             'thumbnail_vertical_flip',
             'thumbnail_transpose',
-            'thumbnail_fftshift_along_z',
         )
         widgets = {
             'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
@@ -127,7 +124,6 @@ class IsmrmrdDataForm(forms.ModelForm):
             'thumbnail_horizontal_flip',
             'thumbnail_vertical_flip',
             'thumbnail_transpose',
-            'thumbnail_fftshift_along_z',
         )
         widgets = {
             'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
