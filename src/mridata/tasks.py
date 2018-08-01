@@ -555,7 +555,7 @@ def create_thumbnail(ismrmrd_file,
             z = acq.idx.kspace_encode_step_2
 
             start = matrix_size_z // 2 - Nz // 2
-            if (z >= start and z < start + Nz):
+            if (z >= start and z < start + Nz and y >= 0 and y <= matrix_size_y):
                 ksp[:, z - start, y, :] = acq.data
                 
     logger.info('Finished reading k-space.')
