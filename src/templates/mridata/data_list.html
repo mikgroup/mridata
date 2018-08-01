@@ -22,7 +22,8 @@
     {% for log in logs %}
     {% include "mridata/log_card.html" %}
     {% endfor %}
-    
+
+    Total {{filter.qs|length}} datasets
     {% include "mridata/data_list_page.html" %}
   </div>
 </div>
