@@ -11,7 +11,7 @@ from django.urls import reverse
 from celery.result import AsyncResult
 from django.contrib.auth.models import User
 
-from .models import Data, TempData, Uploader, Project, Message
+from .models import Data, TempData, Uploader, Project, Log
 from .forms import PhilipsDataForm, SiemensDataForm, GeDataForm, IsmrmrdDataForm, DataForm
 from .filters import DataFilter
 from .tasks import process_ge_data, process_ismrmrd_data, process_philips_data, process_siemens_data
@@ -42,10 +42,10 @@ def data_list(request):
     if request.user.is_authenticated:
         uploader = request.user.uploader
         temp_datasets = TempData.objects.filter(uploader=uploader).order_by('-upload_date')
-        messages = Message.objects.filter(user=request.user).order_by('-date_time')
+        logs = Log.objects.filter(user=request.user).order_by('-date_time')
     else:
         temp_datasets = []
-        messages = []
+        logs = []
     
     if request.is_ajax() and 'page' in request.GET:
         template = 'mridata/data_list_page.html'
@@ -56,7 +56,7 @@ def data_list(request):
                   {
                       'filter': filter,
                       'temp_datasets': temp_datasets,
-                      'messages': messages
+                      'logs': logs
                   })
 
 
@@ -88,9 +88,9 @@ def upload_ismrmrd(request):
             ismrmrd_data.original_filename = request.FILES['ismrmrd_file'].name
             ismrmrd_data.save()
 
-            message = Message(string="{} uploaded. Waiting for backend processing.".format(request.FILES['ismrmrd_file'].name),
+            log = Log(string="{} uploaded. Waiting for backend processing.".format(request.FILES['ismrmrd_file'].name),
                               user=request.user)
-            message.save()
+            log.save()
             
             request.user.uploader.refresh = True
             request.user.uploader.save()
@@ -118,9 +118,9 @@ def upload_ge(request):
             ge_data.original_filename = request.FILES['ge_file'].name
             ge_data.save()
             
-            message = Message(string="{} uploaded. Waiting for backend processing.".format(request.FILES['ge_file'].name),
+            log = Log(string="{} uploaded. Waiting for backend processing.".format(request.FILES['ge_file'].name),
                               user=request.user)
-            message.save()
+            log.save()
             
             request.user.uploader.refresh = True
             request.user.uploader.save()
@@ -152,12 +152,12 @@ def upload_philips(request):
             
             philips_data.save()
             
-            message = Message(string="{} {} {} uploaded. Waiting for backend processing.".format(
+            log = Log(string="{} {} {} uploaded. Waiting for backend processing.".format(
                 request.FILES['philips_raw_file'].name,
                 request.FILES['philips_sin_file'].name,
                 request.FILES['philips_lab_file'].name),
                               user=request.user)
-            message.save()
+            log.save()
             
             request.user.uploader.refresh = True
             request.user.uploader.save()
@@ -184,10 +184,10 @@ def upload_siemens(request):
             siemens_data.original_filename = request.FILES['siemens_dat_file'].name
             siemens_data.save()
             
-            message = Message(string="{} uploaded. Waiting for backend processing.".format(
+            log = Log(string="{} uploaded. Waiting for backend processing.".format(
                 request.FILES['siemens_dat_file'].name),
                               user=request.user)
-            message.save()
+            log.save()
             
             request.user.uploader.refresh = True
             request.user.uploader.save()
@@ -233,21 +233,12 @@ def data_delete(request, uuid):
 
 
 @login_required
-def temp_data_delete(request, uuid):
-    temp_data = get_object_or_404(TempData, uuid=uuid)
-    
-    if request.user == temp_data.uploader.user:
-        temp_data.delete()
-    return redirect("data_list")
-
-
-@login_required
-def message_delete_all(request, pk):
+def log_delete_all(request, pk):
     user = get_object_or_404(User, pk=pk)
     
     if request.user == user:
-        for message in Message.objects.filter(user=user):
-            message.delete()
+        for log in Log.objects.filter(user=user):
+            log.delete()
             
     return redirect("data_list")
 

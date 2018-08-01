@@ -10,7 +10,7 @@ import numpy as np
 import boto3
 
 from .recon import ifftc, rss
-from .models import Data, PhilipsData, SiemensData, GeData, IsmrmrdData, Message
+from .models import Data, PhilipsData, SiemensData, GeData, IsmrmrdData, Log
 from PIL import Image
 
 from django.conf import settings
@@ -44,37 +44,52 @@ def process_temp_data(dtype, uuid):
     uploader = temp_data.uploader
     data = Data()
 
-    message = Message(
-        string="{} backend processing started. Downloading and converting to ISMRMRD.".format(
+    log = Log(
+        string="{} backend processing started. Getting raw data and converting to ISMRMRD.".format(
             temp_data.original_filename), user=temp_data.uploader.user)
-    message.save()
+    log.save()
     set_uploader_refresh(uploader)
     
     try:
         convert_temp_data_to_data(temp_data, dtype, data)
-        
         ismrmrd_file = '{}.h5'.format(uuid)
         data.ismrmrd_file = ismrmrd_file
     
         if not os.path.exists(os.path.join(settings.TEMP_ROOT, ismrmrd_file)):
             raise IOError('{} ISMRMRD conversion failed.'.format(uuid))
         
-        parse_ismrmrd(ismrmrd_file, data)
-
-        message = Message(
-            string="{} ISMRMRD conversion completed. Generating thumbnail.".format(
-            temp_data.original_filename), user=temp_data.uploader.user)
-        message.save()
+        log = Log(
+            string="{} ISMRMRD conversion completed. Extracting parameters.".format(
+                temp_data.original_filename), user=temp_data.uploader.user)
+        log.save()
         set_uploader_refresh(uploader)
         
     except Exception as e:
-        message = Message(string="{} ISMRMRD conversion failed: {}.".format(
+        log = Log(string="{} ISMRMRD conversion failed: {}.".format(
             temp_data.original_filename, traceback.format_exc()), user=temp_data.uploader.user)
-        message.save()
+        log.save()
+        set_uploader_refresh(uploader)
         cleanup_temp_data(temp_data)
+        raise e
+        
+    try:
+        parse_ismrmrd(ismrmrd_file, data)
+
+        log = Log(
+            string="{} parameter extraction completed. Generating thumbnail.".format(
+            temp_data.original_filename), user=temp_data.uploader.user)
+        log.save()
         set_uploader_refresh(uploader)
         
+    except Exception as e:
+        log = Log(string="{} parameter extraction failed: {}.".format(
+            temp_data.original_filename, traceback.format_exc()), user=temp_data.uploader.user)
+        log.save()
+        set_uploader_refresh(uploader)
+        
+        cleanup_temp_data(temp_data)
         raise e
+    
     try:
         thumbnail = create_thumbnail(ismrmrd_file,
                                      thumbnail_horizontal_flip=temp_data.thumbnail_horizontal_flip,
@@ -88,25 +103,25 @@ def process_temp_data(dtype, uuid):
         
         data.thumbnail_file = thumbnail_file
 
-        message = Message(
+        log = Log(
             string="{} thumbnail generation completed. Uploading to storage.".format(
                 temp_data.original_filename), user=temp_data.uploader.user)
         set_uploader_refresh(uploader)
-        message.save()
+        log.save()
         
     except Exception as e:
-        message = Message(
+        log = Log(
             string="{} thumbnail generation failed: {}. Uploading to storage.".format(
                 temp_data.original_filename, traceback.format_exc()), user=temp_data.uploader.user)
-        message.save()
+        log.save()
         pass
 
     try:
         upload_to_media(ismrmrd_file)
     except Exception as e:
-        message = Message(string="{} uploading failed.".format(
+        log = Log(string="{} uploading failed.".format(
             temp_data.original_filename, uuid), user=temp_data.uploader.user)
-        message.save()
+        log.save()
         set_uploader_refresh(uploader)
         
         cleanup_temp_data(temp_data)
@@ -114,9 +129,9 @@ def process_temp_data(dtype, uuid):
 
     data.save()
     
-    message = Message(string="{} backend processing completed. UUID is {}.".format(
+    log = Log(string="{} backend processing completed. UUID is {}.".format(
         temp_data.original_filename, uuid), user=temp_data.uploader.user)
-    message.save()
+    log.save()
     set_uploader_refresh(uploader)
     
     temp_data.delete()

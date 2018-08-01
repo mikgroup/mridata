@@ -15,7 +15,6 @@ urlpatterns = [
     url(r'^data/(?P<uuid>[\w-]+)/download/$', views.data_download, name='data_download'),
     url(r'^data/(?P<uuid>[\w-]+)/delete/$', views.data_delete, name='data_delete'),
     url(r'^data/(?P<uuid>[\w-]+)/edit/$', views.data_edit, name='data_edit'),
-    url(r'^temp_data/(?P<uuid>[\w-]+)/delete$', views.temp_data_delete, name='temp_data_delete'),
-    url(r'^message/(?P<pk>[\w-]+)/delete_all$', views.message_delete_all, name='message_delete_all'),
+    url(r'^log/(?P<pk>[\w-]+)/delete_all$', views.log_delete_all, name='log_delete_all'),
     url(r'^check_refresh$', views.check_refresh, name='check_refresh'),
 ]

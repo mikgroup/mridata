@@ -1,11 +1,11 @@
-<div class="card my-2">
+<div class="card border-light">
   <div class="container my-2">
     <div class="row small">
       <div class="col-3">
-	{{ message.date_time | date:"m/d/y H:i:s"}}
+	{{ log.date_time | date:"m/d/y H:i:s"}}
       </div>
       <div class="col-9">
-	{{ message.string }}
+	{{ log.string }}
       </div>
     </div>
   </div>

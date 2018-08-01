@@ -128,7 +128,7 @@ class Data(models.Model):
         super().delete(*args, **kwargs)
 
 
-class Message(models.Model):
+class Log(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     date_time = models.DateTimeField(default=timezone.now)
     string = models.TextField(blank=True)
@@ -153,9 +153,6 @@ class TempData(models.Model):
     thumbnail_vertical_flip = models.BooleanField(default=False)
     thumbnail_transpose = models.BooleanField(default=False)
     
-    failed = models.NullBooleanField(default=False)
-    error_message = models.TextField(blank=True)
-
     def delete(self, *args, **kwargs):
 
         if len(self.project.data_set.all()) == 0:
