@@ -43,6 +43,12 @@ def process_temp_data(dtype, uuid):
     temp_data = get_object_or_404(dtype, uuid=uuid)
     uploader = temp_data.uploader
     data = Data()
+
+    message = Message(
+        string="{} backend processing started. Downloading and converting to ISMRMRD.".format(
+            temp_data.original_filename), user=temp_data.uploader.user)
+    message.save()
+    set_uploader_refresh(uploader)
     
     try:
         convert_temp_data_to_data(temp_data, dtype, data)
@@ -54,13 +60,21 @@ def process_temp_data(dtype, uuid):
             raise IOError('{} ISMRMRD conversion failed.'.format(uuid))
         
         parse_ismrmrd(ismrmrd_file, data)
+
+        message = Message(
+            string="{} ISMRMRD conversion completed. Generating thumbnail.".format(
+            temp_data.original_filename), user=temp_data.uploader.user)
+        message.save()
+        set_uploader_refresh(uploader)
         
     except Exception as e:
-        
-        raise_temp_data_error(temp_data, traceback.format_exc())
+        message = Message(string="{} ISMRMRD conversion failed: {}.".format(
+            temp_data.original_filename, traceback.format_exc()), user=temp_data.uploader.user)
+        message.save()
+        cleanup_temp_data(temp_data)
         set_uploader_refresh(uploader)
+        
         raise e
-
     try:
         thumbnail = create_thumbnail(ismrmrd_file,
                                      thumbnail_horizontal_flip=temp_data.thumbnail_horizontal_flip,
@@ -73,25 +87,39 @@ def process_temp_data(dtype, uuid):
         upload_to_media(thumbnail_file)
         
         data.thumbnail_file = thumbnail_file
+
+        message = Message(
+            string="{} thumbnail generation completed. Uploading to storage.".format(
+                temp_data.original_filename), user=temp_data.uploader.user)
+        set_uploader_refresh(uploader)
+        message.save()
         
     except Exception as e:
+        message = Message(
+            string="{} thumbnail generation failed: {}. Uploading to storage.".format(
+                temp_data.original_filename, traceback.format_exc()), user=temp_data.uploader.user)
+        message.save()
         pass
 
     try:
         upload_to_media(ismrmrd_file)
     except Exception as e:
-        raise_temp_data_error(temp_data, traceback.format_exc())
+        message = Message(string="{} uploading failed.".format(
+            temp_data.original_filename, uuid), user=temp_data.uploader.user)
+        message.save()
         set_uploader_refresh(uploader)
+        
+        cleanup_temp_data(temp_data)
         raise e
 
+    data.save()
     
-    message = Message(string="{} conversion completed. UUID is {}.".format(
+    message = Message(string="{} backend processing completed. UUID is {}.".format(
         temp_data.original_filename, uuid), user=temp_data.uploader.user)
     message.save()
-    
-    data.save()
-    temp_data.delete()
     set_uploader_refresh(uploader)
+    
+    temp_data.delete()
 
 
 def convert_ge_data(uuid):
@@ -199,11 +227,7 @@ def set_uploader_refresh(uploader):
     uploader.save()
 
     
-def raise_temp_data_error(temp_data, error_message):
-
-    message = Message(string="{} conversion failed. Error: {}".format(
-        temp_data.original_filename, error_message), user=temp_data.uploader.user)
-    message.save()
+def cleanup_temp_data(temp_data):
 
     if os.path.exists(os.path.join(settings.TEMP_ROOT, 'P{}.7'.format(temp_data.uuid))):
         os.remove(os.path.join(settings.TEMP_ROOT, 'P{}.7'.format(temp_data.uuid)))

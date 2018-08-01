@@ -13,6 +13,12 @@
   </div>
   
   <div class="col" id="data_list">    
+    {% if messages|length > 0 %}
+    <a href="{% url 'message_delete_all' pk=user.pk %}"
+       class="btn btn-secondary btn-sm">
+      Clear Messages
+    </a>
+    {% endif %}
     {% for message in messages %}
     {% include "mridata/message_card.html" %}
     {% endfor %}

@@ -9,6 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.urls import reverse
 from celery.result import AsyncResult
+from django.contrib.auth.models import User
 
 from .models import Data, TempData, Uploader, Project, Message
 from .forms import PhilipsDataForm, SiemensDataForm, GeDataForm, IsmrmrdDataForm, DataForm
@@ -87,7 +88,7 @@ def upload_ismrmrd(request):
             ismrmrd_data.original_filename = request.FILES['ismrmrd_file'].name
             ismrmrd_data.save()
 
-            message = Message(string="{} uploaded. Conversion started.".format(request.FILES['ismrmrd_file'].name),
+            message = Message(string="{} uploaded. Waiting for backend processing.".format(request.FILES['ismrmrd_file'].name),
                               user=request.user)
             message.save()
             
@@ -117,7 +118,7 @@ def upload_ge(request):
             ge_data.original_filename = request.FILES['ge_file'].name
             ge_data.save()
             
-            message = Message(string="{} uploaded. Conversion started.".format(request.FILES['ge_file'].name),
+            message = Message(string="{} uploaded. Waiting for backend processing.".format(request.FILES['ge_file'].name),
                               user=request.user)
             message.save()
             
@@ -151,7 +152,7 @@ def upload_philips(request):
             
             philips_data.save()
             
-            message = Message(string="{} {} {} uploaded. Conversion started.".format(
+            message = Message(string="{} {} {} uploaded. Waiting for backend processing.".format(
                 request.FILES['philips_raw_file'].name,
                 request.FILES['philips_sin_file'].name,
                 request.FILES['philips_lab_file'].name),
@@ -183,7 +184,7 @@ def upload_siemens(request):
             siemens_data.original_filename = request.FILES['siemens_dat_file'].name
             siemens_data.save()
             
-            message = Message(string="{} uploaded. Conversion started.".format(
+            message = Message(string="{} uploaded. Waiting for backend processing.".format(
                 request.FILES['siemens_dat_file'].name),
                               user=request.user)
             message.save()
@@ -241,11 +242,13 @@ def temp_data_delete(request, uuid):
 
 
 @login_required
-def message_delete(request, pk):
-    message = get_object_or_404(Message, pk=pk)
+def message_delete_all(request, pk):
+    user = get_object_or_404(User, pk=pk)
     
-    if request.user == message.user:
-        message.delete()
+    if request.user == user:
+        for message in Message.objects.filter(user=user):
+            message.delete()
+            
     return redirect("data_list")
 
 
