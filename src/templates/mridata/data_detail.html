@@ -1,6 +1,6 @@
 <p class="card-text text-center">
   <div class="text-center my-2">
-    <a href="{{data.ismrmrd_file.url}}" class="btn btn-primary btn-sm">
+    <a href="{% url 'data_download' uuid=data.uuid %}" class="btn btn-primary btn-sm">
       Download
     </a>
 
@@ -292,6 +292,11 @@
     <tr>
       <th width="30%" >Upload Date</th>
       <td>{{ data.upload_date }}</td> 
+    </tr>
+    
+    <tr>
+      <th width="30%" >Downloads</th>
+      <td>{{ data.downloads }}</td> 
     </tr>
     
   </table>
