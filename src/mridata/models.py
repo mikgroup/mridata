@@ -120,9 +120,9 @@ class Data(models.Model):
     
     upload_date = models.DateTimeField(default=timezone.now)
     uploader = models.ForeignKey(Uploader, on_delete=models.CASCADE)
+    downloads = models.IntegerField(default=0)
 
     def delete(self, *args, **kwargs):
-
         if len(self.project.data_set.all()) == 1:
             self.project.delete()
             
@@ -138,6 +138,8 @@ class TempData(models.Model):
     references = models.TextField(blank=True, default='')
     comments = models.TextField(blank=True, default='')
     funding_support = models.TextField(blank=True, default='')
+
+    original_filename = models.TextField(default='')
     
     upload_date = models.DateTimeField(default=timezone.now)
     uploader = models.ForeignKey(Uploader, on_delete=models.CASCADE)

@@ -1,3 +1,4 @@
+import logging
 import os
 import numpy as np
 
@@ -71,24 +72,25 @@ def data(request, uuid):
 @login_required
 def upload_ismrmrd(request):
     if request.method == "POST":
-        for ismrmrd_file in request.FILES.getlist('ismrmrd_file'):
-            request.FILES['ismrmrd_file'] = ismrmrd_file
-            form = IsmrmrdDataForm(request.POST, request.FILES)
-            if form.is_valid():
-                project, created = Project.objects.get_or_create(
-                    name=form.cleaned_data['project_name'],
-                )
-                ismrmrd_data = form.save(commit=False)
-                ismrmrd_data.project = project
-                ismrmrd_data.upload_date = timezone.now()
-                ismrmrd_data.uploader = request.user.uploader
-                ismrmrd_data.save()
-                request.user.uploader.refresh = True
-                request.user.uploader.save()
-                process_ismrmrd_data.apply_async(args=[ismrmrd_data.uuid],
-                                                 task_id=str(ismrmrd_data.uuid))
-            else:
-                return render(request, 'mridata/upload.html', {'form': IsmrmrdDataForm})               
+        form = IsmrmrdDataForm(request.POST, request.FILES)
+        if form.is_valid():
+            project, created = Project.objects.get_or_create(
+                name=form.cleaned_data['project_name'],
+            )
+            ismrmrd_data = form.save(commit=False)
+            ismrmrd_data.project = project
+            ismrmrd_data.upload_date = timezone.now()
+            ismrmrd_data.uploader = request.user.uploader
+            ismrmrd_data.original_filename = request.FILES['ismrmrd_file'].name
+            
+            logging.error(ismrmrd_data.original_filename)
+            ismrmrd_data.save()
+            request.user.uploader.refresh = True
+            request.user.uploader.save()
+            process_ismrmrd_data.apply_async(args=[ismrmrd_data.uuid],
+                                             task_id=str(ismrmrd_data.uuid))
+        else:
+            return render(request, 'mridata/upload.html', {'form': IsmrmrdDataForm})               
         return redirect('data_list')
     
     return render(request, 'mridata/upload.html', {'form': IsmrmrdDataForm})
@@ -97,24 +99,24 @@ def upload_ismrmrd(request):
 @login_required
 def upload_ge(request):
     if request.method == "POST":
-        for ge_file in request.FILES.getlist('ge_file'):
-            request.FILES['ge_file'] = ge_file
-            form = GeDataForm(request.POST, request.FILES)
-            if form.is_valid():
-                project, created = Project.objects.get_or_create(
-                    name=form.cleaned_data['project_name'],
-                )
-                ge_data = form.save(commit=False)
-                ge_data.project = project
-                ge_data.upload_date = timezone.now()
-                ge_data.uploader = request.user.uploader
-                ge_data.save()
-                request.user.uploader.refresh = True
-                request.user.uploader.save()
-                process_ge_data.apply_async(args=[ge_data.uuid],
-                                            task_id=str(ge_data.uuid))
-            else:
-                return render(request, 'mridata/upload.html', {'form': GeDataForm})
+        form = GeDataForm(request.POST, request.FILES)
+        if form.is_valid():
+            project, created = Project.objects.get_or_create(
+                name=form.cleaned_data['project_name'],
+            )
+            ge_data = form.save(commit=False)
+            ge_data.project = project
+            ge_data.upload_date = timezone.now()
+            ge_data.uploader = request.user.uploader
+            ge_data.original_filename = request.FILES['ge_file'].name
+            
+            ge_data.save()
+            request.user.uploader.refresh = True
+            request.user.uploader.save()
+            process_ge_data.apply_async(args=[ge_data.uuid],
+                                        task_id=str(ge_data.uuid))
+        else:
+            return render(request, 'mridata/upload.html', {'form': GeDataForm})
             
         return redirect('data_list')
     
@@ -124,57 +126,51 @@ def upload_ge(request):
 @login_required
 def upload_philips(request):
     if request.method == "POST":
-        for (philips_lab_file,
-             philips_raw_file,
-             philips_sin_files) in zip(request.FILES.getlist('philips_lab_file'),
-                                       request.FILES.getlist('philips_raw_file'),
-                                       request.FILES.getlist('philips_sin_file')):
+        form = PhilipsDataForm(request.POST, request.FILES)
+        if form.is_valid():
+            project, created = Project.objects.get_or_create(
+                name=form.cleaned_data['project_name'],
+            )
+            philips_data = form.save(commit=False)
+            philips_data.project = project
+            philips_data.upload_date = timezone.now()
+            philips_data.uploader = request.user.uploader
+            philips_data.original_filename = (request.FILES['philips_raw_file'].name
+                                              + ' ' + request.FILES['philips_sin_file'].name
+                                              + ' ' + request.FILES['philips_lab_file'].name)
             
-            request.FILES['philips_lab_file'] = philips_lab_file
-            request.FILES['philips_raw_file'] = philips_raw_file
-            request.FILES['philips_sin_file'] = philips_sin_file
-            
-            form = PhilipsDataForm(request.POST, request.FILES)
-            if form.is_valid():
-                project, created = Project.objects.get_or_create(
-                    name=form.cleaned_data['project_name'],
-                )
-                philips_data = form.save(commit=False)
-                philips_data.project = project
-                philips_data.upload_date = timezone.now()
-                philips_data.uploader = request.user.uploader
-                philips_data.save()
-                request.user.uploader.refresh = True
-                request.user.uploader.save()
-                process_philips_data.apply_async(args=[philips_data.uuid],
-                                                 task_id=str(philips_data.uuid))
-            else:
-                return render(request, 'mridata/upload.html', {'form': PhilipsDataForm})
-            
+            philips_data.save()
+            request.user.uploader.refresh = True
+            request.user.uploader.save()
+            process_philips_data.apply_async(args=[philips_data.uuid],
+                                             task_id=str(philips_data.uuid))
+        else:
+            return render(request, 'mridata/upload.html', {'form': PhilipsDataForm})
+
         return redirect('data_list')
     return render(request, 'mridata/upload.html', {'form': PhilipsDataForm})
 
 @login_required
 def upload_siemens(request):
     if request.method == "POST":
-        for siemens_dat_file in request.FILES.getlist('siemens_dat_file'):
-            request.FILES['siemens_dat_file'] = siemens_dat_file
-            form = SiemensDataForm(request.POST, request.FILES)
-            if form.is_valid():
-                project, created = Project.objects.get_or_create(
-                    name=form.cleaned_data['project_name'],
-                )
-                siemens_data = form.save(commit=False)
-                siemens_data.project = project
-                siemens_data.upload_date = timezone.now()
-                siemens_data.uploader = request.user.uploader
-                siemens_data.save()
-                request.user.uploader.refresh = True
-                request.user.uploader.save()
-                process_siemens_data.apply_async(args=[siemens_data.uuid],
-                                                 task_id=str(siemens_data.uuid))
-            else:
-                return render(request, 'mridata/upload.html', {'form': SiemensDataForm})
+        form = SiemensDataForm(request.POST, request.FILES)
+        if form.is_valid():
+            project, created = Project.objects.get_or_create(
+                name=form.cleaned_data['project_name'],
+            )
+            siemens_data = form.save(commit=False)
+            siemens_data.project = project
+            siemens_data.upload_date = timezone.now()
+            siemens_data.uploader = request.user.uploader
+            siemens_data.original_filename = request.FILES['siemens_dat_file'].name
+            
+            siemens_data.save()
+            request.user.uploader.refresh = True
+            request.user.uploader.save()
+            process_siemens_data.apply_async(args=[siemens_data.uuid],
+                                             task_id=str(siemens_data.uuid))
+        else:
+            return render(request, 'mridata/upload.html', {'form': SiemensDataForm})
             
         return redirect("data_list")
     
