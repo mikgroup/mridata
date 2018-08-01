@@ -1,0 +1,17 @@
+<div class="card my-2">
+  <div class="container my-2">
+    <div class="row small">
+      <div class="col">
+	{{ message.date_time | date:"SHORT_DATETIME_FORMAT"}}:
+      </div>
+      <div class="col-7">
+	{{ message.string }}
+      </div>
+      <div class="col-2">
+	<a href="{% url 'message_delete' pk=message.pk %}" class="btn btn-secondary btn-sm">
+	  Clear
+	</a>
+      </div>
+    </div>
+  </div>
+</div>

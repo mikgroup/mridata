@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.urls import reverse
 from celery.result import AsyncResult
 
-from .models import Data, TempData, Uploader, Project
+from .models import Data, TempData, Uploader, Project, Message
 from .forms import PhilipsDataForm, SiemensDataForm, GeDataForm, IsmrmrdDataForm, DataForm
 from .filters import DataFilter
 from .tasks import process_ge_data, process_ismrmrd_data, process_philips_data, process_siemens_data
@@ -41,8 +41,10 @@ def data_list(request):
     if request.user.is_authenticated:
         uploader = request.user.uploader
         temp_datasets = TempData.objects.filter(uploader=uploader).order_by('-upload_date')
+        messages = Message.objects.filter(user=request.user).order_by('-date_time')
     else:
         temp_datasets = []
+        messages = []
     
     if request.is_ajax() and 'page' in request.GET:
         template = 'mridata/data_list_page.html'
@@ -52,7 +54,8 @@ def data_list(request):
     return render(request, template,
                   {
                       'filter': filter,
-                      'temp_datasets': temp_datasets
+                      'temp_datasets': temp_datasets,
+                      'messages': messages
                   })
 
 
@@ -82,9 +85,12 @@ def upload_ismrmrd(request):
             ismrmrd_data.upload_date = timezone.now()
             ismrmrd_data.uploader = request.user.uploader
             ismrmrd_data.original_filename = request.FILES['ismrmrd_file'].name
-            
-            logging.error(ismrmrd_data.original_filename)
             ismrmrd_data.save()
+
+            message = Message(string="{} uploaded. Conversion started.".format(request.FILES['ismrmrd_file'].name),
+                              user=request.user)
+            message.save()
+            
             request.user.uploader.refresh = True
             request.user.uploader.save()
             process_ismrmrd_data.apply_async(args=[ismrmrd_data.uuid],
@@ -109,8 +115,12 @@ def upload_ge(request):
             ge_data.upload_date = timezone.now()
             ge_data.uploader = request.user.uploader
             ge_data.original_filename = request.FILES['ge_file'].name
-            
             ge_data.save()
+            
+            message = Message(string="{} uploaded. Conversion started.".format(request.FILES['ge_file'].name),
+                              user=request.user)
+            message.save()
+            
             request.user.uploader.refresh = True
             request.user.uploader.save()
             process_ge_data.apply_async(args=[ge_data.uuid],
@@ -140,6 +150,14 @@ def upload_philips(request):
                                               + ' ' + request.FILES['philips_lab_file'].name)
             
             philips_data.save()
+            
+            message = Message(string="{} {} {} uploaded. Conversion started.".format(
+                request.FILES['philips_raw_file'].name,
+                request.FILES['philips_sin_file'].name,
+                request.FILES['philips_lab_file'].name),
+                              user=request.user)
+            message.save()
+            
             request.user.uploader.refresh = True
             request.user.uploader.save()
             process_philips_data.apply_async(args=[philips_data.uuid],
@@ -163,8 +181,13 @@ def upload_siemens(request):
             siemens_data.upload_date = timezone.now()
             siemens_data.uploader = request.user.uploader
             siemens_data.original_filename = request.FILES['siemens_dat_file'].name
-            
             siemens_data.save()
+            
+            message = Message(string="{} uploaded. Conversion started.".format(
+                request.FILES['siemens_dat_file'].name),
+                              user=request.user)
+            message.save()
+            
             request.user.uploader.refresh = True
             request.user.uploader.save()
             process_siemens_data.apply_async(args=[siemens_data.uuid],
@@ -214,6 +237,15 @@ def temp_data_delete(request, uuid):
     
     if request.user == temp_data.uploader.user:
         temp_data.delete()
+    return redirect("data_list")
+
+
+@login_required
+def message_delete(request, pk):
+    message = get_object_or_404(Message, pk=pk)
+    
+    if request.user == message.user:
+        message.delete()
     return redirect("data_list")
 
 

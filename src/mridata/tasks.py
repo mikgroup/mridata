@@ -10,7 +10,7 @@ import numpy as np
 import boto3
 
 from .recon import ifftc, rss
-from .models import Data, PhilipsData, SiemensData, GeData, IsmrmrdData
+from .models import Data, PhilipsData, SiemensData, GeData, IsmrmrdData, Message
 from PIL import Image
 
 from django.conf import settings
@@ -84,6 +84,11 @@ def process_temp_data(dtype, uuid):
         set_uploader_refresh(uploader)
         raise e
 
+    
+    message = Message(string="{} conversion completed. UUID is {}.".format(
+        temp_data.original_filename, uuid), user=temp_data.uploader.user)
+    message.save()
+    
     data.save()
     temp_data.delete()
     set_uploader_refresh(uploader)
@@ -195,10 +200,10 @@ def set_uploader_refresh(uploader):
 
     
 def raise_temp_data_error(temp_data, error_message):
-    
-    temp_data.failed = True
-    temp_data.error_message = error_message
-    temp_data.save()
+
+    message = Message(string="{} conversion failed. Error: {}".format(
+        temp_data.original_filename, error_message), user=temp_data.uploader.user)
+    message.save()
 
     if os.path.exists(os.path.join(settings.TEMP_ROOT, 'P{}.7'.format(temp_data.uuid))):
         os.remove(os.path.join(settings.TEMP_ROOT, 'P{}.7'.format(temp_data.uuid)))
@@ -213,7 +218,9 @@ def raise_temp_data_error(temp_data, error_message):
     if os.path.exists(os.path.join(settings.TEMP_ROOT, '{}.raw'.format(temp_data.uuid))):
         os.remove(os.path.join(settings.TEMP_ROOT, '{}.raw'.format(temp_data.uuid)))
     if os.path.exists(os.path.join(settings.TEMP_ROOT, '{}.h5'.format(temp_data.uuid))):
-        os.remove(os.path.join(settings.TEMP_ROOT, '{}.h5'.format(temp_data.uuid)))   
+        os.remove(os.path.join(settings.TEMP_ROOT, '{}.h5'.format(temp_data.uuid)))
+        
+    temp_data.delete()
         
     
 def download_from_media(file):

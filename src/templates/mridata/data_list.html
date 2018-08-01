@@ -13,8 +13,8 @@
   </div>
   
   <div class="col" id="data_list">    
-    {% for temp_data in temp_datasets %}
-    {% include "mridata/temp_data_card.html" %}
+    {% for message in messages %}
+    {% include "mridata/message_card.html" %}
     {% endfor %}
     
     {% include "mridata/data_list_page.html" %}

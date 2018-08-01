@@ -129,6 +129,12 @@ class Data(models.Model):
         super().delete(*args, **kwargs)
 
 
+class Message(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    date_time = models.DateTimeField(default=timezone.now)
+    string = models.TextField(blank=True)
+
+
 class TempData(models.Model):
 
     uuid = models.UUIDField(default=uuid.uuid4, primary_key=True)

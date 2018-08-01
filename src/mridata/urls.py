@@ -16,5 +16,6 @@ urlpatterns = [
     url(r'^data/(?P<uuid>[\w-]+)/delete/$', views.data_delete, name='data_delete'),
     url(r'^data/(?P<uuid>[\w-]+)/edit/$', views.data_edit, name='data_edit'),
     url(r'^temp_data/(?P<uuid>[\w-]+)/delete$', views.temp_data_delete, name='temp_data_delete'),
+    url(r'^message/(?P<pk>[\w-]+)/delete$', views.message_delete, name='message_delete'),
     url(r'^check_refresh$', views.check_refresh, name='check_refresh'),
 ]
