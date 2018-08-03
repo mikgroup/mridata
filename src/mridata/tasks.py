@@ -581,8 +581,6 @@ def create_thumbnail(ismrmrd_file,
             except:
                 pass
 
-    print(energy)
-
     slice_idx, repetition_idx, contrast_idx, phase_idx, set_idx = np.where(energy == energy.max())
     
     logger.info('Reading k-space...')
