@@ -12,19 +12,22 @@
     </form>
   </div>
   
-  <div class="col" id="data_list">    
-    {% if logs|length > 0 %}
-    <a href="{% url 'log_delete_all' pk=user.pk %}"
-       class="btn btn-secondary btn-sm">
-      Clear Logs
-    </a>
-    {% endif %}
-    {% for log in logs %}
-    {% include "mridata/log_card.html" %}
-    {% endfor %}
-
+  <div class="col">
     Total {{filter.qs|length}} datasets
-    {% include "mridata/data_list_page.html" %}
+    <div  id="data_list">
+      {% if logs|length > 0 %}
+      <div class="card card-container">
+	<a href="{% url 'log_delete_all' pk=user.pk %}" class="btn btn-secondary btn-sm">
+	  Clear Logs
+	</a>
+	{% for log in logs %}
+	{% include "mridata/log_card.html" %}
+	{% endfor %}
+      </div>
+      {% endif %}
+      
+      {% include "mridata/data_list_page.html" %}
+    </div>
   </div>
 </div>
 <br>
