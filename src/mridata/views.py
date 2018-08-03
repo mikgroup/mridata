@@ -3,7 +3,6 @@ import os
 import numpy as np
 
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
@@ -97,7 +96,6 @@ def upload_ismrmrd(request):
             request.user.uploader.save()
             process_ismrmrd_data.apply_async(args=[ismrmrd_data.uuid],
                                              task_id=str(ismrmrd_data.uuid))
-            messages.success(request, 'Upload success!')
         else:
             return render(request, 'mridata/upload.html', {'form': IsmrmrdDataForm})
         
@@ -129,7 +127,6 @@ def upload_ge(request):
             request.user.uploader.save()
             process_ge_data.apply_async(args=[ge_data.uuid],
                                         task_id=str(ge_data.uuid))
-            messages.success(request, 'Upload success!')
         else:
             return render(request, 'mridata/upload.html', {'form': GeDataForm})
             
@@ -167,7 +164,6 @@ def upload_philips(request):
             request.user.uploader.save()
             process_philips_data.apply_async(args=[philips_data.uuid],
                                              task_id=str(philips_data.uuid))
-            messages.success(request, 'Upload success!')
         else:
             return render(request, 'mridata/upload.html', {'form': PhilipsDataForm})
 
@@ -197,7 +193,6 @@ def upload_siemens(request):
             request.user.uploader.save()
             process_siemens_data.apply_async(args=[siemens_data.uuid],
                                              task_id=str(siemens_data.uuid))
-            messages.success(request, 'Upload success!')
         else:
             return render(request, 'mridata/upload.html', {'form': SiemensDataForm})
             

@@ -15,13 +15,6 @@
   
   <div class="col">
     Total {{filter.qs|length}} datasets
-    {% if messages %}
-    <div class="card messages text-white text-center bg-primary">
-      {% for message in messages %}
-      {{ message }}
-      {% endfor %}
-    </div>
-    {% endif %}
     <div  id="data_list">
       {% if logs|length > 0 %}
 	{% include "mridata/log_card.html" %}
