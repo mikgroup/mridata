@@ -121,6 +121,9 @@ class Data(models.Model):
     uploader = models.ForeignKey(Uploader, on_delete=models.CASCADE)
     downloads = models.IntegerField(default=0)
 
+    def __str__(self):
+        return self.uuid
+
     def delete(self, *args, **kwargs):
         if len(self.project.data_set.all()) == 1:
             self.project.delete()
@@ -132,6 +135,9 @@ class Log(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     date_time = models.DateTimeField(default=timezone.now)
     string = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.string
 
 
 class TempData(models.Model):
@@ -152,6 +158,9 @@ class TempData(models.Model):
     thumbnail_horizontal_flip = models.BooleanField(default=False)
     thumbnail_vertical_flip = models.BooleanField(default=False)
     thumbnail_transpose = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.uuid
     
     def delete(self, *args, **kwargs):
 
