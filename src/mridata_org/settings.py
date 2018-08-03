@@ -166,6 +166,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # TEMP
 TEMP_ROOT = os.environ['TEMP_ROOT']
+FILE_UPLOAD_TEMP_DIR = TEMP_ROOT
 
 # STATIC and MEDIA
 if USE_AWS:
