@@ -122,7 +122,7 @@ class Data(models.Model):
     downloads = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.uuid
+        return str(self.uuid)
 
     def delete(self, *args, **kwargs):
         if len(self.project.data_set.all()) == 1:
@@ -160,7 +160,7 @@ class TempData(models.Model):
     thumbnail_transpose = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.uuid
+        return str(self.uuid)
     
     def delete(self, *args, **kwargs):
 

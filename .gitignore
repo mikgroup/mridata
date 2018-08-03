@@ -113,6 +113,10 @@ ENV/
 !.elasticbeanstalk/*.global.yml
 P*.7
 *.h5
+*.dat
+*.sin
+*.lab
+*.raw
 
 eb_*
 README_aws.md
