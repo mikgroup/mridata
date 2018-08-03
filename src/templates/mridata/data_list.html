@@ -2,6 +2,7 @@
 {% load staticfiles %}
 
 {% block body_block %}
+
 <div class="row">
   <div class="col-md-auto text-center">
     <form action="" method="get">
@@ -14,16 +15,16 @@
   
   <div class="col">
     Total {{filter.qs|length}} datasets
+    {% if messages %}
+    <div class="card messages text-white text-center bg-primary">
+      {% for message in messages %}
+      {{ message }}
+      {% endfor %}
+    </div>
+    {% endif %}
     <div  id="data_list">
       {% if logs|length > 0 %}
-      <div class="card card-container">
-	<a href="{% url 'log_delete_all' pk=user.pk %}" class="btn btn-secondary btn-sm">
-	  Clear Logs
-	</a>
-	{% for log in logs %}
 	{% include "mridata/log_card.html" %}
-	{% endfor %}
-      </div>
       {% endif %}
       
       {% include "mridata/data_list_page.html" %}
