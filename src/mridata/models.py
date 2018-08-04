@@ -1,5 +1,6 @@
 import os
 import uuid
+import time
 import boto3
 from django.db import models
 from django.utils import timezone
@@ -11,8 +12,37 @@ from django.db.models.signals import post_save
 from s3direct.fields import S3DirectField
 
 
-class Project(models.Model):
+def save_ismrmrd_file(data, filename):
+    filename = 'uploads/{}_{}'.format(int(time.time() * 1000), filename)
+    return filename
 
+
+def save_philips_raw_file(data, filename):
+    filename = 'uploads/{}_{}'.format(int(time.time() * 1000), filename)
+    return filename
+
+
+def save_philips_sin_file(data, filename):
+    filename = 'uploads/{}_{}'.format(int(time.time() * 1000), filename)
+    return filename
+
+
+def save_philips_lab_file(data, filename):
+    filename = 'uploads/{}_{}'.format(int(time.time() * 1000), filename)
+    return filename
+
+
+def save_siemens_dat_file(data, filename):
+    filename = 'uploads/{}_{}'.format(int(time.time() * 1000), filename)
+    return filename
+
+
+def save_ge_file(data, filename):
+    filename = 'uploads/{}_{}'.format(int(time.time() * 1000), filename)
+    return filename
+
+
+class Project(models.Model):
     name = models.CharField(max_length=100, default='')
     
     def __str__(self):
@@ -144,9 +174,9 @@ class TempData(models.Model):
         
 
 class PhilipsData(TempData):
-    philips_raw_file = models.FileField(upload_to='uploads/')
-    philips_sin_file = models.FileField(upload_to='uploads/')
-    philips_lab_file = models.FileField(upload_to='uploads/')
+    philips_raw_file = models.FileField(upload_to=save_philips_raw_file)
+    philips_sin_file = models.FileField(upload_to=save_philips_sin_file)
+    philips_lab_file = models.FileField(upload_to=save_philips_lab_file)
 
     def __str__(self):
         return str(self.philips_raw_file).split('/')[-1]
@@ -174,7 +204,7 @@ class PhilipsAwsData(TempData):
 
         
 class SiemensData(TempData):
-    siemens_dat_file = models.FileField(upload_to='uploads/')
+    siemens_dat_file = models.FileField(upload_to=save_siemens_dat_file)
 
     def __str__(self):
         return str(self.siemens_dat_file).split('/')[-1]
@@ -196,7 +226,7 @@ class SiemensAwsData(TempData):
 
         
 class GeData(TempData):
-    ge_file = models.FileField(upload_to='uploads/')
+    ge_file = models.FileField(upload_to=save_ge_file)
 
     def __str__(self):
         return str(self.ge_file).split('/')[-1]
@@ -218,7 +248,7 @@ class GeAwsData(TempData):
 
         
 class IsmrmrdData(TempData):
-    ismrmrd_file = models.FileField(upload_to='uploads/', blank=True)
+    ismrmrd_file = models.FileField(upload_to=save_ismrmrd_file, blank=True)
 
     def __str__(self):
         return str(self.ismrmrd_file).split('/')[-1]
@@ -255,37 +285,3 @@ def delete_aws_file(filename):
 
     key = os.path.join(settings.AWS_MEDIA_LOCATION, filename)
     upload_file = bucket.Object(key).delete()
-
-
-def save_ismrmrd_file(data, filename):
-    filename = 'temp_{}.h5'.format(data.uuid)
-    return filename
-
-
-def save_philips_raw_file(data, filename):
-    filename = 'temp_{}.raw'.format(data.uuid)
-    return filename
-
-
-def save_philips_sin_file(data, filename):
-    filename = 'temp_{}.sin'.format(data.uuid)
-    return filename
-
-
-def save_philips_lab_file(data, filename):
-    filename = 'temp_{}.lab'.format(data.uuid)
-    return filename
-
-
-def save_siemens_dat_file(data, filename):
-    filename = 'temp_{}.dat'.format(data.uuid)
-    return filename
-
-
-def save_ge_file(data, filename):
-    if os.path.splitext(filename)[-1] == '.h5':
-        filename = 'temp_{}.h5'.format(data.uuid)
-    else:
-        filename = 'Ptemp_{}.7'.format(data.uuid)
-    return filename
-

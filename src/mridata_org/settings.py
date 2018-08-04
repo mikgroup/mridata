@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import urllib.parse
-import uuid
+import time
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -188,7 +188,8 @@ if USE_AWS:
     
     S3DIRECT_REGION = AWS_STORAGE_BUCKET_REGION
     S3DIRECT_DESTINATIONS = {
-        'uploads': {'key': 'media/uploads'}
+        'uploads': {'key': lambda filename: 'media/uploads/{}_{}'.format(time.time() * 1000,
+                                                                         filename)}
     }
 else:
     MEDIA_URL = '/media/'
