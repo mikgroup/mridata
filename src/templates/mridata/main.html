@@ -8,17 +8,16 @@
       By using this website, you are agreeing to our <a href="{% url 'terms' %}">Terms of Service</a>.
     </div>
     <div class="card-title text-center">
-      <img src={% static "favicons/android-chrome-192x192.png" %} width="128" height="128">
       <h1>
 	Welcome to mridata.org!
       </h1>
     </div>
     <div class="card-block">
       <p class="card-text text-justify">
-	mridata.org is an open platform for researchers to share magnetic resonance imaging (MRI) raw datasets. The website is designed to facilitate sharing MRI datasets from different vendors, with features including automatic ISMRMRD conversion and thumbnail extraction. We hope that with contributions from many researchers, this website can provide more datasets to train and validate machine learning models for MRI reconstruction.
+	mridata.org is an open platform for researchers to share magnetic resonance imaging (MRI) raw k-space datasets. The website is designed to facilitate sharing MRI datasets from different vendors, with features including automatic ISMRMRD conversion, parameter extraction and thumbnail generation.
 	<br>
 	<br>
-	To start, you can browse projects contributed by users below. To view all available datasets, we refer you to our <a href="{% url 'data_list' %}">Data List</a>. After registering as a user, you can upload datasets from GE, Philips and Siemens. To know more about using the website, we refer you to our <a href="{% url 'faq' %}">FAQ</a>.
+	To start, you can browse projects contributed by users below. To view all available datasets, we refer you to our <a href="{% url 'data_list' %}">Data List</a>. After registering as a user, you can upload datasets from GE, Philips and Siemens. To know more about using the website, we refer you to our <a href="{% url 'faq' %}">FAQ</a>. To visit our old website, please visit <a href="http://old.mridata.org">old.mridata.org</a>.
       </p>
     </div>
   </div>
@@ -27,7 +26,7 @@
 <div class="col">
   <div class="container">
     <h5 class="card-title text-center">
-      Projects Contributed by Users
+      Projects
     </h5>
     <div class="card-columns">
       {% for project in projects %}
