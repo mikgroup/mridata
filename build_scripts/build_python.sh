@@ -1,5 +1,8 @@
 #! /usr/bin/env bash
 
+export LANG="C.UTF-8"
+export LC_ALL="C.UTF-8"
+
 wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 
 bash Miniconda3-latest-Linux-x86_64.sh -b -p /miniconda
@@ -11,6 +14,7 @@ pip install \
     django-el-pagination==3.2.4 \
     django-filter==1.0.4 \
     django-registration-redux==1.8 \
+    django-s3direct==1.0.2 \
     django-storages==1.6.6 \
     h5py==2.8.0 \
     numpy==1.15.0 \
