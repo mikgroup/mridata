@@ -1,18 +1,20 @@
 <div class="card my-2">
-  <div class="container my-2 text-center">
-
-    <p class="card-text text-center">
+  <div class="container my-2">
+    <div class="h5 card-title text-center">
+      Log
+    </div>
+    <p class="card-text">
       <a href="{% url 'log_delete_all' pk=user.pk %}" class="btn btn-secondary btn-sm">
-	Clear Logs
+	Clear
       </a>
-      <table class="table-sm small col-12 text-left">
+      <table class="table table-sm small col-12 text-left">
 	{% for log in logs %}
 	<tr>
-	  <th>
-	    {{ log.date_time | date:"m/d/y H:i:s"}}
-	  </th>
 	  <td>
-	    {{ log.string }}
+	    {{ log.date_time | date:"m/d/y H:i:s"}}
+	  </td>
+	  <td>
+	    <code style="white-space: pre-wrap">{{ log.string }}</code>
 	  </td>
 	</tr>
 	{% endfor %}
