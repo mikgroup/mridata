@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import urllib.parse
+import uuid
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -51,7 +52,8 @@ INSTALLED_APPS = [
     'el_pagination',
     'mridata',
     'django_filters',
-    'storages',
+    's3direct',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -149,6 +151,7 @@ if 'AWS_ACCESS_KEY_ID' in os.environ:
     AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
     AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
     AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+    AWS_STORAGE_BUCKET_REGION = os.environ['AWS_STORAGE_BUCKET_REGION']
 else:
     USE_AWS = False
 
@@ -168,24 +171,26 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 TEMP_ROOT = os.environ['TEMP_ROOT']
 FILE_UPLOAD_TEMP_DIR = TEMP_ROOT
 
-# STATIC and MEDIA
+# Static
 if USE_AWS:
     AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
     AWS_STATIC_LOCATION = 'static'
-    AWS_MEDIA_LOCATION = 'media'
 
-    # Static files (CSS, JavaScript, Images)
     STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_STATIC_LOCATION)
     STATICFILES_STORAGE = 'mridata_org.storages.StaticStorage'
-
-    # Media
-    MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_MEDIA_LOCATION)
-    DEFAULT_FILE_STORAGE = 'mridata_org.storages.MediaStorage'
 else:
-    # Static files (CSS, JavaScript, Images)
     STATIC_URL = '/static/'
-
-    # Media
+    
+# Media
+if USE_AWS:
+    AWS_MEDIA_LOCATION = 'media'
+    MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_MEDIA_LOCATION)
+    
+    S3DIRECT_REGION = AWS_STORAGE_BUCKET_REGION
+    S3DIRECT_DESTINATIONS = {
+        'uploads': {'key': 'media/uploads'}
+    }
+else:
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.environ['MEDIA_ROOT']
 
@@ -204,8 +209,8 @@ if USE_AWS:
 else:
     BROKER_URL = 'redis://redis:6379'
     CELERY_RESULT_BACKEND = 'redis://redis:6379'
-    
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'America/Los_Angeles'
+
+    CELERY_ACCEPT_CONTENT = ['application/json']
+    CELERY_TASK_SERIALIZER = 'json'
+    CELERY_RESULT_SERIALIZER = 'json'
+    CELERY_TIMEZONE = 'America/Los_Angeles'

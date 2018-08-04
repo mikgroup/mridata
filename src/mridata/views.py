@@ -85,11 +85,10 @@ def upload_ismrmrd(request):
             ismrmrd_data.project = project
             ismrmrd_data.upload_date = timezone.now()
             ismrmrd_data.uploader = request.user.uploader
-            ismrmrd_data.original_filename = request.FILES['ismrmrd_file'].name
             ismrmrd_data.save()
 
             log = Log(string="{} uploaded. Waiting for backend processing.".format(
-                request.FILES['ismrmrd_file'].name), user=request.user)
+                ismrmrd_data), user=request.user)
             log.save()
             
             request.user.uploader.refresh = True
@@ -116,11 +115,10 @@ def upload_ge(request):
             ge_data.project = project
             ge_data.upload_date = timezone.now()
             ge_data.uploader = request.user.uploader
-            ge_data.original_filename = request.FILES['ge_file'].name
             ge_data.save()
             
             log = Log(string="{} uploaded. Waiting for backend processing.".format(
-                request.FILES['ge_file'].name), user=request.user)
+                ge_data), user=request.user)
             log.save()
             
             request.user.uploader.refresh = True
@@ -147,17 +145,12 @@ def upload_philips(request):
             philips_data.project = project
             philips_data.upload_date = timezone.now()
             philips_data.uploader = request.user.uploader
-            philips_data.original_filename = (request.FILES['philips_raw_file'].name
-                                              + ' ' + request.FILES['philips_sin_file'].name
-                                              + ' ' + request.FILES['philips_lab_file'].name)
             
             philips_data.save()
             
-            log = Log(string="{} {} {} uploaded. Waiting for backend processing.".format(
-                request.FILES['philips_raw_file'].name,
-                request.FILES['philips_sin_file'].name,
-                request.FILES['philips_lab_file'].name),
-                              user=request.user)
+            log = Log(string="{} uploaded. Waiting for backend processing.".format(
+                philips_data), user=request.user)
+                      
             log.save()
             
             request.user.uploader.refresh = True
@@ -182,11 +175,10 @@ def upload_siemens(request):
             siemens_data.project = project
             siemens_data.upload_date = timezone.now()
             siemens_data.uploader = request.user.uploader
-            siemens_data.original_filename = request.FILES['siemens_dat_file'].name
             siemens_data.save()
             
             log = Log(string="{} uploaded. Waiting for backend processing.".format(
-                request.FILES['siemens_dat_file'].name), user=request.user)
+                siemens_data), user=request.user)
             log.save()
             
             request.user.uploader.refresh = True
