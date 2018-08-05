@@ -1,6 +1,5 @@
 import os
 import uuid
-import time
 import boto3
 from django.db import models
 from django.utils import timezone
@@ -13,32 +12,32 @@ from s3direct.fields import S3DirectField
 
 
 def save_ismrmrd_file(data, filename):
-    filename = 'uploads/{}_{}'.format(int(time.time() * 1000), filename)
+    filename = 'uploads/{}_{}'.format(uuid.uuid4(), filename)
     return filename
 
 
 def save_philips_raw_file(data, filename):
-    filename = 'uploads/{}_{}'.format(int(time.time() * 1000), filename)
+    filename = 'uploads/{}_{}'.format(uuid.uuid4(), filename)
     return filename
 
 
 def save_philips_sin_file(data, filename):
-    filename = 'uploads/{}_{}'.format(int(time.time() * 1000), filename)
+    filename = 'uploads/{}_{}'.format(uuid.uuid4(), filename)
     return filename
 
 
 def save_philips_lab_file(data, filename):
-    filename = 'uploads/{}_{}'.format(int(time.time() * 1000), filename)
+    filename = 'uploads/{}_{}'.format(uuid.uuid4(), filename)
     return filename
 
 
 def save_siemens_dat_file(data, filename):
-    filename = 'uploads/{}_{}'.format(int(time.time() * 1000), filename)
+    filename = 'uploads/{}_{}'.format(uuid.uuid4(), filename)
     return filename
 
 
 def save_ge_file(data, filename):
-    filename = 'uploads/{}_{}'.format(int(time.time() * 1000), filename)
+    filename = 'uploads/{}_{}'.format(uuid.uuid4(), filename)
     return filename
 
 

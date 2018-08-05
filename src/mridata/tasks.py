@@ -63,7 +63,7 @@ def process_temp_data(dtype, uuid):
     uploader = temp_data.uploader
     data = Data()
 
-    log("{} backend processing started.".format(temp_data), uploader)
+    log("{} backend processing started.".format(str(temp_data)[37:]), uploader)
     
     convert_data(temp_data, dtype, data)
     
@@ -74,7 +74,8 @@ def process_temp_data(dtype, uuid):
     upload_temp_file_to_media(ismrmrd_file)
     data.save()
     
-    log("{} backend processing completed. UUID is {}.".format(temp_data, temp_data.uuid), uploader)
+    log("{} backend processing completed. UUID is {}.".format(str(temp_data)[37:],
+                                                              temp_data.uuid), uploader)
     temp_data.delete()
 
 
@@ -165,7 +166,7 @@ def convert_data(temp_data, dtype, data):
         elif dtype in [IsmrmrdData, IsmrmrdAwsData]:
             convert_ismrmrd_data(temp_data)
         
-        log("{} ISMRMRD conversion completed. Extracting parameters.".format(temp_data),
+        log("{} ISMRMRD conversion completed. Extracting parameters.".format(str(temp_data)[37:]),
             temp_data.uploader)
         
     except Exception as e:
@@ -419,7 +420,7 @@ def parse_ismrmrd(temp_data, data):
         except Exception:
             pass
 
-        log("{} parameter extraction completed. Generating thumbnail.".format(temp_data),
+        log("{} parameter extraction completed. Generating thumbnail.".format(str(temp_data)[37:]),
             temp_data.uploader)
         
     except Exception as e:
@@ -555,7 +556,7 @@ def create_thumbnail(temp_data, data):
         data.thumbnail_file = thumbnail_file
 
         log("{} thumbnail generation completed. Uploading to storage.".format(
-            temp_data), temp_data.uploader)
+            str(temp_data)[37:]), temp_data.uploader)
         
     except Exception as e:
         log("{} thumbnail generation failed.\n{}".format(
