@@ -225,11 +225,9 @@ def data_delete(request, uuid):
 
 
 @login_required
-def log_delete_all(request, pk):
-    user = get_object_or_404(User, pk=pk)
-    
-    if request.user == user:
-        for log in Log.objects.filter(user=user):
+def clear_log(request):
+    if request.user.is_authenticated:
+        for log in Log.objects.filter(user=request.user):
             log.delete()
             
     return redirect("data_list")
@@ -237,9 +235,7 @@ def log_delete_all(request, pk):
 
 @login_required
 def check_refresh(request):
-
     if request.user.is_authenticated:
-
         uploader = request.user.uploader
         if uploader.refresh:
             uploader.refresh = False

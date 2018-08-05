@@ -1,12 +1,14 @@
 <div class="card my-2">
   <div class="container my-2">
     <div class="h5 card-title text-center">
-      Log
-    </div>
-    <p class="card-text">
-      <a href="{% url 'log_delete_all' pk=user.pk %}" class="btn btn-secondary btn-sm">
+      <a href="{% url 'clear_log' %}" class="btn btn-secondary btn-sm float-md-left">
 	Clear
       </a>
+      <div class="float-md-center">
+	Log
+      </div>
+    </div>
+    <p class="card-text">
       <table class="table table-sm small col-12 text-left">
 	{% for log in logs %}
 	<tr>
