@@ -156,6 +156,9 @@ def convert_data(temp_data, dtype, data):
         data.references = temp_data.references
         data.comments = temp_data.comments
         data.funding_support = temp_data.funding_support
+        data.thumbnail_horizontal_flip = data.thumbnail_horizontal_flip
+        data.thumbnail_vertical_flip = data.thumbnail_vertical_flip
+        data.thumbnail_transpose = data.thumbnail_transpose
 
         if dtype in [GeData, GeAwsData]:
             convert_ge_data(temp_data)

@@ -109,6 +109,10 @@ class Data(models.Model):
     flip_angle = models.FloatField(verbose_name='Flip Angle [degree]', default=-1)
     sequence_type = models.CharField(max_length=100, default='', blank=True)
     echo_spacing = models.FloatField(verbose_name='Echo Spacing [ms]', default=-1)
+    
+    thumbnail_horizontal_flip = models.BooleanField(default=False)
+    thumbnail_vertical_flip = models.BooleanField(default=False)
+    thumbnail_transpose = models.BooleanField(default=False)
 
     thumbnail_file = models.ImageField()
     

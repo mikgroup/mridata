@@ -20,6 +20,9 @@ class DataForm(forms.ModelForm):
                   'comments',
                   'funding_support',
                   'thumbnail_file',
+                  'thumbnail_horizontal_flip',
+                  'thumbnail_vertical_flip',
+                  'thumbnail_transpose',
         )
         widgets = {
             'references': forms.Textarea(attrs={'rows':3, 'cols':50}),

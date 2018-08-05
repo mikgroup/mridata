@@ -28,6 +28,10 @@
 <br>
 {% endblock %}
 
+{% block css_block %}
+<link rel="stylesheet" href="{% static 'css/thumbnail.css' %}" type="text/css" >
+{% endblock %}
+
 {% block js_block %}
 <script src="{% static 'js/el-pagination.js' %}"></script>
 <script>$.endlessPaginate({paginateOnScroll: true});</script>

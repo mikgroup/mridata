@@ -7,8 +7,30 @@
 	 {% else %}
 	 {% static "images/default_thumbnail.png" %}
 	 {% endif %}
-	 style="max-height:128px;max-width:128px;height:auto;width:auto;"
-	 class="rounded">
+	 height="128"
+	 class=
+	 {% if data.thumbnail_transpose %}
+	 {% if data.thumbnail_horizontal_flip and data.thumbnail_vertical_flip %}
+	 "rounded img-hor-vert-transpose"
+	 {% elif not data.thumbnail_horizontal_flip and data.thumbnail_vertical_flip %}
+	 "rounded img-vert-transpose"
+	 {% elif data.thumbnail_horizontal_flip and not data.thumbnail_vertical_flip %}
+	 "rounded img-hor-transpose"
+	 {% else %}
+	 "rounded img-transpose"
+	 {% endif %}
+	 {% else %}
+	 {% if data.thumbnail_horizontal_flip and data.thumbnail_vertical_flip %}
+	 "rounded img-hor-vert"
+	 {% elif not data.thumbnail_horizontal_flip and data.thumbnail_vertical_flip %}
+	 "rounded img-vert"
+	 {% elif data.thumbnail_horizontal_flip and not data.thumbnail_vertical_flip %}
+	 "rounded img-hor"
+	 {% else %}
+	 "rounded"
+	 {% endif %}
+	 {% endif %}
+	 >
   </div>
   <div class="col-9">
     <table class="table-sm">

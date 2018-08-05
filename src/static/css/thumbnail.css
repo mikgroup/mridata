@@ -1,0 +1,62 @@
+.img-hor {
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: FlipH;
+    -ms-filter: "FlipH";
+}
+
+.img-vert {
+    -moz-transform: scaleY(-1);
+    -o-transform: scaleY(-1);
+    -webkit-transform: scaleY(-1);
+    transform: scaleY(-1);
+    filter: FlipV;
+    -ms-filter: "FlipV";
+}
+
+.img-hor-vert {
+    -moz-transform: scaleX(-1) scaleY(-1);
+    -o-transform: scaleX(-1) scaleY(-1);
+    -webkit-transform: scaleX(-1) scaleY(-1);
+    transform: scaleX(-1) scaleY(-1);
+    filter: FlipH FlipV;
+    -ms-filter: "FlipH FlipV";
+}
+
+.img-transpose {
+    -moz-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);
+    filter: rotate(90deg);
+    -ms-filter: "rotate(90deg)";
+}
+
+.img-hor-transpose {
+    -moz-transform: scaleX(-1) rotate(90deg);
+    -o-transform: scaleX(-1) rotate(90deg);
+    -webkit-transform: scaleX(-1) rotate(90deg);
+    transform: scaleX(-1) rotate(90deg);
+    filter: FlipH rotate(90deg);
+    -ms-filter: "FlipH rotate(90deg)";
+}
+
+.img-vert-transpose {
+    -moz-transform: scaleY(-1) rotate(90deg);
+    -o-transform: scaleY(-1) rotate(90deg);
+    -webkit-transform: scaleY(-1) rotate(90deg);
+    transform: scaleY(-1) rotate(90deg);
+    filter: FlipV rotate(90deg);
+    -ms-filter: "FlipV rotate(90deg)";
+}
+
+.img-hor-vert-transpose {
+    -moz-transform: scaleX(-1) scaleY(-1) rotate(90deg);
+    -o-transform: scaleX(-1) scaleY(-1) rotate(90deg);
+    -webkit-transform: scaleX(-1) scaleY(-1) rotate(90deg);
+    transform: scaleX(-1) scaleY(-1) rotate(90deg);
+    filter: FlipH FlipV rotate(90deg);
+    -ms-filter: "FlipH FlipV rotate(90deg)";
+}
