@@ -124,7 +124,7 @@ class Data(models.Model):
     def delete(self, *args, **kwargs):
         if settings.USE_AWS:
             try:
-                delete_aws_file('{}.png'.format(self.uuid))
+                delete_aws_file('{}.jpg'.format(self.uuid))
                 delete_aws_file('{}.h5'.format(self.uuid))
             except:
                 pass

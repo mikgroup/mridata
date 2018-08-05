@@ -548,7 +548,7 @@ def create_thumbnail(temp_data, data):
         thumbnail = np.clip(thumbnail, 0, 1) * 255
         thumbnail = thumbnail.astype(np.uint8)
 
-        thumbnail_file = '{}.png'.format(temp_data.uuid)
+        thumbnail_file = '{}.jpg'.format(temp_data.uuid)
         pil = Image.fromarray(thumbnail)
         pil.save(os.path.join(settings.TEMP_ROOT, thumbnail_file))
         upload_temp_file_to_media(thumbnail_file)
