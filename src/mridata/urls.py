@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^upload/philips$', views.upload_philips, name='upload_philips'),
     url(r'^upload/siemens$', views.upload_siemens, name='upload_siemens'),
     url(r'^upload/ge$', views.upload_ge, name='upload_ge'),
+    url(r'^upload/get_temp_credentials$', views.get_temp_credentials, name='get_temp_credentials'),
     url(r'^list$', views.data_list, name='data_list'),
     url(r'^data/(?P<uuid>[\w-]+)$', views.data, name='data'),
     url(r'^download/(?P<uuid>[\w-]+)$', views.data_download, name='data_download'),

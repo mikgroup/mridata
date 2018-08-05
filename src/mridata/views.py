@@ -1,6 +1,7 @@
 import logging
 import os
 import numpy as np
+import boto3
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -243,3 +244,12 @@ def check_refresh(request):
             return JsonResponse({'refresh' : True})
             
     return JsonResponse({'refresh' : False})
+
+
+@login_required
+def get_temp_credentials(request):
+    if request.user.is_authenticated:
+        client = boto3.client('sts')
+        r = client.assume_role(RoleArn='arn:aws:iam::876486404445:role/mridata-assets-s3-uploader',
+                               RoleSessionName=str(reqeust.user))
+        return JsonResponse(r['Credentials'])
