@@ -9,7 +9,7 @@ import subprocess
 import numpy as np
 import boto3
 
-from .recon import ifftc, rss
+from .recon import ifftc, rss, crop
 from .models import Data, PhilipsData, SiemensData, GeData, IsmrmrdData, Log, \
     PhilipsAwsData, SiemensAwsData, GeAwsData, IsmrmrdAwsData
 from PIL import Image
@@ -435,7 +435,7 @@ def parse_ismrmrd(temp_data, data):
 
 def create_thumbnail(temp_data, data):
     '''
-    Derived from:
+    Based on:
     https://github.com/ismrmrd/ismrmrd-python-tools/blob/master/recon_ismrmrd_dataset.py
     '''
     
@@ -463,6 +463,16 @@ def create_thumbnail(temp_data, data):
             matrix_size_y = hdr.encoding[0].encodedSpace.matrixSize.y
         except Exception:
             matrix_size_y = 1
+
+        try:
+            recon_matrix_size_x = hdr.encoding[0].reconSpace.matrixSize.x
+        except Exception:
+            recon_matrix_size_x = matrix_size_x
+
+        try:
+            recon_matrix_size_y = hdr.encoding[0].reconSpace.matrixSize.y
+        except Exception:
+            recon_matrix_size_y = matrix_size_y
 
         try:
             matrix_size_z = hdr.encoding[0].encodedSpace.matrixSize.z
@@ -512,15 +522,19 @@ def create_thumbnail(temp_data, data):
                 try:
                     energy[acq.idx.slice, acq.idx.repetition,
                            acq.idx.contrast, acq.idx.phase,
-                           acq.idx.set] += np.sum(np.abs(acq.data)**2)
+                           acq.idx.set] += np.sum(np.abs(acq.data))
                 except:
                     pass
 
         slice_idx, repetition_idx, contrast_idx, phase_idx, set_idx = np.where(
             energy == energy.max())
 
-        ksp = np.zeros([number_of_channels, matrix_size_z, matrix_size_y, matrix_size_x],
-                       dtype=np.complex64)
+        if recon_matrix_size_x < matrix_size_x:
+            Nx = recon_matrix_size_x
+        else:
+            Nx = matrix_size_x
+            
+        ksp = np.zeros([number_of_channels, matrix_size_z, matrix_size_y, Nx], dtype=np.complex64)
         for acqnum in range(dset.number_of_acquisitions()):
             acq = dset.read_acquisition(acqnum)
             if acq.isFlagSet(ismrmrd.ACQ_IS_NOISE_MEASUREMENT):
@@ -536,23 +550,29 @@ def create_thumbnail(temp_data, data):
                 z = acq.idx.kspace_encode_step_2
 
                 if z >= 0 and z < matrix_size_z and y >= 0 and y < matrix_size_y:
-                    ksp[:, z, y, :] += acq.data
+                    acq_data = ifftc(acq.data, axes=[-1])
+                    if recon_matrix_size_x < matrix_size_x:
+                        acq_data = crop(acq_data, [number_of_channels, recon_matrix_size_x])
+                        
+                    ksp[:, z, y, :] += acq_data
+                    
+        z_idx = np.argmax(np.sum(np.abs(ksp)**2, axis=(0, 2, 3)))
+        ksp_slice = ksp[:, z_idx, :, :]
 
-        ksp /= np.abs(ksp).max()
-        ksp_mix = ifftc(ksp, axes=[-3])
-        z_idx = np.argmax(np.sum(np.abs(ksp_mix)**2, axis=(0, 2, 3)))
-        ksp_slice = ksp_mix[:, z_idx, :, :]
-
-        cimg_slice = ifftc(ksp_slice, axes=[-1, -2])
+        cimg_slice = ifftc(ksp_slice, axes=[-2])
+        if recon_matrix_size_y < matrix_size_y:
+            cimg_slice = crop(cimg_slice,
+                              [number_of_channels, recon_matrix_size_y, cimg_slice.shape[-1]])
 
         thumbnail = rss(cimg_slice).T
-
         thumbnail = thumbnail / np.percentile(thumbnail, 99)
         thumbnail = np.clip(thumbnail, 0, 1) * 255
         thumbnail = thumbnail.astype(np.uint8)
 
-        thumbnail_file = '{}.jpg'.format(temp_data.uuid)
         pil = Image.fromarray(thumbnail)
+        pil = pil.resize([recon_matrix_size_x, recon_matrix_size_y])
+        
+        thumbnail_file = '{}.jpg'.format(temp_data.uuid)
         pil.save(os.path.join(settings.TEMP_ROOT, thumbnail_file))
         upload_temp_file_to_media(thumbnail_file)
         
