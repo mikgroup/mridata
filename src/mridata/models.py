@@ -12,32 +12,32 @@ from s3direct.fields import S3DirectField
 
 
 def save_ismrmrd_file(data, filename):
-    filename = 'uploads/{}_{}'.format(uuid.uuid4(), filename)
+    filename = 'uploads/{}_{}'.format(uuid.uuid4(), os.path.split(filename)[-1])
     return filename
 
 
 def save_philips_raw_file(data, filename):
-    filename = 'uploads/{}_{}'.format(uuid.uuid4(), filename)
+    filename = 'uploads/{}_{}'.format(uuid.uuid4(), os.path.split(filename)[-1])
     return filename
 
 
 def save_philips_sin_file(data, filename):
-    filename = 'uploads/{}_{}'.format(uuid.uuid4(), filename)
+    filename = 'uploads/{}_{}'.format(uuid.uuid4(), os.path.split(filename)[-1])
     return filename
 
 
 def save_philips_lab_file(data, filename):
-    filename = 'uploads/{}_{}'.format(uuid.uuid4(), filename)
+    filename = 'uploads/{}_{}'.format(uuid.uuid4(), os.path.split(filename)[-1])
     return filename
 
 
 def save_siemens_dat_file(data, filename):
-    filename = 'uploads/{}_{}'.format(uuid.uuid4(), filename)
+    filename = 'uploads/{}_{}'.format(uuid.uuid4(), os.path.split(filename)[-1])
     return filename
 
 
 def save_ge_file(data, filename):
-    filename = 'uploads/{}_{}'.format(uuid.uuid4(), filename)
+    filename = 'uploads/{}_{}'.format(uuid.uuid4(), os.path.split(filename)[-1])
     return filename
 
 
