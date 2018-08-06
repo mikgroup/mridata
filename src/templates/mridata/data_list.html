@@ -2,7 +2,6 @@
 {% load staticfiles %}
 
 {% block body_block %}
-
 <div class="row">
   <div class="col-md-auto text-center">
     <form action="" method="get">
@@ -15,6 +14,11 @@
   
   <div class="col">
     Total {{filter.qs|length}} datasets
+    <a href="data:text/plain;charset=utf-8,{% for data in filter.qs %}{{data.uuid}}%0D%0A{% endfor %}"
+       class="btn btn-info btn-sm"
+       download="uuids.txt">
+      Download UUIDs
+    </a>
     <div id="data_list">
       {% if logs|length > 0 %}
 	{% include "mridata/log_card.html" %}

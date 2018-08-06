@@ -22,6 +22,16 @@
 
   <table class="table-sm table-striped small text-center col-12">
     
+    <tr>
+      <th width="30%" >UUID</th>
+      <td>{{ data.uuid }}</td> 
+    </tr>
+
+    <tr>
+      <th width="30%" >Downloads</th>
+      <td>{{ data.downloads }}</td> 
+    </tr>
+    
     {% if data.references != '' %}
     <tr>
       <th width="30%" >References</th>
@@ -285,18 +295,8 @@
     {% endif %}
     
     <tr>
-      <th width="30%" >UUID</th>
-      <td>{{ data.uuid }}</td> 
-    </tr>
-    
-    <tr>
       <th width="30%" >Upload Date</th>
       <td>{{ data.upload_date }}</td> 
-    </tr>
-    
-    <tr>
-      <th width="30%" >Downloads</th>
-      <td>{{ data.downloads }}</td> 
     </tr>
     
   </table>
