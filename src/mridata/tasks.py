@@ -9,7 +9,7 @@ import subprocess
 import numpy as np
 import boto3
 
-from .recon import ifftc, rss, crop
+from .recon import ifftc, rss, resize
 from .models import Data, PhilipsData, SiemensData, GeData, IsmrmrdData, Log, \
     PhilipsAwsData, SiemensAwsData, GeAwsData, IsmrmrdAwsData
 from PIL import Image
@@ -505,12 +505,34 @@ def create_thumbnail(temp_data, data):
             number_of_phases = 1
 
         try:
+            number_of_segments = hdr.encoding[0].encodingLimits.segment.maximum + 1
+        except Exception:
+            number_of_segments = 1
+
+        try:
             number_of_sets = hdr.encoding[0].encodingLimits.set.maximum + 1
         except Exception:
             number_of_sets = 1
 
+        try:
+            field_of_view_x = hdr.encoding[0].encodedSpace.fieldOfView_mm.x
+        except Exception:
+            field_of_view_x = 1
+
+        try:
+            field_of_view_y = hdr.encoding[0].encodedSpace.fieldOfView_mm.y
+        except Exception:
+            field_of_view_y = 1
+
+        try:
+            system_vendor = hdr.acquisitionSystemInformation.systemVendor
+        except Exception:
+            system_vendor = ''
+
+        GE = 'GE' in system_vendor
+
         energy = np.zeros([number_of_slices, number_of_repetitions,
-                           number_of_contrasts, number_of_phases, number_of_sets], dtype=np.float32)
+                           number_of_contrasts, number_of_phases, number_of_sets])
         for acqnum in range(dset.number_of_acquisitions()):
             acq = dset.read_acquisition(acqnum)
             if acq.isFlagSet(ismrmrd.ACQ_IS_NOISE_MEASUREMENT):
@@ -518,23 +540,20 @@ def create_thumbnail(temp_data, data):
 
             y = acq.idx.kspace_encode_step_1
             z = acq.idx.kspace_encode_step_2
+
             if z >= 0 and z < matrix_size_z and y >= 0 and y < matrix_size_y:
                 try:
                     energy[acq.idx.slice, acq.idx.repetition,
                            acq.idx.contrast, acq.idx.phase,
-                           acq.idx.set] += np.sum(np.abs(acq.data))
+                           acq.idx.set] = np.sum(np.abs(acq.data)**2)
                 except:
                     pass
 
         slice_idx, repetition_idx, contrast_idx, phase_idx, set_idx = np.where(
             energy == energy.max())
-
-        if recon_matrix_size_x < matrix_size_x:
-            Nx = recon_matrix_size_x
-        else:
-            Nx = matrix_size_x
             
-        ksp = np.zeros([number_of_channels, matrix_size_z, matrix_size_y, Nx], dtype=np.complex64)
+        ksp = np.zeros([number_of_channels, matrix_size_z, matrix_size_y, matrix_size_x],
+                       dtype=np.complex64)
         for acqnum in range(dset.number_of_acquisitions()):
             acq = dset.read_acquisition(acqnum)
             if acq.isFlagSet(ismrmrd.ACQ_IS_NOISE_MEASUREMENT):
@@ -550,27 +569,27 @@ def create_thumbnail(temp_data, data):
                 z = acq.idx.kspace_encode_step_2
 
                 if z >= 0 and z < matrix_size_z and y >= 0 and y < matrix_size_y:
-                    acq_data = ifftc(acq.data, axes=[-1])
-                    if recon_matrix_size_x < matrix_size_x:
-                        acq_data = crop(acq_data, [number_of_channels, recon_matrix_size_x])
-                        
-                    ksp[:, z, y, :] += acq_data
+                    ksp[:, z, y, :] = acq.data
                     
         z_idx = np.argmax(np.sum(np.abs(ksp)**2, axis=(0, 2, 3)))
         ksp_slice = ksp[:, z_idx, :, :]
 
-        cimg_slice = ifftc(ksp_slice, axes=[-2])
-        if recon_matrix_size_y < matrix_size_y:
-            cimg_slice = crop(cimg_slice,
-                              [number_of_channels, recon_matrix_size_y, cimg_slice.shape[-1]])
+        cimg_slice = rss(ifftc(ksp_slice, axes=[-2, -1]))
+        if not GE:
+            cimg_slice = resize(cimg_slice, [recon_matrix_size_y, recon_matrix_size_x])
 
-        thumbnail = rss(cimg_slice).T
+        thumbnail = cimg_slice.T
         thumbnail = thumbnail / np.percentile(thumbnail, 99)
         thumbnail = np.clip(thumbnail, 0, 1) * 255
         thumbnail = thumbnail.astype(np.uint8)
 
+        res_x = field_of_view_x / matrix_size_x
+        res_y = field_of_view_y / matrix_size_y
+        min_res = min(res_x, res_y)
+        
         pil = Image.fromarray(thumbnail)
-        pil = pil.resize([recon_matrix_size_x, recon_matrix_size_y])
+        pil = pil.resize([int(thumbnail.shape[0] * res_x / min_res),
+                          int(thumbnail.shape[1] * res_y / min_res)], resample=3)
         
         thumbnail_file = '{}.jpg'.format(temp_data.uuid)
         pil.save(os.path.join(settings.TEMP_ROOT, thumbnail_file))
