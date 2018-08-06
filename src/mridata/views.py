@@ -87,6 +87,10 @@ def upload_ismrmrd(request):
             ismrmrd_data.upload_date = timezone.now()
             ismrmrd_data.uploader = request.user.uploader
             ismrmrd_data.save()
+
+            log = Log(string="{} uploaded. Waiting for backend processing.".format(
+                str(ismrmrd_data)[37:]), user=request.user)
+            log.save()
             
             request.user.uploader.refresh = True
             request.user.uploader.save()
@@ -113,6 +117,10 @@ def upload_ge(request):
             ge_data.upload_date = timezone.now()
             ge_data.uploader = request.user.uploader
             ge_data.save()
+            
+            log = Log(string="{} uploaded. Waiting for backend processing.".format(
+                str(ge_data)[37:]), user=request.user)
+            log.save()
             
             request.user.uploader.refresh = True
             request.user.uploader.save()
@@ -141,6 +149,11 @@ def upload_philips(request):
             
             philips_data.save()
             
+            log = Log(string="{} uploaded. Waiting for backend processing.".format(
+                str(philips_data)[37:]), user=request.user)
+                      
+            log.save()
+            
             request.user.uploader.refresh = True
             request.user.uploader.save()
             process_philips_data.apply_async(args=[philips_data.uuid],
@@ -164,6 +177,10 @@ def upload_siemens(request):
             siemens_data.upload_date = timezone.now()
             siemens_data.uploader = request.user.uploader
             siemens_data.save()
+            
+            log = Log(string="{} uploaded. Waiting for backend processing.".format(
+                str(siemens_data)[37:]), user=request.user)
+            log.save()
             
             request.user.uploader.refresh = True
             request.user.uploader.save()
