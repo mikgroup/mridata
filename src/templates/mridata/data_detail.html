@@ -4,10 +4,6 @@
       Download
     </a>
 
-    <a href="{% url 'data' uuid=data.uuid %}" class="btn btn-secondary btn-sm">
-      Permalink
-    </a>
-
     {% if user == data.uploader.user %}
     <a href="{% url 'data_edit' uuid=data.uuid %}" class="btn btn-info btn-sm">
       Edit
