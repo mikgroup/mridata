@@ -18,5 +18,4 @@ urlpatterns = [
     url(r'^edit/(?P<uuid>[\w-]+)$', views.data_edit, name='data_edit'),
     url(r'^clear_log$', views.clear_log, name='clear_log'),
     url(r'^check_refresh$', views.check_refresh, name='check_refresh'),
-    url(r'^get_text/(?P<string>[\w-]+)', views.get_text, name='get_text')
 ]
