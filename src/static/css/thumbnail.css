@@ -1,4 +1,11 @@
+.img {
+    max-width:128px;
+    max-height:128px;
+}
+
 .img-hor {
+    max-width:128px;
+    max-height:128px;
     -moz-transform: scaleX(-1);
     -o-transform: scaleX(-1);
     -webkit-transform: scaleX(-1);
@@ -8,6 +15,8 @@
 }
 
 .img-vert {
+    max-width:128px;
+    max-height:128px;
     -moz-transform: scaleY(-1);
     -o-transform: scaleY(-1);
     -webkit-transform: scaleY(-1);
@@ -17,6 +26,8 @@
 }
 
 .img-hor-vert {
+    max-width:128px;
+    max-height:128px;
     -moz-transform: scaleX(-1) scaleY(-1);
     -o-transform: scaleX(-1) scaleY(-1);
     -webkit-transform: scaleX(-1) scaleY(-1);
@@ -26,6 +37,8 @@
 }
 
 .img-transpose {
+    max-width:128px;
+    max-height:128px;
     -moz-transform: rotate(90deg);
     -o-transform: rotate(90deg);
     -webkit-transform: rotate(90deg);
@@ -35,6 +48,8 @@
 }
 
 .img-hor-transpose {
+    max-width:128px;
+    max-height:128px;
     -moz-transform: scaleX(-1) rotate(90deg);
     -o-transform: scaleX(-1) rotate(90deg);
     -webkit-transform: scaleX(-1) rotate(90deg);
@@ -44,6 +59,8 @@
 }
 
 .img-vert-transpose {
+    max-width:128px;
+    max-height:128px;
     -moz-transform: scaleY(-1) rotate(90deg);
     -o-transform: scaleY(-1) rotate(90deg);
     -webkit-transform: scaleY(-1) rotate(90deg);
@@ -53,6 +70,8 @@
 }
 
 .img-hor-vert-transpose {
+    max-width:128px;
+    max-height:128px;
     -moz-transform: scaleX(-1) scaleY(-1) rotate(90deg);
     -o-transform: scaleX(-1) scaleY(-1) rotate(90deg);
     -webkit-transform: scaleX(-1) scaleY(-1) rotate(90deg);

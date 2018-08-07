@@ -7,7 +7,6 @@
 	 {% else %}
 	 {% static "images/default_thumbnail.png" %}
 	 {% endif %}
-	 height="128"
 	 class=
 	 {% if data.thumbnail_transpose %}
 	 {% if data.thumbnail_horizontal_flip and data.thumbnail_vertical_flip %}
@@ -27,7 +26,7 @@
 	 {% elif data.thumbnail_horizontal_flip and not data.thumbnail_vertical_flip %}
 	 "rounded img-hor"
 	 {% else %}
-	 "rounded"
+	 "rounded img"
 	 {% endif %}
 	 {% endif %}
 	 >
