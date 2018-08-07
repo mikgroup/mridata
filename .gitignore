@@ -117,9 +117,4 @@ P*.7
 *.sin
 *.lab
 *.raw
-
-eb_*
-README_aws.md
-Dockerrun.aws.json
-src/start_aws_web.sh
 *.jpg
