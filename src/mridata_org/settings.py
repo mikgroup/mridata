@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 import urllib.parse
 import time
+import uuid
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)

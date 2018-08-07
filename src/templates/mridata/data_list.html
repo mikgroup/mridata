@@ -12,10 +12,10 @@
     </form>
   </div>
   
-  <div class="col">
+  <div class="col float-md-left">
     Total {{filter.qs|length}} datasets
     <a href="data:text/plain;charset=utf-8,{% for data in filter.qs %}{{data.uuid}}%0D%0A{% endfor %}"
-       class="btn btn-info btn-sm"
+       class="btn btn-info btn-sm float-md-right"
        download="uuids.txt">
       Download UUIDs
     </a>
