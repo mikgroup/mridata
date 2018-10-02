@@ -3,9 +3,9 @@
 export LANG="C.UTF-8"
 export LC_ALL="C.UTF-8"
 
-wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+wget --quiet https://repo.continuum.io/miniconda/Miniconda3-4.3.21-Linux-x86_64.sh
 
-bash Miniconda3-latest-Linux-x86_64.sh -b -p /miniconda
+bash Miniconda3-4.3.21-Linux-x86_64.sh -b -p /miniconda
 
 pip install \
     boto3==1.7.66 \
