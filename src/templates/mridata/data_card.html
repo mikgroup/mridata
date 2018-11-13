@@ -1,8 +1,8 @@
 <div class="card my-2">
   <div class="container my-2">
-    <a data-toggle="collapse" href="#collapse{{ data.uuid }}">
+    <!-- <a data-toggle="collapse" href="#collapse{{ data.uuid }}"> -->
       {% include "mridata/data_summary.html" with data=data %}
-    </a>
+    <!-- </a> -->
 
     <div id="collapse{{ data.uuid }}" class="card-collapse collapse">
       {% include "mridata/data_detail.html" with data=data %}

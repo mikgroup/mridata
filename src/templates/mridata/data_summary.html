@@ -1,9 +1,14 @@
 {% load staticfiles %}
+
+
 <div class="row small align-items-center">
   <div class="col-3 text-center">
-    <img src=
+    <!-- <a data-toggle="collapse" href="#collapse{{ data.uuid }}"/> -->
+    <img data-toggle="collapse"
+    href="#collapse{{data.uuid}}"
+    src=
 	 {% if data.thumbnail_file %}
-	 "{{ data.thumbnail_file.url }}"
+   "{{ data.thumbnail_file.url }}"
 	 {% else %}
 	 {% static "images/default_thumbnail.png" %}
 	 {% endif %}
@@ -41,7 +46,7 @@
 	  {{ data.project.name }}
 	</td>
       </tr>
-      
+
       <tr>
 	<td class="text-muted text-left" width="15%">
 	  Anatomy:
@@ -50,8 +55,8 @@
 	  {{ data.anatomy }}
 	</td>
       </tr>
-      
-      <tr>
+
+    <tr>
 	<td class="text-muted text-left" width="15%">
 	  Fullysampled:
 	</td>
@@ -65,7 +70,7 @@
 	  {% endif %}
 	</td>
       </tr>
-      
+
       <tr>
 	<td class="text-muted text-left" width="15%">
 	  Uploader:
@@ -74,6 +79,55 @@
 	  {{ data.uploader }}
 	</td>
       </tr>
+      <tr>
+  	<td class="text-muted text-left" width="15%">
+  	  Tags:
+  	</td>
+    <!-- TODO: Insert all the tags associated with sample. -->
+  	<td class="text-muted text-center">
+      <link rel="stylesheet" type="text/css" href={% static "css/tags.css" %}>
+      <script type="text/javascript" src={% static "js/tags.js" %}></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+      <div id="tags" style="text-align: center" value="{data.uuid}">
+        <input type="text" value="" placeholder="Add a tag"/>
+      </div>
+
+  	</td>
+        </tr>
     </table>
+
+    <div style="text-align: center" class="col-3 text-right" >
+      <style>
+        [data-toggle="collapse"].collapsed .if-not-collapsed {
+          display: none;
+        }
+        [data-toggle="collapse"]:not(.collapsed) .if-collapsed {
+          display: none;
+        }
+        i {
+          border: solid black;
+          border-width: 0 3px 3px 0;
+          display: inline-block;
+          padding: 3px;
+        }
+
+        .up {
+          transform: rotate(-135deg);
+          -webkit-transform: rotate(-135deg);
+        }
+
+        .down {
+            transform: rotate(45deg);
+            -webkit-transform: rotate(45deg);
+        }
+      </style>
+      <a class="right collapsed" data-toggle="collapse" href="#collapse{{data.uuid}}">
+        <span class="if-collapsed"><i class="down"></i></span>
+        <span class="if-not-collapsed"><i class="up"></i></span>
+      </a>
+    </div>
   </div>
+
+
 </div>

@@ -10,7 +10,7 @@ from s3direct.widgets import S3DirectWidget
 class DataForm(forms.ModelForm):
 
     project_name = forms.CharField()
-    
+
     class Meta:
         model = Data
         fields = ('project_name',
@@ -29,10 +29,10 @@ class DataForm(forms.ModelForm):
             'comments': forms.Textarea(attrs={'rows':3, 'cols':50}),
             'funding_support': forms.Textarea(attrs={'rows':3, 'cols':50}),
         }
-        
+
 
 class PhilipsDataForm(forms.ModelForm):
-    
+
     project_name = forms.CharField()
     if settings.USE_AWS:
         philips_lab_file = forms.URLField(widget=S3DirectWidget(dest='uploads'))
@@ -70,7 +70,7 @@ class PhilipsDataForm(forms.ModelForm):
 
 
 class GeDataForm(forms.ModelForm):
-    
+
     project_name = forms.CharField()
     if settings.USE_AWS:
         ge_file = forms.URLField(widget=S3DirectWidget(dest='uploads'))
@@ -108,7 +108,7 @@ class SiemensDataForm(forms.ModelForm):
         siemens_dat_file = forms.URLField(widget=S3DirectWidget(dest='uploads'))
     else:
         siemens_dat_file = forms.FileField(widget=forms.ClearableFileInput())
-    
+
     class Meta:
         if settings.USE_AWS:
             model = SiemensAwsData
@@ -132,9 +132,9 @@ class SiemensDataForm(forms.ModelForm):
             'funding_support': forms.Textarea(attrs={'rows':3, 'cols':50}),
         }
 
-        
+
 class IsmrmrdDataForm(forms.ModelForm):
-    
+
     project_name = forms.CharField()
     if settings.USE_AWS:
         ismrmrd_file = forms.URLField(widget=S3DirectWidget(dest='uploads'))

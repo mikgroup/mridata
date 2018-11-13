@@ -8,12 +8,14 @@ import ismrmrd
 import subprocess
 import numpy as np
 import boto3
+import zipfile
+from io import BytesIO
 
 from .recon import ifftc, rss, resize
 from .models import Data, PhilipsData, SiemensData, GeData, IsmrmrdData, Log, \
     PhilipsAwsData, SiemensAwsData, GeAwsData, IsmrmrdAwsData
 from PIL import Image
-
+from django.http import HttpResponse
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 
@@ -26,7 +28,7 @@ def process_ge_data(uuid):
     else:
         process_temp_data(GeData, uuid)
 
-    
+
 @task(name="process_philips_data")
 def process_philips_data(uuid):
     if settings.USE_AWS:
@@ -34,7 +36,7 @@ def process_philips_data(uuid):
     else:
         process_temp_data(PhilipsData, uuid)
 
-    
+
 @task(name="process_ismrmrd_data")
 def process_ismrmrd_data(uuid):
     if settings.USE_AWS:
@@ -42,7 +44,7 @@ def process_ismrmrd_data(uuid):
     else:
         process_temp_data(IsmrmrdData, uuid)
 
-    
+
 @task(name="process_siemens_data")
 def process_siemens_data(uuid):
     if settings.USE_AWS:
@@ -50,13 +52,34 @@ def process_siemens_data(uuid):
     else:
         process_temp_data(SiemensData, uuid)
 
+@task(name="download_zip")
+def download_zip(uuids):
+    s = BytesIO()
+    zip_subdir = "Mri Datasets"
+    zip_filename = "%s.zip" % zip_subdir
+    zf = zipfile.ZipFile(s, 'w')
+    for id in uuids:
+        data = get_object_or_404(Data, uuid=id)
+        data.downloads += 1
+        data.save()
+        fdir, fname = os.path.split(data.ismrmrd_file.url)
+        zip_path = os.path.join(zip_subdir, fname)
+        zf.write(data.ismrmrd_file.url, zip_path)
+
+    zf.close()
+    return zip_filename
+    #
+    # resp = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
+    # # ..and correct content-disposition
+    # resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+    # return resp
 
 def log(string, uploader):
     Log(string=string, user=uploader.user).save()
     logger.info(string)
     set_uploader_refresh(uploader)
 
-    
+
 def process_temp_data(dtype, uuid):
 
     temp_data = get_object_or_404(dtype, uuid=uuid)
@@ -64,16 +87,16 @@ def process_temp_data(dtype, uuid):
     data = Data()
 
     log("{} backend processing started.".format(str(temp_data)[37:]), uploader)
-    
+
     convert_data(temp_data, dtype, data)
-    
+
     parse_ismrmrd(temp_data, data)
     create_thumbnail(temp_data, data)
 
     ismrmrd_file = '{}.h5'.format(temp_data.uuid)
     upload_temp_file_to_media(ismrmrd_file)
     data.save()
-    
+
     log("{} backend processing completed. UUID is {}.".format(str(temp_data)[37:],
                                                               temp_data.uuid), uploader)
     temp_data.delete()
@@ -83,7 +106,7 @@ def convert_ge_data(temp_data):
     ismrmrd_file = '{}.h5'.format(temp_data.uuid)
     ge_file = str(temp_data)
     get_upload_file_to_temp(ge_file)
-    
+
     subprocess.check_output(['ge_to_ismrmrd',
                              '--verbose',
                              '-o', os.path.join(settings.TEMP_ROOT, ismrmrd_file),
@@ -105,13 +128,13 @@ def convert_siemens_data(temp_data):
     start = stdout.find(b'This file contains ') + len('This file contains ')
     end = stdout.find(b' measurement(s)')
     meas_num = stdout[start:end].decode("utf-8")
-    
+
     subprocess.check_output(['siemens_to_ismrmrd',
                              '-f', os.path.join(settings.TEMP_ROOT, siemens_dat_file),
                              '-o', os.path.join(settings.TEMP_ROOT, ismrmrd_file), '-z', meas_num])
 
     os.remove(os.path.join(settings.TEMP_ROOT, siemens_dat_file))
-    
+
 
 def convert_philips_data(temp_data):
     philips_lab_file = str(temp_data.philips_lab_file).split("/")[-1]
@@ -119,17 +142,17 @@ def convert_philips_data(temp_data):
     philips_raw_file = str(temp_data.philips_raw_file).split("/")[-1]
     schema_file = os.path.join(settings.STATICFILES_DIRS[0], 'schema', 'ismrmrd_philips.xsl')
     ismrmrd_file = '{}.h5'.format(temp_data.uuid)
-    
+
     get_upload_file_to_temp(philips_lab_file)
     get_upload_file_to_temp(philips_sin_file)
     get_upload_file_to_temp(philips_raw_file)
-    
+
     subprocess.check_output(['philips_to_ismrmrd',
                              '-f', os.path.join(settings.TEMP_ROOT,
                                                 os.path.splitext(philips_lab_file)[0]),
                              '-x', schema_file,
                              '-o', os.path.join(settings.TEMP_ROOT, ismrmrd_file)])
-    
+
     os.remove(os.path.join(settings.TEMP_ROOT, philips_lab_file))
     os.remove(os.path.join(settings.TEMP_ROOT, philips_sin_file))
     os.remove(os.path.join(settings.TEMP_ROOT, philips_raw_file))
@@ -137,9 +160,9 @@ def convert_philips_data(temp_data):
 
 def convert_ismrmrd_data(temp_data):
     ismrmrd_file = '{}.h5'.format(temp_data.uuid)
-    temp_ismrmrd_file = str(temp_data)    
+    temp_ismrmrd_file = str(temp_data)
     get_upload_file_to_temp(temp_ismrmrd_file)
-    
+
     os.rename(os.path.join(settings.TEMP_ROOT, temp_ismrmrd_file),
               os.path.join(settings.TEMP_ROOT, ismrmrd_file))
 
@@ -168,10 +191,10 @@ def convert_data(temp_data, dtype, data):
             convert_philips_data(temp_data)
         elif dtype in [IsmrmrdData, IsmrmrdAwsData]:
             convert_ismrmrd_data(temp_data)
-        
+
         log("{} ISMRMRD conversion completed. Extracting parameters.".format(str(temp_data)[37:]),
             temp_data.uploader)
-        
+
     except Exception as e:
         log("{} ISMRMRD conversion failed.\n{}".format(
             temp_data, traceback.format_exc()), temp_data.uploader)
@@ -183,14 +206,14 @@ def set_uploader_refresh(uploader):
     uploader.refresh = True
     uploader.save()
 
-    
+
 def cleanup_temp_data(temp_data):
     if os.path.exists(os.path.join(settings.TEMP_ROOT, str(temp_data))):
         os.remove(os.path.join(settings.TEMP_ROOT, str(temp_data)))
-        
+
     temp_data.delete()
-        
-    
+
+
 def get_upload_file_to_temp(file):
     if settings.USE_AWS:
         s3 = boto3.resource('s3')
@@ -203,10 +226,10 @@ def get_upload_file_to_temp(file):
     else:
         upload_file = os.path.join(settings.MEDIA_ROOT, 'uploads', file)
         shutil.move(upload_file, os.path.join(settings.TEMP_ROOT, file))
-    
-    
+
+
 def upload_temp_file_to_media(file):
-    
+
     if not os.path.exists(os.path.join(settings.TEMP_ROOT, file)):
         raise IOError('{} does not exists.'.format(file))
 
@@ -223,9 +246,9 @@ def upload_temp_file_to_media(file):
         media_file = os.path.join(settings.MEDIA_ROOT, file)
         shutil.move(os.path.join(settings.TEMP_ROOT, file), media_file)
 
-        
+
 def parse_ismrmrd(temp_data, data):
-    
+
     try:
         ismrmrd_file = '{}.h5'.format(temp_data.uuid)
         dset = ismrmrd.Dataset(os.path.join(settings.TEMP_ROOT, ismrmrd_file),
@@ -425,7 +448,7 @@ def parse_ismrmrd(temp_data, data):
 
         log("{} parameter extraction completed. Generating thumbnail.".format(str(temp_data)[37:]),
             temp_data.uploader)
-        
+
     except Exception as e:
         log("{} parameter extraction failed.\n{}".format(
             temp_data, traceback.format_exc()), temp_data.uploader)
@@ -438,7 +461,7 @@ def create_thumbnail(temp_data, data):
     Based on:
     https://github.com/ismrmrd/ismrmrd-python-tools/blob/master/recon_ismrmrd_dataset.py
     '''
-    
+
     try:
         ismrmrd_file = '{}.h5'.format(temp_data.uuid)
         dset = ismrmrd.Dataset(os.path.join(settings.TEMP_ROOT, ismrmrd_file),
@@ -551,7 +574,7 @@ def create_thumbnail(temp_data, data):
 
         slice_idx, repetition_idx, contrast_idx, phase_idx, set_idx = np.where(
             energy == energy.max())
-            
+
         ksp = np.zeros([number_of_channels, matrix_size_z, matrix_size_y, matrix_size_x],
                        dtype=np.complex64)
         for acqnum in range(dset.number_of_acquisitions()):
@@ -570,7 +593,7 @@ def create_thumbnail(temp_data, data):
 
                 if z >= 0 and z < matrix_size_z and y >= 0 and y < matrix_size_y:
                     ksp[:, z, y, :] = acq.data
-                    
+
         z_idx = np.argmax(np.sum(np.abs(ksp)**2, axis=(0, 2, 3)))
         ksp_slice = ksp[:, z_idx, :, :]
 
@@ -586,20 +609,20 @@ def create_thumbnail(temp_data, data):
         res_x = field_of_view_x / matrix_size_x
         res_y = field_of_view_y / matrix_size_y
         min_res = min(res_x, res_y)
-        
+
         pil = Image.fromarray(thumbnail)
         pil = pil.resize([int(thumbnail.shape[0] * res_x / min_res),
                           int(thumbnail.shape[1] * res_y / min_res)], resample=3)
-        
+
         thumbnail_file = '{}.jpg'.format(temp_data.uuid)
         pil.save(os.path.join(settings.TEMP_ROOT, thumbnail_file))
         upload_temp_file_to_media(thumbnail_file)
-        
+
         data.thumbnail_file = thumbnail_file
 
         log("{} thumbnail generation completed. Uploading to storage.".format(
             str(temp_data)[37:]), temp_data.uploader)
-        
+
     except Exception as e:
         log("{} thumbnail generation failed.\n{}".format(
             temp_data, traceback.format_exc()), temp_data.uploader)
