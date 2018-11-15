@@ -9,7 +9,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from taggit.managers import TaggableManager
-# from taggit.models import TaggedItemBase
+from taggit.models import TaggedItemBase
 
 from s3direct.fields import S3DirectField
 
@@ -60,8 +60,8 @@ class Uploader(models.Model):
         return self.user.__str__()
 
 
-# class TaggedData(TaggedItemBase):
-#     content_object = models.ForeignKey('Data')
+class TaggedData(TaggedItemBase):
+    content_object = models.ForeignKey('Data')
 
 class Data(models.Model):
 
@@ -127,7 +127,8 @@ class Data(models.Model):
     upload_date = models.DateTimeField(default=timezone.now)
     uploader = models.ForeignKey(Uploader, on_delete=models.CASCADE)
     downloads = models.IntegerField(default=0)
-    tags = TaggableManager()
+    tags = TaggableManager(through=TaggedData)
+    # tags = models.CharField(max_length=100, default='', blank=True)
 
     def __str__(self):
         return str(self.uuid)
@@ -164,7 +165,7 @@ class TempData(models.Model):
     references = models.TextField(blank=True, default='')
     comments = models.TextField(blank=True, default='')
     funding_support = models.TextField(blank=True, default='')
-
+    # tags = models.TextField(blank=True, default='')
     original_filename = models.TextField(default='')
 
     upload_date = models.DateTimeField(default=timezone.now)

@@ -19,7 +19,7 @@ from .models import Data, TempData, Uploader, Project, Log
 from .forms import PhilipsDataForm, SiemensDataForm, GeDataForm, IsmrmrdDataForm, DataForm
 from .filters import DataFilter
 from .tasks import process_ge_data, process_ismrmrd_data, process_philips_data, process_siemens_data, download_zip
-
+from taggit.models import Tag
 
 def main(request):
     projects = Project.objects.all().order_by('-name')
@@ -326,11 +326,39 @@ def check_refresh(request):
 @login_required
 def tags(request):
     # add tags.
-    if request.is_ajax() and request.POST:
-        data = request.POST.get('new_tag')
-        logging.warning(data)
-        return JsonResponse({"tags": data})
-    return JsonResponse({'tags' : False})
+    # logging.warning("I AM IN TAGS")
+    # logging.warning("request:", request)
+    if request.GET:
+        logging.warning("GET REQUEST")
+        logging.warning("tag: {}".format( request.GET.get("tag")))
+        logging.warning("UUID: {}".format(request.GET.get("uuid")))
+        uuid = request.GET.get("uuid")
+        tagRaw = request.GET.get("tag")
+
+        logging.warning("\n\n\n GETTING DATA")
+        data = get_object_or_404(Data, uuid=uuid)
+        logging.warning("\n\n\n GOT DATA")
+        logging.warning("TAG RAW: ", tagRaw)
+        logging.warning("TAG RAW TYPE: {}".format(type(tagRaw)))
+
+        logging.warning("TAGS: {}".format(data.tags.all()))
+
+        data.tags.add(tagRaw)
+        logging.warning("\n\n\n GOT tags")
+        logging.warning("TAGS: {}".format(data.tags.all()))
+
+        data.save()
+    return redirect("data_list")
+    # if request.is_ajax() and request.POST:
+    #     tagRaw = request.POST.get('new_tag')
+    #     # uuid = request.POST.get('post_uuid');
+    #     # data = get_object_or_404(Data, uuid=uuid) # Data Object
+    #     # data.tags.add(tagRaw)
+    #     logging.warning("Request: {}".format(request.POST))
+    #     logging.warning(tagRaw)
+    #
+    #     return JsonResponse({"tags": dataRaw})
+    # return JsonResponse({'tags' : request.GET})
 
 @login_required
 def get_temp_credentials(request):

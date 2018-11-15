@@ -15,7 +15,7 @@ $(function(){ // DOM ready
           $.ajax({
           	dataType: "json",
             url: "/tags",
-          	data: {"new_tag" : this.value, "post_uuid": "False"}, // TODO: FIGURE OUT HOW TO GET THE UUID.
+          	data: {"new_tag" : this.value, "post_uuid": "hiiii"}, // TODO: FIGURE OUT HOW TO GET THE UUID.
           	success: function(json) {
           	    console.log(json)
           	}

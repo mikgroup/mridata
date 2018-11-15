@@ -19,7 +19,7 @@
 	    {{ form.project_name }}
 	  </td>
         </tr>
-	
+
 	<tr>
 	  <th>
 	    Anatomy:
@@ -56,7 +56,7 @@
 	    {{ form.funding_support }}
 	  </td>
         </tr>
-	
+
 	{% include "mridata/upload_file.html" %}
 
         <tr>
@@ -80,8 +80,23 @@
 	    </table>
 	  </td>
         </tr>
+
+
+        <tr>
+          <th>Tags:</th>
+          <td>
+            <link rel="stylesheet" type="text/css" href={% static "css/tags.css" %}>
+            <script type="text/javascript" src={% static "js/tags.js" %}></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+            <div id="tags">
+              <input type="text" value="" placeholder="Add a tag"/>
+            </div>
+            {{ form.tags_manager }}
+            
+      	  </td>
+        </tr>
       </table>
-      
+
       <div>
 	<input type="checkbox" required>
 	<label>I agree to the <a href="{% url 'terms' %}">Terms of Service</a></label>
