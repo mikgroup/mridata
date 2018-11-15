@@ -329,23 +329,23 @@ def tags(request):
     # logging.warning("I AM IN TAGS")
     # logging.warning("request:", request)
     if request.GET:
-        logging.warning("GET REQUEST")
-        logging.warning("tag: {}".format( request.GET.get("tag")))
-        logging.warning("UUID: {}".format(request.GET.get("uuid")))
+        # logging.warning("GET REQUEST")
+        # logging.warning("tag: {}".format( request.GET.get("tag")))
+        # logging.warning("UUID: {}".format(request.GET.get("uuid")))
         uuid = request.GET.get("uuid")
         tagRaw = request.GET.get("tag")
 
-        logging.warning("\n\n\n GETTING DATA")
+        # logging.warning("\n\n\n GETTING DATA")
         data = get_object_or_404(Data, uuid=uuid)
-        logging.warning("\n\n\n GOT DATA")
-        logging.warning("TAG RAW: ", tagRaw)
-        logging.warning("TAG RAW TYPE: {}".format(type(tagRaw)))
-
-        logging.warning("TAGS: {}".format(data.tags.all()))
+        # logging.warning("\n\n\n GOT DATA")
+        # logging.warning("TAG RAW: ", tagRaw)
+        # logging.warning("TAG RAW TYPE: {}".format(type(tagRaw)))
+        #
+        # logging.warning("TAGS: {}".format(data.tags.all()))
 
         data.tags.add(tagRaw)
-        logging.warning("\n\n\n GOT tags")
-        logging.warning("TAGS: {}".format(data.tags.all()))
+        # logging.warning("\n\n\n GOT tags")
+        # logging.warning("TAGS: {}".format(data.tags.all()))
 
         data.save()
     return redirect("data_list")
@@ -359,6 +359,16 @@ def tags(request):
     #
     #     return JsonResponse({"tags": dataRaw})
     # return JsonResponse({'tags' : request.GET})
+
+
+def tag_delete(request, uuid, tag):
+    logging.warning("request:", request)
+    logging.warning("uuid", uuid)
+    logging.warning("tag", tag)
+    data = get_object_or_404(Data, uuid=uuid)
+    data.tags.remove(tag)
+    data.save()
+    return redirect('data_list')
 
 @login_required
 def get_temp_credentials(request):
