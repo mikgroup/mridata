@@ -43,8 +43,15 @@ def api(request):
 
 
 def data_list(request):
-
-    filter = DataFilter(request.GET, Data.objects.all().order_by('-upload_date'))
+    if (request.GET.get("tags")):
+        tag = request.GET.get("tags")
+        tag = tag.split()
+        tag_filter = Data.objects.filter(tags__name__in=tag).distinct()
+        request.GET = request.GET.copy() # makes request mutable.
+        request.GET['tags'] = "" # deletes all tags so you can filter everything else.
+        filter = DataFilter(request.GET, tag_filter.order_by("-upload_date"))
+    else:
+        filter = DataFilter(request.GET, Data.objects.all().order_by('-upload_date'))
 
     if request.user.is_authenticated:
         uploader = request.user.uploader
