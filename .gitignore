@@ -118,3 +118,6 @@ P*.7
 *.lab
 *.raw
 *.jpg
+
+# Orchestra SDK 
+orchestra-sdk-1.6-1.zip 
