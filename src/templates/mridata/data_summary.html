@@ -120,7 +120,6 @@
             line-height: 26px;
             padding: 0 20px 0 23px;
             position: relative;
-            margin: 0 10px 10px 0;
             text-decoration: none;
           }
 
@@ -161,7 +160,8 @@
             <li class="tag">
               <a href="{% url 'tag_delete' uuid=data.uuid tag=tag %}"
               onclick="return confirm('Are you sure you want to delete?')">
-            {{tag}} </a>
+            {{tag}}
+              </a>
           </li>
           {% endfor %}
 

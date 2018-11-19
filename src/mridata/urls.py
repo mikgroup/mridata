@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^tag_delete/(?P<uuid>.+)/(?P<tag>.+)$', views.tag_delete, name='tag_delete'),
     url(r'^poll_for_download/(?P<uuid>.+)$', views.poll_for_download, name='poll_for_download')
 
+
 ]
