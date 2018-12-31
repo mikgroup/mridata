@@ -105,7 +105,7 @@
 
               <li class="tag" id="clickMe" href="{% url 'tag_delete' uuid=data.uuid tag=tag %}"
               onclick="location.href = '{% url 'search_tag' tag=tag %}'; return true;"
-              oncontextmenu="location.href = '{% url 'tag_delete' uuid=data.uuid tag=tag %}'; return confirm('Are you sure you want to delete?')">
+              oncontextmenu=" if (confirm('Are you sure you want to delete?')) { location.href = '{% url 'tag_delete' uuid=data.uuid tag=tag %}'; return true; } else { return false; } ">
               {{tag}}
               </li>
 
