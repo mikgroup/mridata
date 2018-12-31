@@ -1,4 +1,5 @@
 {% extends "mridata/base.html" %}
+{% load widget_tweaks %}
 {% load staticfiles %}
 
 {% block body_block %}
@@ -6,7 +7,7 @@
   <div class="col-md-auto text-center">
     <form action="" method="get">
       <table class="small table-sm text-left mb-3">
-	{{ filter.form.as_table }}
+        {% render_field filter.form.as_table %}
       </table>
       <button type="submit" class="save btn btn-primary btn-sm">Search</button>
     </form>
@@ -18,28 +19,6 @@
       <a href="{% url 'data' uuid=filter.qs %}" class="btn btn-info btn-sm float-md-right">
         Download Datasets
       </a>
-      <script>
-              $(function(){
-             $.ajaxSetup({ cache: false, timeout: 360000 });
-             var url = "/poll_for_download/";
-             var i = 0;
-             (function worker() {
-                 $.getJSON(url+"?task_id=", function(data){
-                     if(data.filename) {
-                         var file_url = url+"?filename="+data.filename;
-                         $("#content").html("If your download doesn't start automatically, please click <a href='"+file_url+"'>here</a>.");
-                         window.location.href = file_url;
-                     } else {
-                         setTimeout(worker, 5000);
-                     }
-                 });
-             })();
-             setInterval(function() {
-                 i = ++i % 4;
-                 $("#loading").html("loading"+Array(i+1).join("."));
-             }, 1000);
-         });
-      </script>
     {% else %}
       <a href="data:text/plain;charset=utf-8,{% for data in filter.qs %}{{data.uuid}}%0D%0A{% endfor %}"
          class="btn btn-info btn-sm float-md-right"
@@ -51,7 +30,7 @@
 
     <div id="data_list">
       {% if logs|length > 0 %}
-	{% include "mridata/log_card.html" %}
+	      {% include "mridata/log_card.html" %}
       {% endif %}
 
       {% include "mridata/data_list_page.html" %}

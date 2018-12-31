@@ -47,6 +47,7 @@ def data_list(request):
         tag = request.GET.get("tags")
         tag = tag.split()
         tag_filter = Data.objects.filter(tags__name__in=tag).distinct()
+
         request.GET = request.GET.copy() # makes request mutable.
         request.GET['tags'] = "" # deletes all tags so you can filter everything else.
         filter = DataFilter(request.GET, tag_filter.order_by("-upload_date"))
@@ -85,32 +86,16 @@ def data_share(request, uuid):
     return data_list(request)
 
 def data(request, uuid):
-    logging.warning('Watch out!')  # will print a message to the console
-    logging.info('I told you so')  # will not print anything
-    logging.warning("UUIDS: {0}".format(uuid))
 
     if request.user.is_authenticated:
 
         uuid = uuid.strip("<QuerySet [")
         uuid = uuid.strip('>]>')
         uuid = uuid.strip("Data: ")
-        logging.warning(uuid) ## # DEBUG: this is for me to make sure what is in uuid.
         uuids = uuid.split(">, <Data: ")
         for id in uuids:
             id.strip()
-        logging.warning("THE UUIDS: ")
-        logging.warning(uuids) ## # DEBUG: this is for me to make sure what is in uuid.
-        logging.warning("THE TYPE OF UUIDS: {}".format(type(uuids)))
-        # download_zip.delay(uuids=uuids)
-        # s = download_zip.apply_async(args=[uuids])
 
-        # task = download_zip.delay(uuids)
-        # # return redirect('data_list')
-        # return render(request, "mridata/poll_for_download.html",
-                              # {'task_id': task.task_id})
-
-        # Folder name in ZIP archive which contains the above files
-        # E.g [thearchive.zip]/Mri\ Datasets/file.whatever
         s = BytesIO()
         zip_subdir = "Mri Datasets"
         zip_filename = "%s.zip" % zip_subdir
@@ -138,24 +123,6 @@ def data(request, uuid):
         return render(request, 'mridata/data.html',
                   {'data': get_object_or_404(Data, uuid=uuid)})
 
-def poll_for_download(request):
-    task_id = request.GET.get("task_id")
-    filename = request.GET.get("filename")
-
-    if request.is_ajax():
-        result = generate_file.AsyncResult(task_id)
-        if result.ready():
-            return HttpResponse(json.dumps({"filename": result.get()}))
-        return HttpResponse(json.dumps({"filename": None}))
-
-    try:
-        f = open("/path/to/export/"+filename)
-    except:
-        return HttpResponseForbidden()
-    else:
-        response = HttpResponse(file, mimetype='text/csv')
-        response['Content-Disposition'] = 'attachment; filename=%s' % filename
-    return response
 
 
 @login_required
@@ -356,22 +323,39 @@ def tags(request):
 
         data.save()
     return redirect("data_list")
-    # if request.is_ajax() and request.POST:
-    #     tagRaw = request.POST.get('new_tag')
-    #     # uuid = request.POST.get('post_uuid');
-    #     # data = get_object_or_404(Data, uuid=uuid) # Data Object
-    #     # data.tags.add(tagRaw)
-    #     logging.warning("Request: {}".format(request.POST))
-    #     logging.warning(tagRaw)
-    #
-    #     return JsonResponse({"tags": dataRaw})
-    # return JsonResponse({'tags' : request.GET})
 
+
+def search_tag(request, tag):
+    tag = tag.split()
+    for val in request.GET.values():
+        return data_list(request)
+
+    tag_filter = Data.objects.filter(tags__name__in=tag).distinct()
+
+    filter = DataFilter(request.GET, tag_filter.order_by("-upload_date"))
+
+    if request.user.is_authenticated:
+        uploader = request.user.uploader
+        temp_datasets = TempData.objects.filter(uploader=uploader).order_by('-upload_date')
+        logs = Log.objects.filter(user=request.user).order_by('-date_time')
+    else:
+        temp_datasets = []
+        logs = []
+
+    if request.is_ajax() and 'page' in request.GET:
+        template = 'mridata/data_list_page.html'
+    else:
+        template = 'mridata/data_list.html'
+
+    return render(request, template,
+                  {
+                      'filter': filter,
+                      'temp_datasets': temp_datasets,
+                      'logs': logs
+                  })
 
 def tag_delete(request, uuid, tag):
-    logging.warning("request:", request)
-    logging.warning("uuid", uuid)
-    logging.warning("tag", tag)
+    logging.warning("IM HERE")
     data = get_object_or_404(Data, uuid=uuid)
     data.tags.remove(tag)
     data.save()

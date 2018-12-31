@@ -9,7 +9,8 @@ from s3direct.widgets import S3DirectWidget
 
 class DataForm(forms.ModelForm):
 
-    project_name = forms.CharField()
+    project_name = forms.CharField(label="Project Name", required=True)
+    fullysampled = forms.NullBooleanField(label="Fully Sampled")
 
     class Meta:
         model = Data
@@ -25,23 +26,25 @@ class DataForm(forms.ModelForm):
                   'thumbnail_transpose',
         )
         widgets = {
-            'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
-            'comments': forms.Textarea(attrs={'rows':3, 'cols':50}),
-            'funding_support': forms.Textarea(attrs={'rows':3, 'cols':50}),
+            'references': forms.Textarea(attrs={'rows':2, 'cols':50}),
+            'comments': forms.Textarea(attrs={'rows':2, 'cols':50}),
+            'funding_support': forms.Textarea(attrs={'rows':2, 'cols':50}),
         }
 
 
 class PhilipsDataForm(forms.ModelForm):
 
-    project_name = forms.CharField()
+    project_name = forms.CharField(label="Project Name", required=True)
+    fullysampled = forms.NullBooleanField(label="Fully Sampled")
+
     if settings.USE_AWS:
-        philips_lab_file = forms.URLField(widget=S3DirectWidget(dest='uploads'))
-        philips_raw_file = forms.URLField(widget=S3DirectWidget(dest='uploads'))
-        philips_sin_file = forms.URLField(widget=S3DirectWidget(dest='uploads'))
+        philips_lab_file = forms.URLField(widget=S3DirectWidget(dest='uploads'), label="Philips Lab File")
+        philips_raw_file = forms.URLField(widget=S3DirectWidget(dest='uploads'), label="Philips Raw File")
+        philips_sin_file = forms.URLField(widget=S3DirectWidget(dest='uploads'), label="Philips Sin File")
     else:
-        philips_lab_file = forms.FileField(widget=forms.ClearableFileInput())
-        philips_raw_file = forms.FileField(widget=forms.ClearableFileInput())
-        philips_sin_file = forms.FileField(widget=forms.ClearableFileInput())
+        philips_lab_file = forms.FileField(widget=forms.ClearableFileInput(), label="Philips Lab File")
+        philips_raw_file = forms.FileField(widget=forms.ClearableFileInput(), label="Philips Raw File")
+        philips_sin_file = forms.FileField(widget=forms.ClearableFileInput(), label="Philips Sin File")
 
     class Meta:
         if settings.USE_AWS:
@@ -64,19 +67,21 @@ class PhilipsDataForm(forms.ModelForm):
 
         )
         widgets = {
-            'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
-            'comments': forms.Textarea(attrs={'rows':3, 'cols':50}),
-            'funding_support': forms.Textarea(attrs={'rows':3, 'cols':50}),
+            'references': forms.Textarea(attrs={'rows':2, 'cols':50}),
+            'comments': forms.Textarea(attrs={'rows':2, 'cols':50}),
+            'funding_support': forms.Textarea(attrs={'rows':2, 'cols':50}),
         }
 
 
 class GeDataForm(forms.ModelForm):
 
-    project_name = forms.CharField()
+    project_name = forms.CharField(label="Project Name", required=True)
+    fullysampled = forms.NullBooleanField(label="Fully Sampled")
+
     if settings.USE_AWS:
-        ge_file = forms.URLField(widget=S3DirectWidget(dest='uploads'))
+        ge_file = forms.URLField(widget=S3DirectWidget(dest='uploads'), label="GE File")
     else:
-        ge_file = forms.FileField(widget=forms.ClearableFileInput())
+        ge_file = forms.FileField(widget=forms.ClearableFileInput(), label="GE File")
 
     class Meta:
         if settings.USE_AWS:
@@ -96,19 +101,22 @@ class GeDataForm(forms.ModelForm):
             'thumbnail_transpose',
         ]
         widgets = {
-            'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
-            'comments': forms.Textarea(attrs={'rows':3, 'cols':50}),
-            'funding_support': forms.Textarea(attrs={'rows':3, 'cols':50}),
+            'references': forms.Textarea(attrs={'rows':2, 'cols':50}),
+            'comments': forms.Textarea(attrs={'rows':2, 'cols':50}),
+            'funding_support': forms.Textarea(attrs={'rows':2, 'cols':50}),
+            'tags': forms.Textarea(attrs={'rows':1, 'cols':50}),
         }
 
 
 class SiemensDataForm(forms.ModelForm):
 
-    project_name = forms.CharField()
+    project_name = forms.CharField(label="Project Name", required=True)
+    fullysampled = forms.NullBooleanField(label="Fully Sampled")
+
     if settings.USE_AWS:
-        siemens_dat_file = forms.URLField(widget=S3DirectWidget(dest='uploads'))
+        siemens_dat_file = forms.URLField(widget=S3DirectWidget(dest='uploads'), label="Siemens File")
     else:
-        siemens_dat_file = forms.FileField(widget=forms.ClearableFileInput())
+        siemens_dat_file = forms.FileField(widget=forms.ClearableFileInput(), label="Siemens File")
 
     class Meta:
         if settings.USE_AWS:
@@ -128,19 +136,21 @@ class SiemensDataForm(forms.ModelForm):
             'thumbnail_transpose',
         )
         widgets = {
-            'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
-            'comments': forms.Textarea(attrs={'rows':3, 'cols':50}),
-            'funding_support': forms.Textarea(attrs={'rows':3, 'cols':50}),
+            'references': forms.Textarea(attrs={'rows':2, 'cols':50}),
+            'comments': forms.Textarea(attrs={'rows':2, 'cols':50}),
+            'funding_support': forms.Textarea(attrs={'rows':2, 'cols':50}),
         }
 
 
 class IsmrmrdDataForm(forms.ModelForm):
 
-    project_name = forms.CharField()
+    project_name = forms.CharField(label="Project Name", required=True)
+    fullysampled = forms.NullBooleanField(label="Fully Sampled")
+
     if settings.USE_AWS:
-        ismrmrd_file = forms.URLField(widget=S3DirectWidget(dest='uploads'))
+        ismrmrd_file = forms.URLField(widget=S3DirectWidget(dest='uploads'), label='ISMRMRD File')
     else:
-        ismrmrd_file = forms.FileField(widget=forms.ClearableFileInput())
+        ismrmrd_file = forms.FileField(widget=forms.ClearableFileInput(), label='ISMRMRD File')
 
     class Meta:
         if settings.USE_AWS:
@@ -160,7 +170,7 @@ class IsmrmrdDataForm(forms.ModelForm):
             'thumbnail_transpose',
         )
         widgets = {
-            'references': forms.Textarea(attrs={'rows':3, 'cols':50}),
-            'comments': forms.Textarea(attrs={'rows':3, 'cols':50}),
-            'funding_support': forms.Textarea(attrs={'rows':3, 'cols':50}),
+            'references': forms.Textarea(attrs={'rows':2, 'cols':50}),
+            'comments': forms.Textarea(attrs={'rows':2, 'cols':50}),
+            'funding_support': forms.Textarea(attrs={'rows':2, 'cols':50}),
         }

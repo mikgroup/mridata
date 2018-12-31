@@ -55,8 +55,10 @@ INSTALLED_APPS = [
     'django_filters',
     's3direct',
     'storages',
-    'taggit'
+    'taggit',
+    'widget_tweaks'
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

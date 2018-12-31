@@ -1,5 +1,5 @@
 {% extends 'mridata/base.html' %}
-
+{% load widget_tweaks %}
 {% load staticfiles %}
 
 {% block body_block %}
@@ -7,13 +7,52 @@
 <br>
 <div class="col">
   <div class="card text-center">
-    <form method="POST" class="data-form" enctype="multipart/form-data">
-      {% csrf_token %}
+    <form method="POST" class="form mb-3" enctype="multipart/form-data">
       <br>
-      <table class="table-sm" width="100%">
-  	{{ form.as_table }}
-      </table>
-      <button type="submit" class="save btn btn-primary">Update</button>
+      {% csrf_token %}
+
+    {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+    {% endfor %}
+
+    {% for field in form.visible_fields %}
+      {% if field.label == "Thumbnail transpose" %}
+      {% else %}
+      {% if field.label == "Thumbnail vertical flip" %}
+      {% else %}
+      <div class="form-group" align='left'>
+        {% if field.label == "Thumbnail horizontal flip" %}
+        <h5> Thumbnail Options </h5>
+        <table class="text-sm text-left" align="center">
+             <tr>
+                <th> Horizontal Flip: </th>
+                <td> {% render_field form.thumbnail_horizontal_flip %} </td>
+             <tr>
+               <th> Vertical Flip: </th>
+               <td> {% render_field form.thumbnail_vertical_flip  %} </td>
+            </tr>
+            <tr>
+               <th> Transpose: </th>
+               <td> {% render_field form.thumbnail_transpose %} </td>
+            </tr>
+        </table>
+        {% else %}
+        <h5 for="{{ field.id_for_label }}"> {{ field.label }}</h5>
+        {{ field|add_class:'form-control' }}
+        {% for error in field.errors %}
+          <span class="help-block">{{ error }}</span>
+        {% endfor %}
+        {% endif %}
+      </div>
+      {% endif %}
+      {% endif %}
+    {% endfor %}
+    <br>
+    <br>
+    <br>
+
+      <button type="submit" class="save btn btn-primary">Submit</button>
+      <a class="btn btn-danger" type="button" href="{% url 'data_list' %}">Cancel</a>
     </form>
     <br>
   </div>

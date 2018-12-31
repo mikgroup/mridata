@@ -170,7 +170,6 @@ class TempData(models.Model):
 
     upload_date = models.DateTimeField(default=timezone.now)
     uploader = models.ForeignKey(Uploader, on_delete=models.CASCADE)
-
     thumbnail_horizontal_flip = models.BooleanField(default=False)
     thumbnail_vertical_flip = models.BooleanField(default=False)
     thumbnail_transpose = models.BooleanField(default=False)

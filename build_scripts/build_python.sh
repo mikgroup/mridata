@@ -23,7 +23,8 @@ pip install \
     pycurl==7.43.0.2 \
     PyXB==1.2.6 \
     redis==2.10.6 \
-    django-taggit==0.23.0
+    django-taggit==0.23.0 \
+    django-widget-tweaks==1.4.3
 
 # ISMRMRD-python
 git clone https://github.com/ismrmrd/ismrmrd-python.git
