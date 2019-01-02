@@ -18,6 +18,9 @@ class DataFilter(django_filters.FilterSet):
                                            widget=forms.TextInput(attrs={'size': 12}))
     comments = django_filters.CharFilter(label='Comments', lookup_expr='icontains',
                                          widget=forms.TextInput(attrs={'size': 12}))
+    tags = django_filters.CharFilter(label='Tags', lookup_expr='icontains',
+                                         widget=forms.TextInput(attrs={'size': 12}))
+
     funding_support = django_filters.CharFilter(label='Funding Support', lookup_expr='icontains',
                                                 widget=forms.TextInput(attrs={'size': 12}))
     system_vendor = django_filters.CharFilter(label='System Vendor', lookup_expr='icontains',

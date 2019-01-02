@@ -1,9 +1,14 @@
 {% load staticfiles %}
+
+
 <div class="row small align-items-center">
   <div class="col-3 text-center">
-    <img src=
+    <!-- <a data-toggle="collapse" href="#collapse{{ data.uuid }}"/> -->
+    <img data-toggle="collapse"
+    href="#collapse{{data.uuid}}"
+    src=
 	 {% if data.thumbnail_file %}
-	 "{{ data.thumbnail_file.url }}"
+   "{{ data.thumbnail_file.url }}"
 	 {% else %}
 	 {% static "images/default_thumbnail.png" %}
 	 {% endif %}
@@ -41,7 +46,7 @@
 	  {{ data.project.name }}
 	</td>
       </tr>
-      
+
       <tr>
 	<td class="text-muted text-left" width="15%">
 	  Anatomy:
@@ -50,8 +55,8 @@
 	  {{ data.anatomy }}
 	</td>
       </tr>
-      
-      <tr>
+
+    <tr>
 	<td class="text-muted text-left" width="15%">
 	  Fullysampled:
 	</td>
@@ -65,7 +70,7 @@
 	  {% endif %}
 	</td>
       </tr>
-      
+
       <tr>
 	<td class="text-muted text-left" width="15%">
 	  Uploader:
@@ -74,6 +79,128 @@
 	  {{ data.uploader }}
 	</td>
       </tr>
+      <tr>
+  	<td class="text-muted text-left" width="15%">
+  	  Tags:
+  	</td>
+    <!-- TODO: Insert all the tags associated with sample. -->
+  	<td class="text-muted text-center">
+      <!-- <link rel="stylesheet" type="text/css" href={% static "css/tags.css" %}> -->
+      <!-- <script type="text/javascript" src={% static "js/tags.js" %}></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
+
+      <div id="add_tags" style="text-align: center" value={{ data.uuid }}>
+        <form action="/tags">
+        <input type="text" id="tag_input" name="tag" value="" placeholder="Add a tag"/>
+        <input type="hidden" name="uuid" value="{{data.uuid}}" placeholder="" />
+        <input type="submit" value="Add"/>
+        </form>
+      </div>
+  	</td>
+    <td>
+      <div id="tags style="text-align: center">
+        <style>
+          .tags {
+            list-style: none;
+            margin: 0;
+            overflow: hidden;
+            padding: 0;
+          }
+
+          .tags li {
+            float: center;
+          }
+
+          .tag {
+            background: #d2dfec;
+            border-radius: 3px 0 0 3px;
+            color: #999;
+            display: inline-block;
+            height: 26px;
+            line-height: 26px;
+            padding: 0 20px 0 23px;
+            position: relative;
+            text-decoration: none;
+          }
+
+        .tag::before {
+          background: #fff;
+          border-radius: 10px;
+          box-shadow: inset 0 1px rgba(0, 0, 0, 0.25);
+          content: '';
+          height: 6px;
+          left: 10px;
+          position: absolute;
+          width: 6px;
+          top: 10px;
+        }
+
+        .tag::after {
+          background: #fff;
+          border-bottom: 13px solid transparent;
+          border-left: 10px solid #eee;
+          border-top: 13px solid transparent;
+          content: '';
+          position: absolute;
+          right: 0;
+          top: 0;
+        }
+
+        .tag:hover {
+          background-color: crimson;
+          color: white;
+        }
+
+        .tag:hover::after {
+           border-left-color: crimson;
+        }
+        </style>
+          {% for tag in data.tags.all %}
+
+            <li class="tag">
+              <a href="{% url 'tag_delete' uuid=data.uuid tag=tag %}"
+              onclick="return confirm('Are you sure you want to delete?')">
+            {{tag}}
+              </a>
+          </li>
+          {% endfor %}
+
+      </div>
+      </td>
+        </tr>
     </table>
+
+    <div style="text-align: center" class="col-3 text-right" >
+      <style>
+        [data-toggle="collapse"].collapsed .if-not-collapsed {
+          display: none;
+        }
+        [data-toggle="collapse"]:not(.collapsed) .if-collapsed {
+          display: none;
+        }
+        i {
+          border: solid black;
+          border-width: 0 3px 3px 0;
+          display: inline-block;
+          padding: 3px;
+        }
+
+        .up {
+          transform: rotate(-135deg);
+          -webkit-transform: rotate(-135deg);
+        }
+
+        .down {
+            transform: rotate(45deg);
+            -webkit-transform: rotate(45deg);
+        }
+      </style>
+      <a class="right collapsed" data-toggle="collapse" href="#collapse{{data.uuid}}">
+        <span class="if-collapsed"><i class="down"></i></span>
+        <span class="if-not-collapsed"><i class="up"></i></span>
+      </a>
+    </div>
   </div>
+
+
 </div>

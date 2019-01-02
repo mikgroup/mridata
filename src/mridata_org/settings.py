@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'mridata',
     'django_filters',
     's3direct',
-    'storages'
+    'storages',
+    'taggit'
 ]
 
 MIDDLEWARE = [
@@ -181,12 +182,12 @@ if USE_AWS:
     STATICFILES_STORAGE = 'mridata_org.storages.StaticStorage'
 else:
     STATIC_URL = '/static/'
-    
+
 # Media
 if USE_AWS:
     AWS_MEDIA_LOCATION = 'media'
     MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_MEDIA_LOCATION)
-    
+
     S3DIRECT_REGION = AWS_STORAGE_BUCKET_REGION
     S3DIRECT_DESTINATIONS = {
         'uploads': {'key': lambda filename: 'media/uploads/{}_{}'.format(
