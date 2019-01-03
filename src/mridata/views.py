@@ -3,6 +3,7 @@ import os
 import numpy as np
 import boto3
 import zipfile
+import requests
 from io import BytesIO
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -125,7 +126,12 @@ def data(request, uuid):
             logging.warning("uuid {0}".format(data.ismrmrd_file.url)) # this gives me the files I.e. /media/c0fe34bd-bc71-4e14-a9c2-9e47767a4335.h5
             fdir, fname = os.path.split(data.ismrmrd_file.url)
             zip_path = os.path.join(zip_subdir, fname)
-            zf.write(data.ismrmrd_file.url, zip_path)
+
+            if settings.USE_AWS:
+                data_bytes = requests.get(data.ismrmrd_file.url).content                
+                zf.writestr(fname, data_bytes, zip_path)
+            else:
+                zf.write(data.ismrmrd_file.url, zip_path)
 
         zf.close()
 
