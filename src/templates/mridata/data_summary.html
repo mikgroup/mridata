@@ -103,7 +103,7 @@
         <link href="{% static 'css/tags_arrow.css' %}" rel="stylesheet">
           {% for tag in data.tags.all %}
 
-              <li class="tag" id="clickMe" href="{% url 'tag_delete' uuid=data.uuid tag=tag %}"
+              <li class="tag" href="{% url 'tag_delete' uuid=data.uuid tag=tag %}"
               onclick="location.href = '{% url 'search_tag' tag=tag %}'; return true;"
               oncontextmenu=" if (confirm('Are you sure you want to delete?')) { location.href = '{% url 'tag_delete' uuid=data.uuid tag=tag %}'; return true; } else { return false; } ">
               {{tag}}

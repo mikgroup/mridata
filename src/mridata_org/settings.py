@@ -56,10 +56,13 @@ INSTALLED_APPS = [
     's3direct',
     'storages',
     'taggit',
-    'widget_tweaks'
+    'widget_tweaks',
+    'bootstrap3',
+    'crispy_forms',
+    'django_popup_view_field',
 ]
 
-
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

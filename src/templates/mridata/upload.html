@@ -11,8 +11,6 @@
   <div class="card">
     <form method="POST" class="form mb-3" enctype="multipart/form-data">
       <br>
-      {% csrf_token %}
-
     {% for hidden in form.hidden_fields %}
       {{ hidden }}
     {% endfor %}
@@ -24,19 +22,13 @@
       {% else %}
       <div class="form-group" align='left'>
         {% if field.label == "Thumbnail horizontal flip" %}
-        <h5> Thumbnail Options </h5>
-        <table class="text-sm text-left" align="center">
-             <tr>
-                <th> Horizontal Flip: </th>
-                <td> {% render_field form.thumbnail_horizontal_flip %} </td>
-             <tr>
-               <th> Vertical Flip: </th>
-               <td> {% render_field form.thumbnail_vertical_flip  %} </td>
-            </tr>
-            <tr>
-               <th> Transpose: </th>
-               <td> {% render_field form.thumbnail_transpose %} </td>
-            </tr>
+        <h5> Thumbnail Configuration</h5>
+        <table class="table-sm text-center" align="left">
+           <tr>
+               <td> Horizontal flip: {{ form.thumbnail_horizontal_flip }} </td>
+               <td> Vertical flip: {{ form.thumbnail_vertical_flip }} </td>
+               <td> Transpose: {{ form.thumbnail_transpose }} </td>
+           </tr>
         </table>
         {% else %}
         <h5 for="{{ field.id_for_label }}"> {{ field.label }}</h5>

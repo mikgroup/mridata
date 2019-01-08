@@ -4,7 +4,16 @@ from django import forms
 from .models import Data, Project, Uploader
 
 
+
 class DataFilter(django_filters.FilterSet):
+    # ADD AutoComplete
+    search = django_filters.CharFilter(label='Search', name='search',
+                                          lookup_expr='icontains',
+                                        widget=forms.TextInput(attrs={
+                                        'size': 12,
+                                        'class' :'form-control input-lg',
+                                        'placeholder': 'Search'
+                                        }))
 
     uploader = django_filters.CharFilter(label='Uploader', name='uploader__user__username',
                                           lookup_expr='icontains',

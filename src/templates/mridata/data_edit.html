@@ -15,39 +15,90 @@
       {{ hidden }}
     {% endfor %}
 
-    {% for field in form.visible_fields %}
-      {% if field.label == "Thumbnail transpose" %}
-      {% else %}
-      {% if field.label == "Thumbnail vertical flip" %}
-      {% else %}
-      <div class="form-group" align='left'>
-        {% if field.label == "Thumbnail horizontal flip" %}
-        <h5> Thumbnail Options </h5>
-        <table class="text-sm text-left" align="center">
-             <tr>
-                <th> Horizontal Flip: </th>
-                <td> {% render_field form.thumbnail_horizontal_flip %} </td>
-             <tr>
-               <th> Vertical Flip: </th>
-               <td> {% render_field form.thumbnail_vertical_flip  %} </td>
-            </tr>
-            <tr>
-               <th> Transpose: </th>
-               <td> {% render_field form.thumbnail_transpose %} </td>
-            </tr>
-        </table>
-        {% else %}
-        <h5 for="{{ field.id_for_label }}"> {{ field.label }}</h5>
-        {{ field|add_class:'form-control' }}
-        {% for error in field.errors %}
-          <span class="help-block">{{ error }}</span>
+    <div class="form-group" align="left">
+      <h5> Project Name </h5>
+        {% render_field form.project_name class='form-control' %}
+        {% for error in form.project_name.errors %}
+        <span class="help-block"> {{error}} </span>
         {% endfor %}
-        {% endif %}
-      </div>
-      {% endif %}
-      {% endif %}
-    {% endfor %}
-    <br>
+    </div>
+    <div class="form-group" align="left">
+      <h5> Anatomy </h5>
+        {% render_field form.anatomy class='form-control' %}
+        {% for error in form.anatomy.errors %}
+        <span class="help-block"> {{error}} </span>
+        {% endfor %}
+    </div>
+    <div class="form-group" align="left">
+      <h5> Fully Sampled </h5>
+        {% render_field form.fullysampled class='form-control' %}
+        {% for error in form.fullysampled.errors %}
+        <span class="help-block"> {{error}} </span>
+        {% endfor %}
+    </div>
+    <div class="form-group" align="left">
+      <h5> References </h5>
+        {% render_field form.references class='form-control' %}
+        {% for error in form.references.errors %}
+        <span class="help-block"> {{error}} </span>
+        {% endfor %}
+    </div>
+    <div class="form-group" align="left">
+      <h5> Commmets </h5>
+        {% render_field form.comments class='form-control' %}
+        {% for error in form.comments.errors %}
+        <span class="help-block"> {{error}} </span>
+        {% endfor %}
+    </div>
+    <div class="form-group" align="left">
+      <h5> Funding Support </h5>
+        {% render_field form.funding_support class='form-control' %}
+        {% for error in form.funding_support.errors %}
+        <span class="help-block"> {{error}} </span>
+        {% endfor %}
+    </div>
+    <div class="form-group" align="left">
+      <h5> Thumbnail File </h5>
+      <img  src= {{image_url}}
+       class=
+       {% if data.thumbnail_transpose %}
+       {% if data.thumbnail_horizontal_flip and data.thumbnail_vertical_flip %}
+       "rounded img-hor-vert-transpose"
+       {% elif not data.thumbnail_horizontal_flip and data.thumbnail_vertical_flip %}
+       "rounded img-vert-transpose"
+       {% elif data.thumbnail_horizontal_flip and not data.thumbnail_vertical_flip %}
+       "rounded img-hor-transpose"
+       {% else %}
+       "rounded img-transpose"
+       {% endif %}
+       {% else %}
+       {% if data.thumbnail_horizontal_flip and data.thumbnail_vertical_flip %}
+       "rounded img-hor-vert"
+       {% elif not data.thumbnail_horizontal_flip and data.thumbnail_vertical_flip %}
+       "rounded img-vert"
+       {% elif data.thumbnail_horizontal_flip and not data.thumbnail_vertical_flip %}
+       "rounded img-hor"
+       {% else %}
+       "rounded img"
+       {% endif %}
+       {% endif %}
+       >
+      <br>
+      {% render_field form.thumbnail_file class='form-control' %}
+      {% for error in form.thumbnail_file.errors %}
+      <span class="help-block"> {{error}} </span>
+      {% endfor %}
+    </div>
+    <div class="form-group" align="left">
+      <h5> Thumbnail Configuration</h5>
+      <table class="table-sm text-center" align="left">
+         <tr>
+             <td> Horizontal flip: {{ form.thumbnail_horizontal_flip }} </td>
+             <td> Vertical flip: {{ form.thumbnail_vertical_flip }} </td>
+             <td> Transpose: {{ form.thumbnail_transpose }} </td>
+         </tr>
+      </table>
+    </div>
     <br>
     <br>
 

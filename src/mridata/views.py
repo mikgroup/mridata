@@ -18,7 +18,7 @@ from django.contrib.auth.models import User
 from .models import Data, TempData, Uploader, Project, Log
 from .forms import PhilipsDataForm, SiemensDataForm, GeDataForm, IsmrmrdDataForm, DataForm
 from .filters import DataFilter
-from .tasks import process_ge_data, process_ismrmrd_data, process_philips_data, process_siemens_data, download_zip
+from .tasks import process_ge_data, process_ismrmrd_data, process_philips_data, process_siemens_data
 from taggit.models import Tag
 
 def main(request):
@@ -42,9 +42,62 @@ def api(request):
     return render(request, 'mridata/api.html')
 
 
+def search(result, request):
+    get = request.GET
+    if not result:
+        return get
+    else:
+        result = result.lower()
+    options = ('uploader', 'tag', 'project', 'anatomy',
+    'references', 'comments', 'tags',
+    'funding_support', 'system_vendor',
+    'system_model', 'protocol_name',
+    'coil_name', 'sequence_type', 'uuid', 'fullysampled')
+    logging.warning(result.lower())
+    logging.warning("GET {}".format(get))
+    # if csrfmiddlewaretoken exists delete.
+    if 'csrfmiddlewaretoken' in get:
+        get.pop('csrfmiddlewaretoken')
+    logging.warning("GET {}".format(get))
+    results = result.split(',')
+    get['other'] = ''
+    for res in results:
+        r = res.split(':')
+        logging.warning("r: {}".format(r))
+        try:
+            logging.warning("helloooo")
+            logging.warning("r[0] {}".format(r[0].strip()))
+            logging.warning("{0} in options: {1}".format(r[0].strip(), r[0].strip() in options))
+
+            if r[0].strip() in options:
+                if r[0].strip() == 'uploader':
+                    if r[1].strip().lower() == 'me':
+                        get[r[0].strip()] = request.user.uploader
+                        continue
+                get[r[0].strip()] = r[1].strip()
+            else:
+                get['other'] += r[0].strip()
+        except Exception:
+            get['other'] += str(r)
+    if get['other'] == '':
+        get.pop('other')
+    # if no ',' then contains in each and combine.
+    # if there is ',' and ':' then put in appropriate category.
+    logging.warning("GET {}".format(get))
+    return get
+
 def data_list(request):
-    if (request.GET.get("tags")):
-        tag = request.GET.get("tags")
+    logging.warning("Request GET: {}".format(request.GET))
+    logging.warning("Request POST: {}".format(request.POST))
+
+    result = request.GET.get('search')
+    request.GET = request.GET.copy()
+    request.GET['search'] = ''
+    logging.warning("result: {}".format(result))
+    logging.warning("NEW REQUEST: {}".format(request.GET))
+    request.GET = search(result, request)
+    if (request.GET.get("tag")):
+        tag = request.GET.get("tag")
         tag = tag.split()
         tag_filter = Data.objects.filter(tags__name__in=tag).distinct()
 
@@ -96,12 +149,13 @@ def data(request, uuid):
         for id in uuids:
             id.strip()
 
+        # TODO: make this work, write a script instead.
+
         s = BytesIO()
         zip_subdir = "Mri Datasets"
         zip_filename = "%s.zip" % zip_subdir
         zf = zipfile.ZipFile(s, 'w')
 
-        # TODO: figure out how to make this in the background.
 
         for id in uuids:
             data = get_object_or_404(Data, uuid=id)
@@ -113,12 +167,10 @@ def data(request, uuid):
             zf.write(data.ismrmrd_file.url, zip_path)
 
         zf.close()
-
-        resp = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
-        # ..and correct content-disposition
-        resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+        resp = HttpResponse(r.get(), content_type = "application/x-zip-compressed")
+        resp['Content-Disposition'] = 'attachment; filename=%s' % "Mri Datasets.zip"
         return resp
-        # return redirect('data_list')
+
     else:
         return render(request, 'mridata/data.html',
                   {'data': get_object_or_404(Data, uuid=uuid)})
@@ -263,8 +315,9 @@ def data_edit(request, uuid):
                 return redirect("data_list")
         else:
             data = get_object_or_404(Data, uuid=uuid)
+
             form = DataForm(instance=data, initial={'project_name': data.project.name})
-            return render(request, 'mridata/data_edit.html', {'data': data, 'form': form})
+            return render(request, 'mridata/data_edit.html', {'data': data, 'form': form, 'image_url': data.thumbnail_file.url})
 
 
 @login_required
@@ -299,28 +352,11 @@ def check_refresh(request):
 
 @login_required
 def tags(request):
-    # add tags.
-    # logging.warning("I AM IN TAGS")
-    # logging.warning("request:", request)
     if request.GET:
-        # logging.warning("GET REQUEST")
-        # logging.warning("tag: {}".format( request.GET.get("tag")))
-        # logging.warning("UUID: {}".format(request.GET.get("uuid")))
         uuid = request.GET.get("uuid")
         tagRaw = request.GET.get("tag")
-
-        # logging.warning("\n\n\n GETTING DATA")
         data = get_object_or_404(Data, uuid=uuid)
-        # logging.warning("\n\n\n GOT DATA")
-        # logging.warning("TAG RAW: ", tagRaw)
-        # logging.warning("TAG RAW TYPE: {}".format(type(tagRaw)))
-        #
-        # logging.warning("TAGS: {}".format(data.tags.all()))
-
         data.tags.add(tagRaw)
-        # logging.warning("\n\n\n GOT tags")
-        # logging.warning("TAGS: {}".format(data.tags.all()))
-
         data.save()
     return redirect("data_list")
 
@@ -360,6 +396,7 @@ def tag_delete(request, uuid, tag):
     data.tags.remove(tag)
     data.save()
     return redirect('data_list')
+
 
 @login_required
 def get_temp_credentials(request):

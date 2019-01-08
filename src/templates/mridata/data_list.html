@@ -3,17 +3,31 @@
 {% load staticfiles %}
 
 {% block body_block %}
-<div class="row">
-  <div class="col-md-auto text-center">
-    <form action="" method="get">
-      <table class="small table-sm text-left mb-3">
-        {% render_field filter.form.as_table %}
-      </table>
-      <button type="submit" class="save btn btn-primary btn-sm">Search</button>
-    </form>
-  </div>
 
-  <div class="col left">
+<link rel="stylesheet" href="{% static 'css/search_bar.css' %}" type="text/css" >
+
+<form action method="get" enctype="multipart/form-data">
+{% csrf_token %}
+
+<div class="container">
+	<div class="row">
+            <div class="col" id="custom-search-input">
+                <div class="input-group col-md-12">
+                    {{filter.form.search}}
+                    <span class="input-group-btn">
+                        <button class="btn btn-lg" type="submit">
+                          &#x1F50D
+                        </button>
+                    </span>
+                </div>
+            </div>
+	</div>
+</div>
+</form>
+
+
+
+<div class="col">
     Total {{filter.qs|length}} datasets
     {% if user.is_authenticated %}
       <a href="{% url 'data' uuid=filter.qs %}" class="btn btn-info btn-sm float-md-right">
@@ -36,7 +50,6 @@
       {% include "mridata/data_list_page.html" %}
     </div>
   </div>
-</div>
 <br>
 <br>
 {% endblock %}

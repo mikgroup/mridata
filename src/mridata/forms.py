@@ -5,6 +5,8 @@ from registration.forms import RegistrationForm
 from .models import Data, PhilipsData, SiemensData, GeData, IsmrmrdData, Project, \
     PhilipsAwsData, SiemensAwsData, GeAwsData, IsmrmrdAwsData
 from s3direct.widgets import S3DirectWidget
+from django.utils.safestring import mark_safe
+
 
 
 class DataForm(forms.ModelForm):

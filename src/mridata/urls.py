@@ -22,5 +22,5 @@ urlpatterns = [
     url(r'^tags$', views.tags, name='tags'),
     url(r'^tag_delete/(?P<uuid>.+)/(?P<tag>.+)$', views.tag_delete, name='tag_delete'),
     url(r'^search_tag/(?P<tag>.+)$', views.search_tag, name='search_tag'),
-
+     
 ]
