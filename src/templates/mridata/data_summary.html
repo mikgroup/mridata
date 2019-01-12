@@ -93,12 +93,16 @@
         <form action="/tags">
         <input type="text" id="tag_input" name="tag" value="" placeholder="Add a tag"/>
         <input type="hidden" name="uuid" value="{{data.uuid}}" placeholder="" />
-        <input type="submit" value="Add"/>
+        {% if user.is_authenticated %}
+          <button type="submit">Add </button>
+        {% else %}
+          <button type="submit" onclick="alert('Oh oh! \n In order to add a tag you must be signed in!');"> Add </button>
+        {% endif %}
         </form>
       </div>
   	</td>
     <td>
-      <div id="tags" style="text-align: center" >
+      <div id="tags" style="text-align: center">
 
         <link href="{% static 'css/tags_arrow.css' %}" rel="stylesheet">
           {% for tag in data.tags.all %}
@@ -109,38 +113,14 @@
               {{tag}}
               </li>
 
-
           {% endfor %}
       </div>
       </td>
         </tr>
     </table>
 
+    <link href="{% static 'css/expand.css' %}" rel="stylesheet">
     <div style="text-align: center" class="col-3 text-right" >
-      <style>
-        [data-toggle="collapse"].collapsed .if-not-collapsed {
-          display: none;
-        }
-        [data-toggle="collapse"]:not(.collapsed) .if-collapsed {
-          display: none;
-        }
-        i {
-          border: solid black;
-          border-width: 0 3px 3px 0;
-          display: inline-block;
-          padding: 3px;
-        }
-
-        .up {
-          transform: rotate(-135deg);
-          -webkit-transform: rotate(-135deg);
-        }
-
-        .down {
-            transform: rotate(45deg);
-            -webkit-transform: rotate(45deg);
-        }
-      </style>
       <a class="right collapsed" data-toggle="collapse" href="#collapse{{data.uuid}}">
         <span class="if-collapsed"><i class="down"></i></span>
         <span class="if-not-collapsed"><i class="up"></i></span>

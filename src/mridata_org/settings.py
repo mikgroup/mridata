@@ -59,7 +59,6 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'bootstrap3',
     'crispy_forms',
-    'django_popup_view_field',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'

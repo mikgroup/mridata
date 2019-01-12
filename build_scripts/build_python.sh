@@ -25,7 +25,6 @@ pip install \
     redis==2.10.6 \
     django-taggit==0.23.0 \
     django-widget-tweaks==1.4.3 \
-    django-popup-view-field==0.4.0 \
     django-crispy-forms==1.7.2 \
     django-bootstrap3==11.0.0
 # ISMRMRD-python

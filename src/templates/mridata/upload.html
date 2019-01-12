@@ -10,6 +10,7 @@
   </div>
   <div class="card">
     <form method="POST" class="form mb-3" enctype="multipart/form-data">
+      {% csrf_token %}
       <br>
     {% for hidden in form.hidden_fields %}
       {{ hidden }}
@@ -53,7 +54,7 @@
 	        <label>I agree to the <a href="{% url 'terms' %}">Terms of Service</a></label>
       </div>
       <button type="submit" class="save btn btn-primary">Upload</button>
-      <a class="btn btn-danger" type="button" href="{% url 'data_list' %}">Cancel</a>
+      <a href="{% url 'data_list' %}" class="btn btn-danger" role="button">Cancel</a>
     </form>
   </div>
 <!-- </div> -->

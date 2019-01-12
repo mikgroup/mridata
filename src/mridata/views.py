@@ -49,38 +49,52 @@ def search(result, request):
     else:
         result = result.lower()
     options = ('uploader', 'tag', 'project', 'anatomy',
-    'references', 'comments', 'tags',
-    'funding_support', 'system_vendor',
-    'system_model', 'protocol_name',
-    'coil_name', 'sequence_type', 'uuid', 'fullysampled')
-    logging.warning(result.lower())
+    'references', 'comments', 'tags', 'funding_support',
+    'system_vendor', 'vendor', 'model', 'protocol', 'type',
+    'coil', 'sequence', 'system_model', 'protocol_name',
+    'coil_name', 'sequence_type', 'uuid', 'id', 'sampled',
+    'fullysampled', 'ref') # for each model, coil, sequence.... 
+    logging.warning("result {}".format(result))
     logging.warning("GET {}".format(get))
-    # if csrfmiddlewaretoken exists delete.
-    if 'csrfmiddlewaretoken' in get:
-        get.pop('csrfmiddlewaretoken')
-    logging.warning("GET {}".format(get))
+
     results = result.split(',')
-    get['other'] = ''
     for res in results:
         r = res.split(':')
+
         logging.warning("r: {}".format(r))
+
         try:
+
             logging.warning("helloooo")
             logging.warning("r[0] {}".format(r[0].strip()))
             logging.warning("{0} in options: {1}".format(r[0].strip(), r[0].strip() in options))
 
-            if r[0].strip() in options:
-                if r[0].strip() == 'uploader':
-                    if r[1].strip().lower() == 'me':
-                        get[r[0].strip()] = request.user.uploader
+            option = r[0].strip()
+            value = r[1].strip()
+
+            if option in options:
+                if option == 'uploader':
+                    if value == 'me':
+                        get[option] = request.user.uploader
                         continue
-                get[r[0].strip()] = r[1].strip()
+                elif option == "fullysampled":
+                    if value in ('yes', 'y', 't', 'true'):
+                        get[option] = 1
+                    elif value in ('no', 'n', 'f', 'false'):
+                        get[option] = 0
+                    else:
+                        get[option] = ''
+                elif option == "ref":
+                    get["references"] = value
+                else:
+                    get[option] = value
             else:
                 get['other'] += r[0].strip()
         except Exception:
-            get['other'] += str(r)
-    if get['other'] == '':
-        get.pop('other')
+            get['csrfmiddlewaretoken'] += str(r)
+
+    if 'csrfmiddlewaretoken' in get:
+        get.pop('csrfmiddlewaretoken')
     # if no ',' then contains in each and combine.
     # if there is ',' and ':' then put in appropriate category.
     logging.warning("GET {}".format(get))
@@ -142,10 +156,6 @@ def data(request, uuid):
 
     if request.user.is_authenticated:
 
-        uuid = uuid.strip("<QuerySet [")
-        uuid = uuid.strip('>]>')
-        uuid = uuid.strip("Data: ")
-        uuids = uuid.split(">, <Data: ")
         for id in uuids:
             id.strip()
 
@@ -355,6 +365,8 @@ def tags(request):
     if request.GET:
         uuid = request.GET.get("uuid")
         tagRaw = request.GET.get("tag")
+        if tagRaw == "" or not tagRaw:
+            return redirect('data_list')
         data = get_object_or_404(Data, uuid=uuid)
         data.tags.add(tagRaw)
         data.save()

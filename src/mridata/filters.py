@@ -4,7 +4,7 @@ from django import forms
 from .models import Data, Project, Uploader
 
 
-
+    
 class DataFilter(django_filters.FilterSet):
     # ADD AutoComplete
     search = django_filters.CharFilter(label='Search', name='search',

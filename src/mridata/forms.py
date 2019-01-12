@@ -13,6 +13,7 @@ class DataForm(forms.ModelForm):
 
     project_name = forms.CharField(label="Project Name", required=True)
     fullysampled = forms.NullBooleanField(label="Fully Sampled")
+    funding_support = forms.CharField(label="Funding Support", required=True)
 
     class Meta:
         model = Data
@@ -38,6 +39,7 @@ class PhilipsDataForm(forms.ModelForm):
 
     project_name = forms.CharField(label="Project Name", required=True)
     fullysampled = forms.NullBooleanField(label="Fully Sampled")
+    funding_support = forms.CharField(label="Funding Support", required=True)
 
     if settings.USE_AWS:
         philips_lab_file = forms.URLField(widget=S3DirectWidget(dest='uploads'), label="Philips Lab File")
@@ -79,6 +81,7 @@ class GeDataForm(forms.ModelForm):
 
     project_name = forms.CharField(label="Project Name", required=True)
     fullysampled = forms.NullBooleanField(label="Fully Sampled")
+    funding_support = forms.CharField(label="Funding Support", required=True)
 
     if settings.USE_AWS:
         ge_file = forms.URLField(widget=S3DirectWidget(dest='uploads'), label="GE File")
@@ -114,6 +117,7 @@ class SiemensDataForm(forms.ModelForm):
 
     project_name = forms.CharField(label="Project Name", required=True)
     fullysampled = forms.NullBooleanField(label="Fully Sampled")
+    funding_support = forms.CharField(label="Funding Support", required=True)
 
     if settings.USE_AWS:
         siemens_dat_file = forms.URLField(widget=S3DirectWidget(dest='uploads'), label="Siemens File")
@@ -148,6 +152,7 @@ class IsmrmrdDataForm(forms.ModelForm):
 
     project_name = forms.CharField(label="Project Name", required=True)
     fullysampled = forms.NullBooleanField(label="Fully Sampled")
+    funding_support = forms.CharField(label="Funding Support", required=True)
 
     if settings.USE_AWS:
         ismrmrd_file = forms.URLField(widget=S3DirectWidget(dest='uploads'), label='ISMRMRD File')

@@ -5,25 +5,44 @@
 {% block body_block %}
 
 <link rel="stylesheet" href="{% static 'css/search_bar.css' %}" type="text/css" >
+<link type="text/css" href="{% static 'css/expand.css' %}" rel="stylesheet">
+
+<script type="text/javascript">
+	function showHideDiv(ele, type) {
+	       var srcElement = document.getElementById(ele);
+	       if (srcElement != null) {
+	               if (srcElement.style.display != "none") {
+	                       srcElement.style.display = 'none';
+	               } else {
+	                       srcElement.style.display = type;
+	               }
+	               return false;
+	       }
+	}
+</script>
 
 <form action method="get" enctype="multipart/form-data">
-{% csrf_token %}
+ {% csrf_token %}
 
-<div class="container">
-	<div class="row">
-            <div class="col" id="custom-search-input">
-                <div class="input-group col-md-12">
-                    {{filter.form.search}}
-                    <span class="input-group-btn">
-                        <button class="btn btn-lg" type="submit">
-                          &#x1F50D
-                        </button>
-                    </span>
-                </div>
-            </div>
-	</div>
-</div>
+  <div class="container">
+  	<div class="col">
+    	<div class="row" id="custom-search-input">
+      	<div class="input-group col-md-12">
+        	{{filter.form.search}}
+          <span class="input-group-btn">
+	          <a class="right collapsed" style="padding:10px " onclick="showHideDiv('advanceSearchOff', 'inline'); showHideDiv('advanceSearchOn', 'inline');" >
+	          	<span class="if-collapsed" id="advanceSearchOff" style="display: inline"><i class="down"></i></span>
+	            <span class="if-collapsed" id="advanceSearchOn" style="display: none"><i class="up"></i></span>
+	          </a>
+	          <button class="btn btn-lg" type="submit"> &#x1F50D </button>
+						<button class="btn btn-lg" onClick="showHideDiv('advance-custom-search')" type="button"> &#10067</button>
+       		</span>
+        </div>
+      </div>
+     </div>
+  </div>
 </form>
+
 
 
 
