@@ -4,24 +4,9 @@
 
 {% block body_block %}
 
-<link rel="stylesheet" href="{% static 'css/search_bar.css' %}" type="text/css" >
-<link type="text/css" href="{% static 'css/expand.css' %}" rel="stylesheet">
 
-<script type="text/javascript">
-	function showHideDiv(ele, type) {
-	       var srcElement = document.getElementById(ele);
-	       if (srcElement != null) {
-	               if (srcElement.style.display != "none") {
-	                       srcElement.style.display = 'none';
-	               } else {
-	                       srcElement.style.display = type;
-	               }
-	               return false;
-	       }
-	}
-</script>
 
-<form action method="get" enctype="multipart/form-data">
+<form method="get" enctype="multipart/form-data">
  {% csrf_token %}
 
   <div class="container">
@@ -30,12 +15,23 @@
       	<div class="input-group col-md-12">
         	{{filter.form.search}}
           <span class="input-group-btn">
-	          <a class="right collapsed" style="padding:10px " onclick="showHideDiv('advanceSearchOff', 'inline'); showHideDiv('advanceSearchOn', 'inline');" >
-	          	<span class="if-collapsed" id="advanceSearchOff" style="display: inline"><i class="down"></i></span>
-	            <span class="if-collapsed" id="advanceSearchOn" style="display: none"><i class="up"></i></span>
+	          <a class="right collapsed" role="button" style="padding:10px"
+						data-tooltip="Advance Search" data-tooltip-pos="down"
+						onclick="showHideDiv('advanceSearchOff', 'inline');
+										 showHideDiv('advance_search', 'flex');">
+	          	<span class="if-collapsed" id="advanceSearchOff" style="display: inline">
+								<i class="down"></i>
+							</span>
 	          </a>
-	          <button class="btn btn-lg" type="submit"> &#x1F50D </button>
-						<button class="btn btn-lg" onClick="showHideDiv('advance-custom-search')" type="button"> &#10067</button>
+	          <button data-tooltip="Search" data-tooltip-pos="down"
+						class="btn btn-lg" type="submit">
+							&#x1F50D
+						</button>
+						<button data-tooltip="Help" data-tooltip-pos="down"
+						class="btn btn-lg" onClick="showHideDiv('help_guide', 'flex')"
+						type="button">
+							&#10067
+						</button>
        		</span>
         </div>
       </div>
@@ -44,6 +40,61 @@
 </form>
 
 
+
+<!-- The Modal -->
+<div id="advance_search" class="modal" style="display:none">
+  <!-- Modal content -->
+  <div class="modal-content">
+		<form method="get" enctype="multipart/form-data">
+
+		<div class="modal-header">
+			<h3 style="text-align:center">Advance Search</h3>
+
+			<span class="close"
+			onclick="showHideDiv('advance_search', 'none');
+							 showHideDiv('advanceSearchOff', 'inline')">
+				&times
+			</span>
+	 	</div>
+	 	<div class="modal-body">
+			 {% csrf_token %}
+			  {% for field in filter.form %}
+					{% if field != filter.form.search %}
+						{{ field.label }}
+						{{ field|add_class:'form-control'}}
+					{% endif %}
+					{% for error in field.errors %}
+						<span class="help-block">{{ error }}</span>
+					{% endfor %}
+				{% endfor %}
+				<br>
+	 	</div>
+	 	<div class="modal-footer">
+			<button class="btn-arrow btn btn-primary" type="submit" style="vertical-align:middle"><span>Search </span></button>
+	 	</div>
+	</form>
+
+  </div>
+</div>
+
+<!-- The Modal -->
+<div id="help_guide" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+		<div class="modal-header">
+		 	<h3> CheatSheet </h3>
+			<span onclick="showHideDiv('help_guide', 'flex');"
+               class="close">&times;</span>
+	 	</div>
+	 	<div class="modal-body">
+		  {% include "mridata/cheatsheet.html" %}
+	 	</div>
+	 	<div class="modal-footer">
+      <button class="btn btn-info" onclick="showHideDiv('help_guide', 'flex');">Close</button>
+
+	 	</div>
+  </div>
+</div>
 
 
 <div class="col">
@@ -78,6 +129,33 @@
 {% endblock %}
 
 {% block js_block %}
+
+<script>
+	function showHideDiv(ele, type) {
+	       var srcElement = document.getElementById(ele);
+	       if (srcElement != null) {
+             if (srcElement.style.display != "none") {
+                     srcElement.style.display = "none";
+             } else {
+                     srcElement.style.display = type;
+             }
+	       }
+	}
+
+	window.onclick = function(event) {
+		var help_guide = document.getElementById('help_guide');
+		var advance_search = document.getElementById('advance_search');
+	  if (event.target == help_guide) {
+	    help_guide.style.display = "none";
+	  }
+		if (event.target == advance_search) {
+			advance_search.style.display = "none";
+			showHideDiv('advanceSearchOff', 'inline');
+		}
+	}
+</script>
+
+
 <script src="{% static 'js/el-pagination.js' %}"></script>
 <script>$.endlessPaginate({paginateOnScroll: true});</script>
 {% if user.is_authenticated %}

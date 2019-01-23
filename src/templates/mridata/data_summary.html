@@ -102,9 +102,11 @@
       </div>
   	</td>
     <td>
+    {% block css_block %}
+    <link href="{% static 'css/tags_arrow.css' %}" rel="stylesheet">
+    {% endblock %}
       <div id="tags" style="text-align: center">
 
-        <link href="{% static 'css/tags_arrow.css' %}" rel="stylesheet">
           {% for tag in data.tags.all %}
 
               <li class="tag" href="{% url 'tag_delete' uuid=data.uuid tag=tag %}"
@@ -118,10 +120,21 @@
       </td>
         </tr>
     </table>
-
-    <link href="{% static 'css/expand.css' %}" rel="stylesheet">
-    <div style="text-align: center" class="col-3 text-right" >
-      <a class="right collapsed" data-toggle="collapse" href="#collapse{{data.uuid}}">
+    {% block js_block %}
+    <script>
+      function changeToolTip(id){
+        var el = document.getElementById(id);
+        if (el.getAttribute('data-tooltip') == 'expand') {
+          el.setAttribute('data-tooltip', 'collapse');
+        } else {
+          el.setAttribute('data-tooltip', 'expand');
+        }
+      }
+    </script>
+    {% endblock %}
+    <div style="text-align: center" class="col-3 text-right">
+      <a data-tooltip="expand"  data-tooltip-pos="right" id="head_button{{data.uuid}}" class="right collapsed" data-toggle="collapse" data-target="#collapse{{data.uuid}}"
+      onclick="changeToolTip('head_button{{data.uuid}}');">
         <span class="if-collapsed"><i class="down"></i></span>
         <span class="if-not-collapsed"><i class="up"></i></span>
       </a>

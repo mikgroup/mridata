@@ -42,6 +42,37 @@ def api(request):
     return render(request, 'mridata/api.html')
 
 
+def get_option(opt, options):
+    actual = ('tag', 'system_vendor', 'system_model','protocol_name',
+    'sequence_type','sequence_type', 'coil_name', 'uuid', 'fullysampled',
+    'references')
+    abrev = ('tags', 'vendor', 'model', 'protocol', 'type','sequence',
+    'coil', 'id', 'sampled', 'ref')
+
+    if opt not in abrev and opt in options:
+        return opt
+
+    for i in range(len(abrev)):
+        if opt == abrev[i]:
+            return actual[i]
+
+
+
+
+def get_value(val, uploader):
+    if val == "me":
+        return uploader
+    elif val in ('yes', 'y', 't', 'true', '1'):
+        return 1
+    elif val in ('no', 'n', 'f', 'false', '0'):
+        return 0
+    elif val == "unknown":
+        return ''
+    elif 'and' in val:
+        return val.replace('and', ',')
+    else:
+        return val
+
 def search(result, request):
     get = request.GET
     if not result:
@@ -53,44 +84,33 @@ def search(result, request):
     'system_vendor', 'vendor', 'model', 'protocol', 'type',
     'coil', 'sequence', 'system_model', 'protocol_name',
     'coil_name', 'sequence_type', 'uuid', 'id', 'sampled',
-    'fullysampled', 'ref') # for each model, coil, sequence.... 
+    'fullysampled', 'ref') # for each model, coil, sequence....
     logging.warning("result {}".format(result))
     logging.warning("GET {}".format(get))
 
     results = result.split(',')
     for res in results:
         r = res.split(':')
-
         logging.warning("r: {}".format(r))
-
         try:
-
             logging.warning("helloooo")
             logging.warning("r[0] {}".format(r[0].strip()))
             logging.warning("{0} in options: {1}".format(r[0].strip(), r[0].strip() in options))
 
-            option = r[0].strip()
-            value = r[1].strip()
+            option = get_option(r[0].strip(), options)
+            value = get_value(r[1].strip(), request.user.uploader)
+            logging.warning("Value type: {}".format(type(value)))
+            logging.warning("Value: {}".format(value))
 
+            logging.warning("option: {0} \nValue: {1}".format(option, value))
             if option in options:
-                if option == 'uploader':
-                    if value == 'me':
-                        get[option] = request.user.uploader
-                        continue
-                elif option == "fullysampled":
-                    if value in ('yes', 'y', 't', 'true'):
-                        get[option] = 1
-                    elif value in ('no', 'n', 'f', 'false'):
-                        get[option] = 0
-                    else:
-                        get[option] = ''
-                elif option == "ref":
-                    get["references"] = value
-                else:
-                    get[option] = value
+                get[option] = value
+                logging.warning("added to options: \nGET: {}".format(get))
             else:
-                get['other'] += r[0].strip()
+                logging.warning("Option is not correct?")
+                get['other'] += r
         except Exception:
+            logging.warning("am i here??")
             get['csrfmiddlewaretoken'] += str(r)
 
     if 'csrfmiddlewaretoken' in get:
@@ -368,13 +388,19 @@ def tags(request):
         if tagRaw == "" or not tagRaw:
             return redirect('data_list')
         data = get_object_or_404(Data, uuid=uuid)
-        data.tags.add(tagRaw)
-        data.save()
+        tags = tagRaw.split(',')
+        for tag in tags:
+            t = tag.strip()
+            logging.warning("ADDING TAG: {}".format(t))
+            data.tags.add(t)
+            data.save()
     return redirect("data_list")
 
 
 def search_tag(request, tag):
-    tag = tag.split()
+    tag = [tag]
+    logging.warning("tag {}".format(tag))
+    logging.warning("request {}".format(request.GET))
     for val in request.GET.values():
         return data_list(request)
 
