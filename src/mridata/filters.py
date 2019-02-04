@@ -4,7 +4,7 @@ from django import forms
 from .models import Data, Project, Uploader
 
 
-    
+
 class DataFilter(django_filters.FilterSet):
     # ADD AutoComplete
     search = django_filters.CharFilter(label='Search', name='search',
@@ -12,7 +12,9 @@ class DataFilter(django_filters.FilterSet):
                                         widget=forms.TextInput(attrs={
                                         'size': 12,
                                         'class' :'form-control input-lg',
-                                        'placeholder': 'Search'
+                                        'placeholder': 'Search',
+                                        'id': 'txtSearch',
+                                        'name': 'txtSearch'
                                         }))
 
     uploader = django_filters.CharFilter(label='Uploader', name='uploader__user__username',

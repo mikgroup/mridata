@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.urls import reverse
 from celery.result import AsyncResult
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 
 
@@ -55,7 +56,7 @@ def get_option(opt, options):
     for i in range(len(abrev)):
         if opt == abrev[i]:
             return actual[i]
-
+    return 'other'
 
 
 
@@ -85,52 +86,48 @@ def search(result, request):
     'coil', 'sequence', 'system_model', 'protocol_name',
     'coil_name', 'sequence_type', 'uuid', 'id', 'sampled',
     'fullysampled', 'ref') # for each model, coil, sequence....
-    logging.warning("result {}".format(result))
-    logging.warning("GET {}".format(get))
 
     results = result.split(',')
     for res in results:
         r = res.split(':')
-        logging.warning("r: {}".format(r))
+        # Need the try catch in case r[0]/r[1] fails.
         try:
-            logging.warning("helloooo")
-            logging.warning("r[0] {}".format(r[0].strip()))
-            logging.warning("{0} in options: {1}".format(r[0].strip(), r[0].strip() in options))
-
             option = get_option(r[0].strip(), options)
-            value = get_value(r[1].strip(), request.user.uploader)
-            logging.warning("Value type: {}".format(type(value)))
-            logging.warning("Value: {}".format(value))
-
-            logging.warning("option: {0} \nValue: {1}".format(option, value))
+            if option == 'other':
+                value = r
+            else:
+                value = get_value(r[1].strip(), request.user.uploader)
             if option in options:
                 get[option] = value
-                logging.warning("added to options: \nGET: {}".format(get))
             else:
-                logging.warning("Option is not correct?")
-                get['other'] += r
+                get['other'] = r
         except Exception:
-            logging.warning("am i here??")
             get['csrfmiddlewaretoken'] += str(r)
 
     if 'csrfmiddlewaretoken' in get:
         get.pop('csrfmiddlewaretoken')
     # if no ',' then contains in each and combine.
     # if there is ',' and ':' then put in appropriate category.
-    logging.warning("GET {}".format(get))
     return get
 
-def data_list(request):
-    logging.warning("Request GET: {}".format(request.GET))
-    logging.warning("Request POST: {}".format(request.POST))
 
+def data_list(request):
     result = request.GET.get('search')
     request.GET = request.GET.copy()
     request.GET['search'] = ''
-    logging.warning("result: {}".format(result))
-    logging.warning("NEW REQUEST: {}".format(request.GET))
     request.GET = search(result, request)
-    if (request.GET.get("tag")):
+    if (request.GET.get('other')):
+        options = request.GET.get('other')
+        filter = Data.objects.filter(Q(tags__name__in=options) | Q(anatomy__icontains=options[0]) |
+                                Q(references__icontains=options[0]) | Q(comments__icontains=options[0]) |
+                                Q(funding_support__icontains=options[0]) | Q(protocol_name__icontains=options[0]) |
+                                Q(series_description__icontains=options[0]) | Q(system_vendor__icontains=options[0]) |
+                                Q(system_model__icontains=options[0]) | Q(coil_name__icontains=options[0]) |
+                                Q(institution_name__icontains=options[0]) | Q(uploader__user__username= options[0]) |
+                                Q(project__name__icontains=options[0])).distinct()
+        request.GET['other'] = ''
+        filter = DataFilter(request.GET, filter.order_by('-upload_date'))
+    elif (request.GET.get("tag")):
         tag = request.GET.get("tag")
         tag = tag.split()
         tag_filter = Data.objects.filter(tags__name__in=tag).distinct()
@@ -138,6 +135,7 @@ def data_list(request):
         request.GET = request.GET.copy() # makes request mutable.
         request.GET['tags'] = "" # deletes all tags so you can filter everything else.
         filter = DataFilter(request.GET, tag_filter.order_by("-upload_date"))
+
     else:
         filter = DataFilter(request.GET, Data.objects.all().order_by('-upload_date'))
 
@@ -167,44 +165,6 @@ def data_download(request, uuid):
     data.downloads += 1
     data.save()
     return redirect(data.ismrmrd_file.url)
-
-def data_share(request, uuid):
-    # TODO: Add popup of form.
-    return data_list(request)
-
-def data(request, uuid):
-
-    if request.user.is_authenticated:
-
-        for id in uuids:
-            id.strip()
-
-        # TODO: make this work, write a script instead.
-
-        s = BytesIO()
-        zip_subdir = "Mri Datasets"
-        zip_filename = "%s.zip" % zip_subdir
-        zf = zipfile.ZipFile(s, 'w')
-
-
-        for id in uuids:
-            data = get_object_or_404(Data, uuid=id)
-            data.downloads += 1
-            data.save()
-            logging.warning("uuid {0}".format(data.ismrmrd_file.url)) # this gives me the files I.e. /media/c0fe34bd-bc71-4e14-a9c2-9e47767a4335.h5
-            fdir, fname = os.path.split(data.ismrmrd_file.url)
-            zip_path = os.path.join(zip_subdir, fname)
-            zf.write(data.ismrmrd_file.url, zip_path)
-
-        zf.close()
-        resp = HttpResponse(r.get(), content_type = "application/x-zip-compressed")
-        resp['Content-Disposition'] = 'attachment; filename=%s' % "Mri Datasets.zip"
-        return resp
-
-    else:
-        return render(request, 'mridata/data.html',
-                  {'data': get_object_or_404(Data, uuid=uuid)})
-
 
 
 @login_required

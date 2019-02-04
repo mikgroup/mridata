@@ -13,7 +13,6 @@ urlpatterns = [
     url(r'^upload/ge$', views.upload_ge, name='upload_ge'),
     url(r'^upload/get_temp_credentials$', views.get_temp_credentials, name='get_temp_credentials'),
     url(r'^list$', views.data_list, name='data_list'),
-    url(r'^data/(?P<uuid>.+)$', views.data, name='data'),
     url(r'^download/(?P<uuid>[\w-]+)$', views.data_download, name='data_download'),
     url(r'^delete/(?P<uuid>[\w-]+)$', views.data_delete, name='data_delete'),
     url(r'^edit/(?P<uuid>[\w-]+)$', views.data_edit, name='data_edit'),
@@ -22,5 +21,5 @@ urlpatterns = [
     url(r'^tags$', views.tags, name='tags'),
     url(r'^tag_delete/(?P<uuid>.+)/(?P<tag>.+)$', views.tag_delete, name='tag_delete'),
     url(r'^search_tag/(?P<tag>.+)$', views.search_tag, name='search_tag'),
-     
+
 ]
