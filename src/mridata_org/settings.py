@@ -196,9 +196,8 @@ if USE_AWS:
     AWS_MEDIA_LOCATION = 'media'
     MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_MEDIA_LOCATION)
 
-    S3DIRECT_REGION = AWS_STORAGE_BUCKET_REGION
+    AWS_S3_REGION_NAME = AWS_STORAGE_BUCKET_REGION
     S3DIRECT_DESTINATIONS = {
-        'region': S3DIRECT_REGION,
         'uploads': {'key': lambda filename: 'media/uploads/{}_{}'.format(
             uuid.uuid4(), os.path.split(filename)[-1])}
     }
