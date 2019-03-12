@@ -5,10 +5,10 @@
   <div class="col-3 text-center">
     <!-- <a data-toggle="collapse" href="#collapse{{ data.uuid }}"/> -->
     <img data-toggle="collapse"
-    href="#collapse{{data.uuid}}"
-    src=
+	 href="#collapse{{data.uuid}}"
+	 src=
 	 {% if data.thumbnail_file %}
-   "{{ data.thumbnail_file.url }}"
+	 "{{ data.thumbnail_file.url }}"
 	 {% else %}
 	 {% static "images/default_thumbnail.png" %}
 	 {% endif %}
@@ -42,7 +42,7 @@
 	<td class="text-muted text-left" width="15%">
 	  Project:
 	</td>
-	<td class="text-muted text-center">
+	<td class="text-muted text-center" width="85%">
 	  {{ data.project.name }}
 	</td>
       </tr>
@@ -51,16 +51,16 @@
 	<td class="text-muted text-left" width="15%">
 	  Anatomy:
 	</td>
-	<td class="text-muted text-center">
+	<td class="text-muted text-center" width="85%">
 	  {{ data.anatomy }}
 	</td>
       </tr>
 
-    <tr>
+      <tr>
 	<td class="text-muted text-left" width="15%">
 	  Fullysampled:
 	</td>
-	<td class="text-muted text-center">
+	<td class="text-muted text-center" width="85%">
 	  {% if data.fullysampled is None %}
 	  Unknown
 	  {% elif data.fullysampled %}
@@ -75,7 +75,7 @@
 	<td class="text-muted text-left" width="15%">
 	  Uploader:
 	</td>
-	<td class="text-muted text-center">
+	<td class="text-muted text-center" width="85%">
 	  {{ data.uploader }}
 	</td>
       </tr>
@@ -83,60 +83,37 @@
   	<td class="text-muted text-left" width="15%">
   	  Tags:
   	</td>
-    <!-- TODO: Insert all the tags associated with sample. -->
-  	<td class="text-muted text-center">
-      <!-- <link rel="stylesheet" type="text/css" href={% static "css/tags.css" %}> -->
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<!-- TODO: Insert all the tags associated with sample. -->
+  	<td class="text-muted text-center" width="85%">
+	  <!-- <link rel="stylesheet" type="text/css" href={% static "css/tags.css" %}> -->
+	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
-      <div id="add_tags" style="text-align: center" value={{ data.uuid }}>
-        <form action="/tags">
-        <input type="text" id="tag_input" name="tag" value="" placeholder="Add a tag"/>
-        <input type="hidden" name="uuid" value="{{data.uuid}}" placeholder="" />
-        {% if user.is_authenticated %}
-          <button type="submit">Add </button>
-        {% else %}
-          <button type="submit" onclick="alert('Oh oh! \n In order to add a tag you must be signed in!');"> Add </button>
-        {% endif %}
-        </form>
-      </div>
+	  <div id="add_tags" style="text-align: center" value={{ data.uuid }}>
+            <form action="/tags">
+              <input type="text" id="tag_input" name="tag" value="" placeholder="Add a tag"/>
+              <input type="hidden" name="uuid" value="{{data.uuid}}" placeholder="" />
+              {% if user.is_authenticated %}
+              <button type="submit">Add </button>
+              {% else %}
+              <button type="submit" onclick="alert('Oh oh! \n In order to add a tag you must be signed in!');"> Add </button>
+              {% endif %}
+            </form>
+	  </div>
   	</td>
-    <td>
+      </tr>
+    </table>
     {% block css_block %}
     <link href="{% static 'css/tags_arrow.css' %}" rel="stylesheet">
     {% endblock %}
-      <div id="tags" style="text-align: center">
+    <div id="tags" style="text-align: left">
+      {% for tag in data.tags.all %}
+      <li class="tag" href="{% url 'tag_delete' uuid=data.uuid tag=tag %}"
+	  onclick="location.href = '{% url 'search_tag' tag=tag %}'; return true;"
+	  oncontextmenu=" if (confirm('Are you sure you want to delete?')) { location.href = '{% url 'tag_delete' uuid=data.uuid tag=tag %}'; return true; } else { return false; } ">
+        {{tag}}
+      </li>
 
-          {% for tag in data.tags.all %}
-
-              <li class="tag" href="{% url 'tag_delete' uuid=data.uuid tag=tag %}"
-              onclick="location.href = '{% url 'search_tag' tag=tag %}'; return true;"
-              oncontextmenu=" if (confirm('Are you sure you want to delete?')) { location.href = '{% url 'tag_delete' uuid=data.uuid tag=tag %}'; return true; } else { return false; } ">
-              {{tag}}
-              </li>
-
-          {% endfor %}
-      </div>
-      </td>
-        </tr>
-    </table>
-    {% block js_block %}
-    <script>
-      function changeToolTip(id){
-        var el = document.getElementById(id);
-        if (el.getAttribute('data-tooltip') == 'expand') {
-          el.setAttribute('data-tooltip', 'collapse');
-        } else {
-          el.setAttribute('data-tooltip', 'expand');
-        }
-      }
-    </script>
-    {% endblock %}
-    <div style="text-align: center" class="col-3 text-right">
-      <a data-tooltip="expand"  data-tooltip-pos="right" id="head_button{{data.uuid}}" class="right collapsed" data-toggle="collapse" data-target="#collapse{{data.uuid}}"
-      onclick="changeToolTip('head_button{{data.uuid}}');">
-        <span class="if-collapsed"><i class="down"></i></span>
-        <span class="if-not-collapsed"><i class="up"></i></span>
-      </a>
+      {% endfor %}
     </div>
   </div>
 
