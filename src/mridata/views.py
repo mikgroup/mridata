@@ -1,26 +1,16 @@
 import logging
-import os
-import numpy as np
 import boto3
-import zipfile
-import requests
-from io import BytesIO
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse, Http404
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from django.urls import reverse
-from celery.result import AsyncResult
-from django.contrib.auth.models import User
+from django.db.models import Q
 
-
-
-from .models import Data, TempData, Uploader, Project, Log
+from .models import Data, TempData, Project, Log
 from .forms import PhilipsDataForm, SiemensDataForm, GeDataForm, IsmrmrdDataForm, DataForm
 from .filters import DataFilter
-from .tasks import process_ge_data, process_ismrmrd_data, process_philips_data, process_siemens_data, download_zip
-from taggit.models import Tag
+from .tasks import process_ge_data, process_ismrmrd_data, process_philips_data, process_siemens_data
+
 
 def main(request):
     projects = Project.objects.all().order_by('-name')
@@ -43,14 +33,99 @@ def api(request):
     return render(request, 'mridata/api.html')
 
 
+def get_option(opt, options):
+    actual = ('tag', 'system_vendor', 'system_model', 'protocol_name',
+              'sequence_type', 'sequence_type', 'coil_name', 'uuid', 'fullysampled',
+              'references')
+    abrev = ('tags', 'vendor', 'model', 'protocol', 'type', 'sequence',
+             'coil', 'id', 'sampled', 'ref')
+
+    if opt not in abrev and opt in options:
+        return opt
+
+    for i in range(len(abrev)):
+        if opt == abrev[i]:
+            return actual[i]
+    return 'other'
+
+
+
+def get_value(val, uploader):
+    if val == "me":
+        return uploader
+    elif val in ('yes', 'y', 't', 'true', '1'):
+        return 1
+    elif val in ('no', 'n', 'f', 'false', '0'):
+        return 0
+    elif val == "unknown":
+        return ''
+    elif 'and' in val:
+        return val.replace('and', ',')
+    else:
+        return val
+
+def search(result, request):
+    get = request.GET
+    if not result:
+        return get
+    else:
+        result = result.lower()
+    options = ('uploader', 'tag', 'project', 'anatomy',
+               'references', 'comments', 'tags', 'funding_support',
+               'system_vendor', 'vendor', 'model', 'protocol', 'type',
+               'coil', 'sequence', 'system_model', 'protocol_name',
+               'coil_name', 'sequence_type', 'uuid', 'id', 'sampled',
+               'fullysampled', 'ref') # for each model, coil, sequence....
+
+    results = result.split(',')
+    for res in results:
+        r = res.split(':')
+        # Need the try catch in case r[0]/r[1] fails.
+        try:
+            option = get_option(r[0].strip(), options)
+            if option == 'other':
+                value = r
+            else:
+                value = get_value(r[1].strip(), request.user.uploader)
+            if option in options:
+                get[option] = value
+            else:
+                get['other'] = r
+        except Exception:
+            get['csrfmiddlewaretoken'] += str(r)
+
+    if 'csrfmiddlewaretoken' in get:
+        get.pop('csrfmiddlewaretoken')
+    # if no ',' then contains in each and combine.
+    # if there is ',' and ':' then put in appropriate category.
+    return get
+
+
 def data_list(request):
-    if (request.GET.get("tags")):
-        tag = request.GET.get("tags")
+    result = request.GET.get('search')
+    request.GET = request.GET.copy()
+    request.GET['search'] = ''
+    request.GET = search(result, request)
+    if request.GET.get('other'):
+        options = request.GET.get('other')
+        filter = Data.objects.filter(Q(tags__name__in=options) | Q(anatomy__icontains=options[0]) |
+                                     Q(references__icontains=options[0]) | Q(comments__icontains=options[0]) |
+                                     Q(funding_support__icontains=options[0]) | Q(protocol_name__icontains=options[0]) |
+                                     Q(series_description__icontains=options[0]) | Q(system_vendor__icontains=options[0]) |
+                                     Q(system_model__icontains=options[0]) | Q(coil_name__icontains=options[0]) |
+                                     Q(institution_name__icontains=options[0]) | Q(uploader__user__username= options[0]) |
+                                     Q(project__name__icontains=options[0])).distinct()
+        request.GET['other'] = ''
+        filter = DataFilter(request.GET, filter.order_by('-upload_date'))
+    elif (request.GET.get("tag")):
+        tag = request.GET.get("tag")
         tag = tag.split()
         tag_filter = Data.objects.filter(tags__name__in=tag).distinct()
+
         request.GET = request.GET.copy() # makes request mutable.
         request.GET['tags'] = "" # deletes all tags so you can filter everything else.
         filter = DataFilter(request.GET, tag_filter.order_by("-upload_date"))
+
     else:
         filter = DataFilter(request.GET, Data.objects.all().order_by('-upload_date'))
 
@@ -80,88 +155,6 @@ def data_download(request, uuid):
     data.downloads += 1
     data.save()
     return redirect(data.ismrmrd_file.url)
-
-def data_share(request, uuid):
-    # TODO: Add popup of form.
-    return data_list(request)
-
-def data(request, uuid):
-    logging.warning('Watch out!')  # will print a message to the console
-    logging.info('I told you so')  # will not print anything
-    logging.warning("UUIDS: {0}".format(uuid))
-
-    if request.user.is_authenticated:
-
-        uuid = uuid.strip("<QuerySet [")
-        uuid = uuid.strip('>]>')
-        uuid = uuid.strip("Data: ")
-        logging.warning(uuid) ## # DEBUG: this is for me to make sure what is in uuid.
-        uuids = uuid.split(">, <Data: ")
-        for id in uuids:
-            id.strip()
-        logging.warning("THE UUIDS: ")
-        logging.warning(uuids) ## # DEBUG: this is for me to make sure what is in uuid.
-        logging.warning("THE TYPE OF UUIDS: {}".format(type(uuids)))
-        # download_zip.delay(uuids=uuids)
-        # s = download_zip.apply_async(args=[uuids])
-
-        # task = download_zip.delay(uuids)
-        # # return redirect('data_list')
-        # return render(request, "mridata/poll_for_download.html",
-                              # {'task_id': task.task_id})
-
-        # Folder name in ZIP archive which contains the above files
-        # E.g [thearchive.zip]/Mri\ Datasets/file.whatever
-        s = BytesIO()
-        zip_subdir = "Mri Datasets"
-        zip_filename = "%s.zip" % zip_subdir
-        zf = zipfile.ZipFile(s, 'w')
-
-        # TODO: figure out how to make this in the background.
-
-        for id in uuids:
-            data = get_object_or_404(Data, uuid=id)
-            data.downloads += 1
-            data.save()
-            logging.warning("uuid {0}".format(data.ismrmrd_file.url)) # this gives me the files I.e. /media/c0fe34bd-bc71-4e14-a9c2-9e47767a4335.h5
-            fdir, fname = os.path.split(data.ismrmrd_file.url)
-            zip_path = os.path.join(zip_subdir, fname)
-
-            if settings.USE_AWS:
-                data_bytes = requests.get(data.ismrmrd_file.url).content                
-                zf.writestr(fname, data_bytes, zip_path)
-            else:
-                zf.write(data.ismrmrd_file.url, zip_path)
-
-        zf.close()
-
-        resp = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
-        # ..and correct content-disposition
-        resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
-        return resp
-        # return redirect('data_list')
-    else:
-        return render(request, 'mridata/data.html',
-                  {'data': get_object_or_404(Data, uuid=uuid)})
-
-def poll_for_download(request):
-    task_id = request.GET.get("task_id")
-    filename = request.GET.get("filename")
-
-    if request.is_ajax():
-        result = generate_file.AsyncResult(task_id)
-        if result.ready():
-            return HttpResponse(json.dumps({"filename": result.get()}))
-        return HttpResponse(json.dumps({"filename": None}))
-
-    try:
-        f = open("/path/to/export/"+filename)
-    except:
-        return HttpResponseForbidden()
-    else:
-        response = HttpResponse(file, mimetype='text/csv')
-        response['Content-Disposition'] = 'attachment; filename=%s' % filename
-    return response
 
 
 @login_required
@@ -302,8 +295,9 @@ def data_edit(request, uuid):
                 return redirect("data_list")
         else:
             data = get_object_or_404(Data, uuid=uuid)
+
             form = DataForm(instance=data, initial={'project_name': data.project.name})
-            return render(request, 'mridata/data_edit.html', {'data': data, 'form': form})
+            return render(request, 'mridata/data_edit.html', {'data': data, 'form': form, 'image_url': data.thumbnail_file.url})
 
 
 @login_required
@@ -338,50 +332,59 @@ def check_refresh(request):
 
 @login_required
 def tags(request):
-    # add tags.
-    # logging.warning("I AM IN TAGS")
-    # logging.warning("request:", request)
     if request.GET:
-        # logging.warning("GET REQUEST")
-        # logging.warning("tag: {}".format( request.GET.get("tag")))
-        # logging.warning("UUID: {}".format(request.GET.get("uuid")))
         uuid = request.GET.get("uuid")
         tagRaw = request.GET.get("tag")
-
-        # logging.warning("\n\n\n GETTING DATA")
+        if tagRaw == "" or not tagRaw:
+            return redirect('data_list')
         data = get_object_or_404(Data, uuid=uuid)
-        # logging.warning("\n\n\n GOT DATA")
-        # logging.warning("TAG RAW: ", tagRaw)
-        # logging.warning("TAG RAW TYPE: {}".format(type(tagRaw)))
-        #
-        # logging.warning("TAGS: {}".format(data.tags.all()))
-
-        data.tags.add(tagRaw)
-        # logging.warning("\n\n\n GOT tags")
-        # logging.warning("TAGS: {}".format(data.tags.all()))
-
-        data.save()
+        tags = tagRaw.split(',')
+        for tag in tags:
+            t = tag.strip()
+            logging.warning("ADDING TAG: {}".format(t))
+            data.tags.add(t)
+            data.save()
     return redirect("data_list")
-    # if request.is_ajax() and request.POST:
-    #     tagRaw = request.POST.get('new_tag')
-    #     # uuid = request.POST.get('post_uuid');
-    #     # data = get_object_or_404(Data, uuid=uuid) # Data Object
-    #     # data.tags.add(tagRaw)
-    #     logging.warning("Request: {}".format(request.POST))
-    #     logging.warning(tagRaw)
-    #
-    #     return JsonResponse({"tags": dataRaw})
-    # return JsonResponse({'tags' : request.GET})
 
+
+def search_tag(request, tag):
+    tag = [tag]
+    logging.warning("tag {}".format(tag))
+    logging.warning("request {}".format(request.GET))
+    for val in request.GET.values():
+        return data_list(request)
+
+    tag_filter = Data.objects.filter(tags__name__in=tag).distinct()
+
+    filter = DataFilter(request.GET, tag_filter.order_by("-upload_date"))
+
+    if request.user.is_authenticated:
+        uploader = request.user.uploader
+        temp_datasets = TempData.objects.filter(uploader=uploader).order_by('-upload_date')
+        logs = Log.objects.filter(user=request.user).order_by('-date_time')
+    else:
+        temp_datasets = []
+        logs = []
+
+    if request.is_ajax() and 'page' in request.GET:
+        template = 'mridata/data_list_page.html'
+    else:
+        template = 'mridata/data_list.html'
+
+    return render(request, template,
+                  {
+                      'filter': filter,
+                      'temp_datasets': temp_datasets,
+                      'logs': logs
+                  })
 
 def tag_delete(request, uuid, tag):
-    logging.warning("request:", request)
-    logging.warning("uuid", uuid)
-    logging.warning("tag", tag)
+    logging.warning("IM HERE")
     data = get_object_or_404(Data, uuid=uuid)
     data.tags.remove(tag)
     data.save()
     return redirect('data_list')
+
 
 @login_required
 def get_temp_credentials(request):

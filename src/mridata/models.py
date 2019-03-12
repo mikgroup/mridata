@@ -61,7 +61,7 @@ class Uploader(models.Model):
 
 
 class TaggedData(TaggedItemBase):
-    content_object = models.ForeignKey('Data')
+    content_object = models.ForeignKey('Data', on_delete=models.CASCADE)
 
 class Data(models.Model):
 
@@ -128,7 +128,6 @@ class Data(models.Model):
     uploader = models.ForeignKey(Uploader, on_delete=models.CASCADE)
     downloads = models.IntegerField(default=0)
     tags = TaggableManager(through=TaggedData)
-    # tags = models.CharField(max_length=100, default='', blank=True)
 
     def __str__(self):
         return str(self.uuid)
@@ -165,12 +164,10 @@ class TempData(models.Model):
     references = models.TextField(blank=True, default='')
     comments = models.TextField(blank=True, default='')
     funding_support = models.TextField(blank=True, default='')
-    # tags = models.TextField(blank=True, default='')
     original_filename = models.TextField(default='')
 
     upload_date = models.DateTimeField(default=timezone.now)
     uploader = models.ForeignKey(Uploader, on_delete=models.CASCADE)
-
     thumbnail_horizontal_flip = models.BooleanField(default=False)
     thumbnail_vertical_flip = models.BooleanField(default=False)
     thumbnail_transpose = models.BooleanField(default=False)

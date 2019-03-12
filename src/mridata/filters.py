@@ -1,16 +1,26 @@
 import django_filters
 from django import forms
 
-from .models import Data, Project, Uploader
+from .models import Data
 
 
 class DataFilter(django_filters.FilterSet):
+    # ADD AutoComplete
+    search = django_filters.CharFilter(label='Search', field_name='search',
+                                       lookup_expr='icontains',
+                                       widget=forms.TextInput(attrs={
+                                           'size': 12,
+                                           'class' :'form-control input-lg',
+                                           'placeholder': 'Search',
+                                           'id': 'txtSearch',
+                                           'name': 'txtSearch'
+                                       }))
 
-    uploader = django_filters.CharFilter(label='Uploader', name='uploader__user__username',
-                                          lookup_expr='icontains',
-                                        widget=forms.TextInput(attrs={'size': 12}))
-    project = django_filters.CharFilter(label='Project', name='project__name',
+    uploader = django_filters.CharFilter(label='Uploader', field_name='uploader__user__username',
                                          lookup_expr='icontains',
+                                         widget=forms.TextInput(attrs={'size': 12}))
+    project = django_filters.CharFilter(label='Project', field_name='project__name',
+                                        lookup_expr='icontains',
                                         widget=forms.TextInput(attrs={'size': 12}))
     anatomy = django_filters.CharFilter(label='Anatomy', lookup_expr='icontains',
                                         widget=forms.TextInput(attrs={'size': 12}))
@@ -19,7 +29,7 @@ class DataFilter(django_filters.FilterSet):
     comments = django_filters.CharFilter(label='Comments', lookup_expr='icontains',
                                          widget=forms.TextInput(attrs={'size': 12}))
     tags = django_filters.CharFilter(label='Tags', lookup_expr='icontains',
-                                         widget=forms.TextInput(attrs={'size': 12}))
+                                     widget=forms.TextInput(attrs={'size': 12}))
 
     funding_support = django_filters.CharFilter(label='Funding Support', lookup_expr='icontains',
                                                 widget=forms.TextInput(attrs={'size': 12}))
@@ -39,5 +49,4 @@ class DataFilter(django_filters.FilterSet):
     class Meta:
         model = Data
         fields = ['fullysampled',
-                  'uploader',
-        ]
+                  'uploader',]

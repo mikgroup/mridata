@@ -52,27 +52,7 @@ def process_siemens_data(uuid):
     else:
         process_temp_data(SiemensData, uuid)
 
-@task(name="download_zip")
-def download_zip(uuids):
-    s = BytesIO()
-    zip_subdir = "Mri Datasets"
-    zip_filename = "%s.zip" % zip_subdir
-    zf = zipfile.ZipFile(s, 'w')
-    for id in uuids:
-        data = get_object_or_404(Data, uuid=id)
-        data.downloads += 1
-        data.save()
-        fdir, fname = os.path.split(data.ismrmrd_file.url)
-        zip_path = os.path.join(zip_subdir, fname)
-        zf.write(data.ismrmrd_file.url, zip_path)
 
-    zf.close()
-    return zip_filename
-    #
-    # resp = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
-    # # ..and correct content-disposition
-    # resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
-    # return resp
 
 def log(string, uploader):
     Log(string=string, user=uploader.user).save()

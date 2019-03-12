@@ -1,10 +1,13 @@
 <!DOCTYPE html>
+
 <html lang="en">
   <head>
-    
+
     {% load staticfiles %}
+    {% if debug %}
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68201918-2"></script>
+
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -12,14 +15,21 @@
 
       gtag('config', 'UA-68201918-2');
     </script>
+    {% endif %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
 
     <title>mridata.org</title>
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link href="https://getbootstrap.com/docs/4.0/examples/starter-template/starter-template.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/tooltip.css' %}" type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/search_bar.css' %}" type="text/css" >
+    <link type="text/css" href="{% static 'css/expand.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'css/popup.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'css/btn_arrow.css' %}" rel="stylesheet">
     <link rel="apple-touch-icon" sizes="180x180" href={% static "favicons/apple-touch-icon.png" %}>
     <link rel="icon" type="image/png" sizes="32x32" href={% static "favicons/favicon-32x32.png" %}>
     <link rel="icon" type="image/png" sizes="16x16" href={% static "favicons/favicon-16x16.png" %}>
@@ -27,7 +37,7 @@
     <link rel="mask-icon" href={% static "favicons/safari-pinned-tab.svg"%}>
     <meta name="theme-color" content="#ffffff">
   </head>
-  
+
   <body class="bg-light">
 
     {% include "mridata/navbar.html" %}
@@ -38,20 +48,24 @@
     <!-- Bootstrap core JavaScript
 	 ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <!-- <script src="http://code.jquery.com/jquery-latest.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.formset/1.2.2/jquery.formset.min.js"></script>
 
     <footer>
       <div class="container">
-        <small class="text-muted">
-	  <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a><br />Except where otherwise noted, content on this site is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.</small>
+	<div class="col">
+          <small class="text-muted">
+	    <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a><br />Except where otherwise noted, content on this site is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.</small>
+	</div>
       </div>
     </footer>
 
     {% load staticfiles %}
-    {% block css_block %}{% endblock %}
-    {% block js_block %}{% endblock %}
+    {% block css_block %} {% endblock %}
+    {% block js_block %} {% endblock %}
   </body>
 </html>

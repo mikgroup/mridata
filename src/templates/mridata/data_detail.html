@@ -1,5 +1,6 @@
 <p class="card-text text-center">
   <div class="text-center my-2">
+    <!-- TODO: make this become a popup, that will either download the h5 file or original or BART format. -->
     <a href="{% url 'data_download' uuid=data.uuid %}" class="btn btn-primary btn-sm">
       Download
     </a>
@@ -17,17 +18,17 @@
   </div>
 
   <table class="table-sm table-striped small text-center col-12">
-    
+
     <tr>
       <th width="30%" >UUID</th>
-      <td>{{ data.uuid }}</td> 
+      <td>{{ data.uuid }}</td>
     </tr>
 
     <tr>
       <th width="30%" >Downloads</th>
-      <td>{{ data.downloads }}</td> 
+      <td>{{ data.downloads }}</td>
     </tr>
-    
+
     {% if data.references != '' %}
     <tr>
       <th width="30%" >References</th>
@@ -36,7 +37,7 @@
       </td>
     </tr>
     {% endif %}
-    
+
     {% if data.comments != '' %}
     <tr>
       <th width="30%" >Comments</th>
@@ -45,7 +46,7 @@
       </td>
     </tr>
     {% endif %}
-    
+
     {% if data.funding_support != '' %}
     <tr>
       <th width="30%" >Funding Support</th>
@@ -54,188 +55,188 @@
       </td>
     </tr>
     {% endif %}
-    
+
     <tr>
       <th width="30%" >Protocol Name</th>
-      <td>{{ data.protocol_name }}</td> 
+      <td>{{ data.protocol_name }}</td>
     </tr>
-    
+
     <tr>
       <th width="30%" >Series Description</th>
-      <td>{{ data.protocol_name }}</td> 
+      <td>{{ data.protocol_name }}</td>
     </tr>
-    
+
     <tr>
       <th width="30%" >System Vendor</th>
-      <td>{{ data.system_vendor }}</td> 
+      <td>{{ data.system_vendor }}</td>
     </tr>
-    
+
     <tr>
       <th width="30%" >System Model</th>
-      <td>{{ data.system_model }}</td> 
+      <td>{{ data.system_model }}</td>
     </tr>
-    
+
     {% if data.system_field_strength != -1 %}
     <tr>
       <th width="30%" >System Field Strength</th>
       <td>
 	{{ data.system_field_strength }} T
-      </td> 
+      </td>
     </tr>
     {% endif %}
-    
+
     {% if data.relative_receiver_noise_bandwidth != -1 %}
     <tr>
       <th width="30%" >Receiver Bandwidth</th>
       <td>
 	{{ data.relative_receiver_noise_bandwidth }}
-      </td> 
+      </td>
     </tr>
     {% endif %}
-    
+
     {% if data.number_of_channels != -1 %}
     <tr>
       <th width="30%" >Number of Channels</th>
       <td>
 	{{ data.number_of_channels }}
-      </td> 
+      </td>
     </tr>
     {% endif %}
-    
+
     {% if data.coil_name != '' %}
     <tr>
       <th width="30%" >Coil Name</th>
       <td>
 	{{ data.coil_name }}
-      </td> 
+      </td>
     </tr>
     {% endif %}
-    
+
     {% if data.institution_name != '' %}
     <tr>
       <th width="30%" >Institution Name</th>
       <td>
 	{{ data.institution_name }}
-      </td> 
+      </td>
     </tr>
     {% endif %}
-    
+
     {% if data.station_name != '' %}
     <tr>
       <th width="30%" >Station Name</th>
       <td>
 	{{ data.station_name }}
-      </td> 
+      </td>
     </tr>
     {% endif %}
-    
+
     {% if data.h1_resonance_frequency != -1 %}
     <tr>
       <th width="30%" >H1 Resonance Frequency</th>
       <td>
 	{{ data.h1_resonance_frequency }} Hz
-      </td> 
+      </td>
     </tr>
     {% endif %}
-    
+
     <tr>
       <th width="30%" >Matrix Size</th>
       <td>
 	{{data.matrix_size_x}} x {{data.matrix_size_y}} x {{data.matrix_size_z}}
-      </td> 
+      </td>
     </tr>
-    
+
     <tr>
       <th width="30%" >Field Of View</th>
       <td>
 	{{data.field_of_view_x|floatformat}} mm x {{data.field_of_view_y|floatformat}} mm x {{data.field_of_view_z|floatformat}} mm
-      </td> 
+      </td>
     </tr>
-    
+
     {% if data.number_of_averages != -1 %}
     <tr>
       <th width="30%" >Number of Averages</th>
       <td>
 	{{ data.number_of_averages }}
-      </td> 
+      </td>
     </tr>
     {% endif %}
-    
+
     {% if data.number_of_slices != -1 %}
     <tr>
       <th width="30%" >Number of Slices</th>
       <td>
 	{{ data.number_of_slices }}
-      </td> 
+      </td>
     </tr>
     {% endif %}
-    
+
     {% if data.number_of_phases != -1 %}
     <tr>
       <th width="30%" >Number of Phases</th>
       <td>
 	{{ data.number_of_phases }}
-      </td> 
+      </td>
     </tr>
     {% endif %}
-    
+
     {% if data.number_of_repetitions != -1 %}
     <tr>
       <th width="30%" >Number of Repetition</th>
       <td>
 	{{ data.number_of_repetitions }}
-      </td> 
+      </td>
     </tr>
     {% endif %}
-    
+
     {% if data.number_of_contrasts != -1 %}
     <tr>
       <th width="30%" >Number of Contrasts</th>
       <td>
 	{{ data.number_of_contrasts }}
-      </td> 
+      </td>
     </tr>
     {% endif %}
-    
+
     {% if data.number_of_sets != -1 %}
     <tr>
       <th width="30%" >Number of Sets</th>
       <td>
 	{{ data.number_of_sets }}
-      </td> 
+      </td>
     </tr>
     {% endif %}
-    
+
     {% if data.number_of_segments != -1 %}
     <tr>
       <th width="30%" >Number of Segments</th>
       <td>
 	{{ data.number_of_segments }}
-      </td> 
+      </td>
     </tr>
     {% endif %}
-    
+
     <tr>
       <th width="30%" >Trajectory</th>
-      <td>{{ data.trajectory }}</td> 
+      <td>{{ data.trajectory }}</td>
     </tr>
-    
+
     {% if data.parallel_imaging_factor_y != -1 and data.parallel_imaging_factor_z != -1 %}
     <tr>
       <th width="30%" >Parallel Imaging Factor</th>
-      <td>{{ data.parallel_imaging_factor_y }} x {{ data.parallel_imaging_factor_z }}</td> 
+      <td>{{ data.parallel_imaging_factor_y }} x {{ data.parallel_imaging_factor_z }}</td>
     </tr>
     {% endif %}
-    
+
     {% if data.echo_train_length != -1 %}
     <tr>
       <th width="30%" >Echo Train Length</th>
       <td>
 	{{ data.echo_train_length }}
-      </td> 
+      </td>
     </tr>
     {% endif %}
-    
+
     {% if data.tr != -1 %}
     <tr>
       <th width="30%" >Repetition Time</th>
@@ -244,7 +245,7 @@
       </td>
     </tr>
     {% endif %}
-    
+
     {% if data.te != -1 %}
     <tr>
       <th width="30%" >Echo Time</th>
@@ -262,7 +263,7 @@
       </td>
     </tr>
     {% endif %}
-    
+
     {% if data.flip_angle != -1 %}
     <tr>
       <th width="30%" >Flip Angle</th>
@@ -271,16 +272,16 @@
       </td>
     </tr>
     {% endif %}
-    
+
     {% if data.sequence_type != '' %}
     <tr>
       <th width="30%" >Sequence Type</th>
       <td>
 	{{ data.sequence_type }}
-      </td> 
+      </td>
     </tr>
     {% endif %}
-    
+
     {% if data.echo_spacing != -1 %}
     <tr>
       <th width="30%" >Echo Spacing</th>
@@ -289,12 +290,12 @@
       </td>
     </tr>
     {% endif %}
-    
+
     <tr>
       <th width="30%" >Upload Date</th>
-      <td>{{ data.upload_date }}</td> 
+      <td>{{ data.upload_date }}</td>
     </tr>
-    
+
   </table>
 
 </p>

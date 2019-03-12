@@ -1,112 +1,64 @@
 {% extends 'mridata/base.html' %}
 {% load staticfiles %}
-
+{% load widget_tweaks %}
 {% block body_block %}
 
-<div class="col text-center mb-3">
-  <div class="alert alert-warning text-center mb-2">
-    Please ensure your data does not contain any patient information.
-    By using this website, you are agreeing to our <a href="{% url 'terms' %}">Terms of Service</a>.
-  </div>
-  <div class="card">
-    <form method="POST" class="form mb-3" enctype="multipart/form-data">
-      <br>
-      {% csrf_token %}
-      <table class="table-sm mb-3 col-12">
-        <tr>
-          <th>Project Name:</th>
-          <td>
-	    {{ form.project_name }}
-	  </td>
-        </tr>
+<div class="container">
+  <div class="col text-center mb-3">
+    <div class="alert alert-warning text-center mb-2">
+      Please ensure your data does not contain any patient information.
+    </div>
+    <div>
+      <form method="POST" class="form mb-3" enctype="multipart/form-data">
+	{% csrf_token %}
+	<br>
+	{% for hidden in form.hidden_fields %}
+	{{ hidden }}
+	{% endfor %}
 
-	<tr>
-	  <th>
-	    Anatomy:
-	  </th>
-	  <td>
-	    {{ form.anatomy }}
-	  </td>
-	</tr>
+	{% for field in form.visible_fields %}
+	{% if field.label == "Thumbnail transpose" %}
+	{% else %}
+	{% if field.label == "Thumbnail vertical flip" %}
+	{% else %}
+	<div class="form-group" align='left'>
+          {% if field.label == "Thumbnail horizontal flip" %}
+          <h5> Thumbnail Configuration</h5>
+          <table class="table-sm text-center" align="left">
+            <tr>
+              <td> Horizontal flip: {{ form.thumbnail_horizontal_flip }} </td>
+              <td> Vertical flip: {{ form.thumbnail_vertical_flip }} </td>
+              <td> Transpose: {{ form.thumbnail_transpose }} </td>
+            </tr>
+          </table>
+          {% else %}
+          <h5 for="{{ field.id_for_label }}"> {{ field.label }}</h5>
+          {{ field|add_class:'form-control' }}
+          {% for error in field.errors %}
+          <span class="help-block">{{ error }}</span>
+          {% endfor %}
+          {% endif %}
+	</div>
+	{% endif %}
+	{% endif %}
+	{% endfor %}
+	<br>
+	<br>
+	<br>
 
-        <tr>
-          <th>Fullysampled:</th>
-          <td>
-	    {{ form.fullysampled }}
-	  </td>
-        </tr>
-
-        <tr>
-          <th>References:</th>
-          <td>
-	    {{ form.references }}
-	  </td>
-        </tr>
-
-        <tr>
-          <th>Comments:</th>
-          <td>
-	    {{ form.comments }}
-	  </td>
-        </tr>
-
-        <tr>
-          <th>Funding Support:</th>
-          <td>
-	    {{ form.funding_support }}
-	  </td>
-        </tr>
-
-	{% include "mridata/upload_file.html" %}
-
-        <tr>
-          <th>Thumbnail Options:</th>
-          <td>
-	    <table class="table-sm text-center" align="center">
-	      <tr>
-		<td>
-		  Horizontal flip:
-		  {{ form.thumbnail_horizontal_flip }}
-		</td>
-		<td>
-		  Vertical flip:
-		  {{ form.thumbnail_vertical_flip }}
-		</td>
-		<td>
-		  Transpose:
-		  {{ form.thumbnail_transpose }}
-		</td>
-	      </tr>
-	    </table>
-	  </td>
-        </tr>
-
-
-        <!-- <tr> -->
-        <!--   <th>Tags:</th> -->
-        <!--   <td> -->
-        <!--     <link rel="stylesheet" type="text/css" href={% static "css/tags.css" %}> -->
-        <!--     <script type="text/javascript" src={% static "js/tags.js" %}></script> -->
-        <!--     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
-
-        <!--     <div id="tags"> -->
-        <!--       <input type="text" value="" placeholder="Add a tag"/> -->
-        <!--     </div> -->
-
-      	<!--   </td> -->
-        <!-- </tr> -->
-      </table>
-
-      <div>
-	<input type="checkbox" required>
-	<label>I agree to the <a href="{% url 'terms' %}">Terms of Service</a></label>
-      </div>
-      <button type="submit" class="save btn btn-primary">Upload</button>
-    </form>
+	<div>
+	  <input type="checkbox" required>
+	  <label>I agree to the <a href="{% url 'terms' %}">Terms of Service</a></label>
+	</div>
+	<button type="submit" class="save btn btn-primary">Upload</button>
+	<a href="{% url 'data_list' %}" class="btn btn-danger" role="button">Cancel</a>
+      </form>
+    </div>
+>>>>>>> gnahum12345-master
   </div>
 </div>
-{% endblock %}
 
+{% endblock %}
 
 {% block js_block %}
 {{ form.media }}

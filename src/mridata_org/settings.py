@@ -55,9 +55,13 @@ INSTALLED_APPS = [
     'django_filters',
     's3direct',
     'storages',
-    'taggit'
+    'taggit',
+    'widget_tweaks',
+    'bootstrap3',
+    'crispy_forms',
 ]
 
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -86,6 +90,10 @@ TEMPLATES = [
         },
     },
 ]
+
+INTERNAL_IPS = (
+    '127.0.0.1',
+)
 
 WSGI_APPLICATION = 'mridata_org.wsgi.application'
 
