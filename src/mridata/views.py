@@ -1,26 +1,16 @@
 import logging
-import os
-import numpy as np
 import boto3
-import zipfile
-from io import BytesIO
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse, Http404
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from django.urls import reverse
-from celery.result import AsyncResult
-from django.contrib.auth.models import User
 from django.db.models import Q
 
-
-
-from .models import Data, TempData, Uploader, Project, Log
+from .models import Data, TempData, Project, Log
 from .forms import PhilipsDataForm, SiemensDataForm, GeDataForm, IsmrmrdDataForm, DataForm
 from .filters import DataFilter
 from .tasks import process_ge_data, process_ismrmrd_data, process_philips_data, process_siemens_data
-from taggit.models import Tag
+
 
 def main(request):
     projects = Project.objects.all().order_by('-name')
@@ -44,11 +34,11 @@ def api(request):
 
 
 def get_option(opt, options):
-    actual = ('tag', 'system_vendor', 'system_model','protocol_name',
-    'sequence_type','sequence_type', 'coil_name', 'uuid', 'fullysampled',
-    'references')
-    abrev = ('tags', 'vendor', 'model', 'protocol', 'type','sequence',
-    'coil', 'id', 'sampled', 'ref')
+    actual = ('tag', 'system_vendor', 'system_model', 'protocol_name',
+              'sequence_type', 'sequence_type', 'coil_name', 'uuid', 'fullysampled',
+              'references')
+    abrev = ('tags', 'vendor', 'model', 'protocol', 'type', 'sequence',
+             'coil', 'id', 'sampled', 'ref')
 
     if opt not in abrev and opt in options:
         return opt
@@ -81,11 +71,11 @@ def search(result, request):
     else:
         result = result.lower()
     options = ('uploader', 'tag', 'project', 'anatomy',
-    'references', 'comments', 'tags', 'funding_support',
-    'system_vendor', 'vendor', 'model', 'protocol', 'type',
-    'coil', 'sequence', 'system_model', 'protocol_name',
-    'coil_name', 'sequence_type', 'uuid', 'id', 'sampled',
-    'fullysampled', 'ref') # for each model, coil, sequence....
+               'references', 'comments', 'tags', 'funding_support',
+               'system_vendor', 'vendor', 'model', 'protocol', 'type',
+               'coil', 'sequence', 'system_model', 'protocol_name',
+               'coil_name', 'sequence_type', 'uuid', 'id', 'sampled',
+               'fullysampled', 'ref') # for each model, coil, sequence....
 
     results = result.split(',')
     for res in results:
@@ -116,15 +106,15 @@ def data_list(request):
     request.GET = request.GET.copy()
     request.GET['search'] = ''
     request.GET = search(result, request)
-    if (request.GET.get('other')):
+    if request.GET.get('other'):
         options = request.GET.get('other')
         filter = Data.objects.filter(Q(tags__name__in=options) | Q(anatomy__icontains=options[0]) |
-                                Q(references__icontains=options[0]) | Q(comments__icontains=options[0]) |
-                                Q(funding_support__icontains=options[0]) | Q(protocol_name__icontains=options[0]) |
-                                Q(series_description__icontains=options[0]) | Q(system_vendor__icontains=options[0]) |
-                                Q(system_model__icontains=options[0]) | Q(coil_name__icontains=options[0]) |
-                                Q(institution_name__icontains=options[0]) | Q(uploader__user__username= options[0]) |
-                                Q(project__name__icontains=options[0])).distinct()
+                                     Q(references__icontains=options[0]) | Q(comments__icontains=options[0]) |
+                                     Q(funding_support__icontains=options[0]) | Q(protocol_name__icontains=options[0]) |
+                                     Q(series_description__icontains=options[0]) | Q(system_vendor__icontains=options[0]) |
+                                     Q(system_model__icontains=options[0]) | Q(coil_name__icontains=options[0]) |
+                                     Q(institution_name__icontains=options[0]) | Q(uploader__user__username= options[0]) |
+                                     Q(project__name__icontains=options[0])).distinct()
         request.GET['other'] = ''
         filter = DataFilter(request.GET, filter.order_by('-upload_date'))
     elif (request.GET.get("tag")):
