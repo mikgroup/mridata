@@ -1,120 +1,108 @@
-{% block css_block %}
-<style>
+<table class="table">
+  <tr>
+    <th>Keyword</th>
+    <th>Usage</th>
+    <th>Notes</th>
+  </tr>
+  <tr>
+    <td>Uploader</td>
+    <td>uploader: &#60;uploader&#62; , <br> uploader: me </td>
+    <td>Keywords and values are case <b> insensitive </b>.  <br>
+      "me" returns all the datasets that you uploaded. </td>
+  </tr>
+  <tr>
+    <td>Tags</td>
+    <td>tag: &#60;tag 1&#62;   and &#60;tag 2&#62; ,  <br>
+      tags: &#60;tag 1&#62;   and &#60;tag 2&#62; ,  <br>
+      tag: &#60;tag 1&#62;  </td>
 
-            table.alt tr:nth-child(odd) {
-                background-color: #F6F5F6;
-            }
-            table.alt tr:nth-child(even) {
-                background-color: #fff;
-            }
-</style>
-{% endblock %}
-
-<table class="alt">
-      <tr>
-          <th>Keyword</th>
-          <th>Usage</th>
-        	<th>Notes</th>
-      </tr>
-      <tr>
-          <td nowrap>Uploader</td>
-          <td nowrap>uploader: &#60;uploader&#62; , <br> uploader: me </td>
-          <td nowrap>Keywords and values are case <b> insensitive </b>.  <br>
-          "me" returns all the datasets that you uploaded. </td>
-      </tr>
-      <tr>
-          <td nowrap>Tags</td>
-          <td nowrap>tag: &#60;tag 1&#62;   and &#60;tag 2&#62; ,  <br>
-            tags: &#60;tag 1&#62;   and &#60;tag 2&#62; ,  <br>
-            tag: &#60;tag 1&#62;  </td>
-
-          <td nowrap>Keywords and value are case insensitive. <br>
-          Inserting "and" will allow you to search for multiple tags. tags and tag are the same.<br>
-         </td>
-      </tr>
-      <tr>
-          <td nowrap>Project</td>
-          <td nowrap>project: &#60;project name&#62; , </td>
-          <td nowrap>Keywords and value are case insensitive. </td>
-      </tr>
-      <tr>
-          <td nowrap>Anatomy</td>
-          <td nowrap>anatomy: &#60;anatomy&#62; , </td>
-          <td nowrap>Keywords and value are case insensitive.</td>
-      </tr>
-      <tr>
-          <td nowrap>References</td>
-          <td nowrap>references: &#60;references&#62; , <br>
-              ref: &#60;references&#62; </td>
-          <td nowrap>Keywords and value are case insensitive. <br>
-            Ref and References are the same thing, but ref is a shortcut for references.
-          </td>
-      </tr>
-      <tr>
-          <td nowrap>Comments</td>
-          <td nowrap>comments: &#60;comment&#62;  </td>
-          <td nowrap>Keywords and value are case insensitive. <br>
-             Furthermore, it does NOT have to be an exact match, but rather if it contains.
-           </td>
-      </tr>
-      <tr>
-          <td nowrap>Funding Support</td>
-          <td nowrap>funding_support: &#60;supporter&#62; , <br>
-              funding: &#60;supporter&#62; , <br>
-              support: &#60;supporter&#62; , </td>
-          <td nowrap>Keywords and value are case insensitive. <br>
-              "funding" and "support" are both shortcuts for "funding_support".</td>
-      </tr>
-      <tr>
-          <td nowrap>System Vendor</td>
-          <td nowrap>system_vendor: &#60;vendor&#62; , <br>
-              vendor: &#60;vendor&#62;  </td>
-          <td nowrap>Keywords and value are case insensitive. <br>
-              "vendor" is a shortcut for "system_vendor".</td>
-      </tr>
-      <tr>
-          <td nowrap>System Model</td>
-          <td nowrap>system_model: &#60;model&#62; , <br>
-              model: &#60;model&#62; </td>
-          <td nowrap>Keywords and value are case insensitive. <br>
-              "model" is a shortcut for "system_model".</td>
-      </tr>
-      <tr>
-          <td nowrap>Protocol Name</td>
-          <td nowrap>protocol_name: &#60;protocol&#62; , <br>
-              protocol: &#60;protocol&#62;  </td>
-          <td nowrap>Keywords and value are case insensitive. <br>
-              "protocol" is a shortcut for "protocol_name".</td>
-      </tr>
-      <tr>
-          <td nowrap>Coil Name</td>
-          <td nowrap>coil_name: &#60;coil&#62; , <br>
-              coil: &#60;coil&#62;  </td>
-          <td nowrap>Keywords and value are case insensitive. <br>
-              "coil" is a shortcut for "coil_name".</td>
-      </tr>
-      <tr>
-          <td nowrap>Sequence Type</td>
-          <td nowrap>sequence_type: &#60;sequence&#62; , <br>
-              sequence: &#60;sequence&#62;  </td>
-          <td nowrap>Keywords and value are case insensitive. <br>
-              "sequence" is a shortcut for "sequence_type".</td>
-      </tr>
-      <tr>
-          <td nowrap>UUID</td>
-          <td nowrap>uuid: &#60;uuid&#62; , <br>
-              id: &#60;uuid&#62; </td>
-          <td nowrap>Keywords and value are case insensitive. <br>
-              "id" is a shortcut for "uuid". </td>
-      </tr>
-      <tr>
-          <td nowrap>Fully Sampled</td>
-          <td nowrap>fullysampled: &#60;yes or no&#62; , <br>
-              sampled: &#60;yes or no&#62;  </td>
-          <td nowrap>Keywords and value are case insensitive. <br>
-              If sampled is unknown, state "unknown" or leave it blank. <br>
-              Response can also be "y" for "yes" and "n" for "no". <br>
-              Responses can also take the form of "1" for "yes" and "0" for "no". <br>
-              "sampled" is a shortcut for "fullysampled". </td>
-      </tr>
+    <td>Keywords and value are case insensitive. <br>
+      Inserting "and" will allow you to search for multiple tags. tags and tag are the same.<br>
+    </td>
+  </tr>
+  <tr>
+    <td>Project</td>
+    <td>project: &#60;project name&#62; , </td>
+    <td>Keywords and value are case insensitive. </td>
+  </tr>
+  <tr>
+    <td>Anatomy</td>
+    <td>anatomy: &#60;anatomy&#62; , </td>
+    <td>Keywords and value are case insensitive.</td>
+  </tr>
+  <tr>
+    <td>References</td>
+    <td>references: &#60;references&#62; , <br>
+      ref: &#60;references&#62; </td>
+    <td>Keywords and value are case insensitive. <br>
+      Ref and References are the same thing, but ref is a shortcut for references.
+    </td>
+  </tr>
+  <tr>
+    <td>Comments</td>
+    <td>comments: &#60;comment&#62;  </td>
+    <td>Keywords and value are case insensitive. <br>
+      Furthermore, it does NOT have to be an exact match, but rather if it contains.
+    </td>
+  </tr>
+  <tr>
+    <td>Funding Support</td>
+    <td>funding_support: &#60;supporter&#62; , <br>
+      funding: &#60;supporter&#62; , <br>
+      support: &#60;supporter&#62; , </td>
+    <td>Keywords and value are case insensitive. <br>
+      "funding" and "support" are both shortcuts for "funding_support".</td>
+  </tr>
+  <tr>
+    <td>System Vendor</td>
+    <td>system_vendor: &#60;vendor&#62; , <br>
+      vendor: &#60;vendor&#62;  </td>
+    <td>Keywords and value are case insensitive. <br>
+      "vendor" is a shortcut for "system_vendor".</td>
+  </tr>
+  <tr>
+    <td>System Model</td>
+    <td>system_model: &#60;model&#62; , <br>
+      model: &#60;model&#62; </td>
+    <td>Keywords and value are case insensitive. <br>
+      "model" is a shortcut for "system_model".</td>
+  </tr>
+  <tr>
+    <td>Protocol Name</td>
+    <td>protocol_name: &#60;protocol&#62; , <br>
+      protocol: &#60;protocol&#62;  </td>
+    <td>Keywords and value are case insensitive. <br>
+      "protocol" is a shortcut for "protocol_name".</td>
+  </tr>
+  <tr>
+    <td>Coil Name</td>
+    <td>coil_name: &#60;coil&#62; , <br>
+      coil: &#60;coil&#62;  </td>
+    <td>Keywords and value are case insensitive. <br>
+      "coil" is a shortcut for "coil_name".</td>
+  </tr>
+  <tr>
+    <td>Sequence Type</td>
+    <td>sequence_type: &#60;sequence&#62; , <br>
+      sequence: &#60;sequence&#62;  </td>
+    <td>Keywords and value are case insensitive. <br>
+      "sequence" is a shortcut for "sequence_type".</td>
+  </tr>
+  <tr>
+    <td>UUID</td>
+    <td>uuid: &#60;uuid&#62; , <br>
+      id: &#60;uuid&#62; </td>
+    <td>Keywords and value are case insensitive. <br>
+      "id" is a shortcut for "uuid". </td>
+  </tr>
+  <tr>
+    <td>Fully Sampled</td>
+    <td>fullysampled: &#60;yes or no&#62; , <br>
+      sampled: &#60;yes or no&#62;  </td>
+    <td>Keywords and value are case insensitive. <br>
+      If sampled is unknown, state "unknown" or leave it blank. <br>
+      Response can also be "y" for "yes" and "n" for "no". <br>
+      Responses can also take the form of "1" for "yes" and "0" for "no". <br>
+      "sampled" is a shortcut for "fullysampled". </td>
+  </tr>
 </table>
