@@ -4,6 +4,7 @@
   <head>
 
     {% load staticfiles %}
+    {% if debug %}
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68201918-2"></script>
 
@@ -14,6 +15,7 @@
 
       gtag('config', 'UA-68201918-2');
     </script>
+    {% endif %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
@@ -23,8 +25,6 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link href="https://getbootstrap.com/docs/4.0/examples/starter-template/starter-template.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/easy-autocomplete.min.css'%}" type='text/css'>
-    <link rel="stylesheet" href="{% static 'css/easy-autocomplete.themes.min.css' %}" type='text/css'>
     <link rel="stylesheet" href="{% static 'css/tooltip.css' %}" type='text/css'>
     <link rel="stylesheet" href="{% static 'css/search_bar.css' %}" type="text/css" >
     <link type="text/css" href="{% static 'css/expand.css' %}" rel="stylesheet">
