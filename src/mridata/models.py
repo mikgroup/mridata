@@ -61,7 +61,7 @@ class Uploader(models.Model):
 
 
 class TaggedData(TaggedItemBase):
-    content_object = models.ForeignKey('Data')
+    content_object = models.ForeignKey('Data', on_delete=models.CASCADE)
 
 class Data(models.Model):
 
