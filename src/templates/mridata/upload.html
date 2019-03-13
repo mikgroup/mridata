@@ -59,5 +59,8 @@
 {% endblock %}
 
 {% block js_block %}
-{{form.media}}
+<script type="text/javascript" src="{% static 'js/s3direct.js' %}"> </script>
+{% endblock %}
+{% block js_block %}
+<link rel="stylesheet" href="{% static 'css/s3direct.css' %}" type="text/css" >
 {% endblock %}
