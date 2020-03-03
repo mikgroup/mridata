@@ -7,4 +7,6 @@ wget --quiet https://repo.continuum.io/miniconda/Miniconda3-4.3.21-Linux-x86_64.
 
 bash Miniconda3-4.3.21-Linux-x86_64.sh -b -p /miniconda
 
+pip install --upgrade pip
+
 pip install -r build_scripts/requirements.txt
