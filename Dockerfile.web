@@ -5,6 +5,7 @@ MAINTAINER Frank Ong <frankong@berkeley.edu>
 ENV PATH=/miniconda/bin:${PATH}
 
 ADD build_scripts/build_python.sh build_scripts/build_python.sh
+ADD build_scripts/requirements.txt build_scripts/requirements.txt
 
 RUN bash build_scripts/build_python.sh
 
