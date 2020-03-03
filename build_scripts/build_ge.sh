@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # GE to ISMRMRD
-if [ -d "${SDK_TOP}/lib" ]; then
+if [ -d "${SDKTOP}/lib" ]; then
     git clone https://github.com/frankong/ge_to_ismrmrd.git
     cd ge_to_ismrmrd
     mkdir build
