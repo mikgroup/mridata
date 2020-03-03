@@ -31,7 +31,7 @@ psycopg2==2.8.4
 pycosat==0.6.2
 pycparser==2.17
 pycurl==7.43.0.5
-pyOpenSSL==17.0.0
+pyOpenSSL==17.5.0
 pyparsing==2.1.4
 python-dateutil==2.8.1
 pytz==2019.3
