@@ -13,6 +13,7 @@ django-el-pagination==3.3.0
 django-filter==2.4.0
 django-registration-redux==2.9
 django-s3direct==1.1.8
+django-storages==1.11.1
 django-taggit==1.4.0
 django-widget-tweaks==1.4.8
 h5py==3.3.0
