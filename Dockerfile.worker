@@ -1,27 +1,31 @@
-FROM gcc:4.9
+FROM python:3.9-slim-buster
 
 MAINTAINER Frank Ong <frankong@berkeley.edu>
 
-ADD orchestra-sdk-1.6-1 orchestra-sdk-1.6-1
-ENV SDKTOP /orchestra-sdk-1.6-1
-ENV LD_LIBRARY_PATH /usr/local/lib
-ENV HDF5_DISABLE_VERSION_CHECK 2
+# Python
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
 
-ADD build_scripts/build_ismrmrd.sh build_scripts/build_ismrmrd.sh
+RUN apt-get update
+COPY orchestra-sdk-1.10-1 orchestra-sdk-1.10-1
+ENV SDKTOP /orchestra-sdk-1.10-1
+
+# ISMRMRD
+COPY build_scripts/build_ismrmrd.sh build_scripts/build_ismrmrd.sh
 RUN bash build_scripts/build_ismrmrd.sh
 
-ADD build_scripts/build_siemens.sh build_scripts/build_siemens.sh
+ENV LD_LIBRARY_PATH /usr/local/lib
+
+# Siemens to ISMRMRD
+COPY build_scripts/build_siemens.sh build_scripts/build_siemens.sh
 RUN bash build_scripts/build_siemens.sh
 
-ADD build_scripts/build_philips.sh build_scripts/build_philips.sh
+# Philips to ISMRMRD
+COPY build_scripts/build_philips.sh build_scripts/build_philips.sh
 RUN bash build_scripts/build_philips.sh
 
-ADD build_scripts/build_ge.sh build_scripts/build_ge.sh
+# GE to ISMRMRD
+COPY build_scripts/build_ge.sh build_scripts/build_ge.sh
 RUN bash build_scripts/build_ge.sh
 
-ENV PATH=/miniconda/bin:${PATH}
-ADD build_scripts/build_python.sh build_scripts/build_python.sh
-ADD build_scripts/requirements.txt build_scripts/requirements.txt
-RUN bash build_scripts/build_python.sh
-
-ADD start_worker.sh start_worker.sh
+COPY start_worker.sh start_worker.sh

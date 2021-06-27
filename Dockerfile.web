@@ -1,14 +1,10 @@
-FROM gcc:4.9
+FROM python:3.9-slim-buster
 
 MAINTAINER Frank Ong <frankong@berkeley.edu>
 
-ENV PATH=/miniconda/bin:${PATH}
+# Python
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
 
-ADD build_scripts/build_python.sh build_scripts/build_python.sh
-ADD build_scripts/requirements.txt build_scripts/requirements.txt
-
-RUN bash build_scripts/build_python.sh
-
-ADD start_web.sh start_web.sh
-
+COPY start_web.sh start_web.sh
 EXPOSE 8000

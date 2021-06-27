@@ -87,10 +87,17 @@ def convert_ge_data(temp_data):
     ge_file = str(temp_data)
     get_upload_file_to_temp(ge_file)
 
-    subprocess.check_output(['ge_to_ismrmrd',
-                             '--verbose',
-                             '-o', os.path.join(settings.TEMP_ROOT, ismrmrd_file),
-                             os.path.join(settings.TEMP_ROOT, ge_file)])
+    env = os.environ.copy()
+    env['PATH'] = '/ge-tools/bin'
+    env['LD_LIBRARY_PATH'] = '/ismrmrd_ge/lib:/ge-tools/lib'
+    try:
+        subprocess.run(['ge2ismrmrd',
+                        '--verbose',
+                        '-o', os.path.join(settings.TEMP_ROOT, ismrmrd_file),
+                        os.path.join(settings.TEMP_ROOT, ge_file)],
+                       env=env)
+    except:
+        pass
 
     os.remove(os.path.join(settings.TEMP_ROOT, ge_file))
 

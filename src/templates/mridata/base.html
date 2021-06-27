@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
 
-    {% load staticfiles %}
+    {% load static %}
     {% if debug %}
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68201918-2"></script>
@@ -64,7 +64,7 @@
       </div>
     </footer>
 
-    {% load staticfiles %}
+    {% load static %}
     {% block css_block %} {% endblock %}
     {% block js_block %} {% endblock %}
   </body>

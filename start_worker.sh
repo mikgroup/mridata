@@ -1,2 +1,2 @@
 cd src
-celery worker -l info -A mridata_org --concurrency=1
+celery -A mridata_org worker -l info --concurrency=1

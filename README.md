@@ -16,7 +16,11 @@ https://docs.docker.com/compose/install/#install-compose
 
 ## Build and run using docker-compose
 
-Clone the repo, go to that directory and run:
+Clone the repo, go to that directory.
+
+If you want to convert GE files, you will need to put the `orchestra-sdk-1.10-1` folder under the directory.
+
+To launch the web servers, run:
 
 	docker-compose build
 	docker-compose up
@@ -55,3 +59,21 @@ Each of these packages (Django, PostgresSQL, Celery, and Redis) runs in their ow
 - [filters.py](src/mridata/filters.py) contains filter options on the main page.
 
 - [forms.py](src/mridata/forms.py) contains upload form options.
+
+
+### Python dependencies
+
+	pip install \
+	boto3 \
+	celery \
+	django \
+	django-el-pagination \
+	django-s3direct \
+	django-taggit \
+	django-registration-redux \
+	django-widget-tweaks \
+	ismrmrd \
+	numpy \
+	pillow \
+	psycopg2 \
+	redis

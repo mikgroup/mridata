@@ -1,13 +1,14 @@
-from django.conf.urls import include, url
+from django.conf.urls import include
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.conf import settings
+from django.urls import re_path
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'', include('mridata.urls')),
-    url(r'^accounts/', include('registration.backends.simple.urls')),
-    url(r'^s3direct/', include('s3direct.urls')),
+    re_path(r'^admin/', admin.site.urls),
+    re_path(r'', include('mridata.urls')),
+    re_path(r'^accounts/', include('registration.backends.simple.urls')),
+    re_path(r'^s3direct/', include('s3direct.urls')),
 ]
 
 if not settings.USE_AWS:

@@ -137,7 +137,8 @@ def data_list(request):
         temp_datasets = []
         logs = []
 
-    if request.is_ajax() and 'page' in request.GET:
+    is_ajax = request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+    if is_ajax and 'page' in request.GET:
         template = 'mridata/data_list_page.html'
     else:
         template = 'mridata/data_list.html'
@@ -252,6 +253,7 @@ def upload_philips(request):
 def upload_siemens(request):
     if request.method == "POST":
         form = SiemensDataForm(request.POST, request.FILES)
+        logging.warning(str(form))
         if form.is_valid():
             project, created = Project.objects.get_or_create(
                 name=form.cleaned_data['project_name'],
@@ -366,7 +368,8 @@ def search_tag(request, tag):
         temp_datasets = []
         logs = []
 
-    if request.is_ajax() and 'page' in request.GET:
+    is_ajax = request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+    if is_ajax and 'page' in request.GET:
         template = 'mridata/data_list_page.html'
     else:
         template = 'mridata/data_list.html'
@@ -379,7 +382,6 @@ def search_tag(request, tag):
                   })
 
 def tag_delete(request, uuid, tag):
-    logging.warning("IM HERE")
     data = get_object_or_404(Data, uuid=uuid)
     data.tags.remove(tag)
     data.save()
