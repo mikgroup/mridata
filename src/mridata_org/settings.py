@@ -180,7 +180,8 @@ FILE_UPLOAD_TEMP_DIR = TEMP_ROOT
 
 # Static
 if USE_AWS:
-    AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+    AWS_S3_CUSTOM_DOMAIN = '{}.s3.{}.amazonaws.com'.format(
+        AWS_STORAGE_BUCKET_NAME, AWS_STORAGE_BUCKET_REGION)
     AWS_STATIC_LOCATION = 'static'
 
     STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_STATIC_LOCATION)
@@ -193,7 +194,6 @@ if USE_AWS:
     AWS_MEDIA_LOCATION = 'media'
     MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_MEDIA_LOCATION)
 
-    AWS_S3_ENDPOINT_URL = 'https://s3.%s.amazonaws.com' % AWS_STORAGE_BUCKET_REGION
     AWS_S3_REGION_NAME = AWS_STORAGE_BUCKET_REGION
     S3DIRECT_DESTINATIONS = {
         'uploads': {
