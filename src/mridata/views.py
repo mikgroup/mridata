@@ -253,7 +253,6 @@ def upload_philips(request):
 def upload_siemens(request):
     if request.method == "POST":
         form = SiemensDataForm(request.POST, request.FILES)
-        logging.warning(str(form))
         if form.is_valid():
             project, created = Project.objects.get_or_create(
                 name=form.cleaned_data['project_name'],
