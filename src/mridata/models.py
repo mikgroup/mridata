@@ -246,7 +246,7 @@ class GeData(TempData):
 
 
 class GeAwsData(TempData):
-    ge_aws_file = S3DirectField(dest='uploads')
+    ge_file = S3DirectField(dest='uploads')
 
     def __str__(self):
         return str(self.ge_file).split('/')[-1]
