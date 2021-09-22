@@ -8,7 +8,7 @@ click==7.1.2
 click-didyoumean==0.0.3
 click-plugins==1.1.1
 click-repl==0.2.0
-Django==3.2.4
+Django==3.2.5
 django-el-pagination==3.3.0
 django-filter==2.4.0
 django-registration-redux==2.9
